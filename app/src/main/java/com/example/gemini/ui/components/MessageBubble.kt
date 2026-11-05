@@ -154,6 +154,9 @@ fun MessageBubble(
                 isUserBubbleVisible = true
             }
 
+            val screenWidth = androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp.dp
+            val maxBubbleWidth = remember(screenWidth) { (screenWidth * 0.84f).coerceIn(240.dp, 480.dp) }
+
             Column(horizontalAlignment = Alignment.End) {
                 Box(
                     modifier = Modifier
@@ -163,7 +166,7 @@ fun MessageBubble(
                             scaleY = userScale
                             translationX = userOffsetX
                         }
-                        .widthIn(max = 340.dp)
+                        .widthIn(max = maxBubbleWidth)
                         .clip(RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp, bottomStart = 18.dp, bottomEnd = 4.dp))
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                         .border(
@@ -450,6 +453,9 @@ fun UserMessageBubble(
             isUserBubbleVisible = true
         }
 
+        val screenWidth = androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp.dp
+        val maxBubbleWidth = remember(screenWidth) { (screenWidth * 0.84f).coerceIn(240.dp, 480.dp) }
+
         Box(
             modifier = Modifier
                 .graphicsLayer {
@@ -458,7 +464,7 @@ fun UserMessageBubble(
                     scaleY = userScale
                     translationX = userOffsetX
                 }
-                .widthIn(max = 340.dp)
+                .widthIn(max = maxBubbleWidth)
                 .bringIntoViewRequester(bubbleBringIntoView)
                 .clip(RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp, bottomStart = 18.dp, bottomEnd = 4.dp))
                 .background(MaterialTheme.colorScheme.surfaceVariant)

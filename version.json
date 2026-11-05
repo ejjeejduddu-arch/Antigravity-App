@@ -1,13 +1,13 @@
 {
-  "version_code": 121,
-  "version_name": "1.0.21",
+  "version_code": 122,
+  "version_name": "1.0.22",
   "min_supported_version_code": 1,
   "changelog": [
-    "Ported LocalMind modern Shadcn-inspired theme and design system",
-    "Added Dark (Shadcn Slate), Light, Claude Light, and Claude Dark themes",
-    "Added smooth message bubble entrance animations and micro-interactions",
-    "Refined input bar pill styling with subtle borders and shadows",
-    "Updated card borders, rounded corners, and typography"
+    "Mobile auto-responsive design for all screen sizes (compact, standard, foldable, tablet)",
+    "Advanced staggered entrance animations with spring physics and pulsating halo glow",
+    "Interactive option card selection micro-physics with spring bounce and animated borders",
+    "Updated installer and app branding to Antigravity Environment",
+    "Screen-adaptive responsive message bubble width for all mobile devices"
   ],
   "is_critical": false
 }

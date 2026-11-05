@@ -84,10 +84,10 @@ import com.example.gemini.data.daemon.TermuxDaemonManager
 import com.example.gemini.data.daemon.IdeApiClient
 
 enum class SettingsSection(val title: String, val subtitle: String) {
-    MAIN("Settings & Preferences", "Configure your AntiGem experience"),
+    MAIN("Settings & Preferences", "Configure your Antigravity experience"),
     APPEARANCE("Appearance & Theme", "Theme, dark mode, and chat font scaling"),
     SERVERS("Servers & Connectivity", "Configure AGY Hub and IDE Bridge endpoints"),
-    WEBVIEW_EXTENSIONS("Custom AntiGem Plugins", "Install and manage plugins: MCP tools and skills"),
+    WEBVIEW_EXTENSIONS("Custom Antigravity Plugins", "Install and manage plugins: MCP tools and skills"),
     SLASH_COMMANDS("Slash Commands", "Your own / commands and what they expand to"),
     MCP("MCP Servers", "Model Context Protocol tools & integrations"),
     SKILLS_PLUGINS("Skills & Plugins", "Agent capabilities, Google plugins, and extensions"),
@@ -8489,7 +8489,7 @@ private fun AboutSubScreen(
                 }
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "AntiGem",
+                    text = "Antigravity",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -8678,8 +8678,8 @@ private fun AboutSubScreen(
                                         updateCheckResultText = null
                                     } else {
                                         isUpdateCheckError = false
-                                        updateCheckResultText = "AntiGem is up to date (v${BuildConfig.VERSION_NAME})."
-                                        Toast.makeText(context, "AntiGem is up to date!", Toast.LENGTH_SHORT).show()
+                                        updateCheckResultText = "Antigravity is up to date (v${BuildConfig.VERSION_NAME})."
+                                        Toast.makeText(context, "Antigravity is up to date!", Toast.LENGTH_SHORT).show()
                                     }
                                 }.onFailure { err ->
                                     isUpdateCheckError = true
