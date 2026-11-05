@@ -23,8 +23,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.outlined.InsertDriveFile
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -597,18 +601,374 @@ fun ChatInputBar(
                 .fillMaxWidth()
                 .padding(horizontal = 14.dp, vertical = 6.dp)
         ) {
-            // Opera-inspired unified rounded input card
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
-                color = if (isDark) OperaDarkSurface else OperaSurface,
-                border = BorderStroke(
-                    1.5.dp,
-                    if (isDark) OperaDarkBorder else OperaBorder
-                ),
-                shadowElevation = if (isDark) 4.dp else 1.5.dp
+            // 1. Floating Model Selector Pill (Opera header style above composer)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 4.dp, vertical = 2.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                Surface(
+                    onClick = {
+                        focusManager.clearFocus(force = true)
+                        keyboardController?.hide()
+                        onOpenModelSelector()
+                    },
+                    shape = RoundedCornerShape(12.dp),
+                    color = if (isDark) OperaDarkSurface else OperaSurface,
+                    border = BorderStroke(1.dp, if (isDark) OperaDarkBorder else OperaBorder),
+                    shadowElevation = 1.dp
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 9.dp, vertical = 5.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.AutoAwesome,
+                            contentDescription = null,
+                            tint = OperaRed,
+                            modifier = Modifier.size(13.dp)
+                        )
+                        Spacer(modifier = Modifier.width(5.dp))
+                        Text(
+                            text = selectedModel.displayName,
+                            fontFamily = com.example.gemini.theme.FigtreeFontFamily,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
 
+                        val pct = quota?.percentage
+                        if (pct != null) {
+                            Spacer(modifier = Modifier.width(5.dp))
+                            val badgeColor = if (pct > 50) QuotaGreen else if (pct > 20) QuotaAmber else QuotaRed
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .background(badgeColor.copy(alpha = 0.15f))
+                                    .padding(horizontal = 4.dp, vertical = 1.dp)
+                            ) {
+                                Text(
+                                    text = "$pct%",
+                                    fontSize = 9.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = badgeColor
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.width(3.dp))
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowDown,
+                            contentDescription = "Switch Model",
+                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                            modifier = Modifier.size(14.dp)
+                        )
+                    }
+                }
+            }
+
+            // 2. Live Dictation Status Banner (if active)
+            if (isLiveDictating) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = if (isDictationPaused) Color(0xFFFFA000).copy(alpha = 0.12f) else OperaRed.copy(alpha = 0.12f),
+                    border = BorderStroke(
+                        1.dp,
+                        if (isDictationPaused) Color(0xFFFFA000).copy(alpha = 0.4f) else OperaRed.copy(alpha = 0.4f)
+                    ),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 2.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp)
+                                .clip(CircleShape)
+                                .background(if (isDictationPaused) Color(0xFFFFA000) else OperaRed)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = if (isDictationPaused) "Dictation paused (tap resume to speak)" else "Listening... Speak now",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium,
+                            fontFamily = com.example.gemini.theme.FigtreeFontFamily,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.weight(1f)
+                        )
+
+                        Surface(
+                            onClick = {
+                                if (isDictationPaused) {
+                                    speechManager?.resumeTranscriptionSession()
+                                    isDictationPaused = false
+                                } else {
+                                    speechManager?.pauseTranscriptionSession()
+                                    isDictationPaused = true
+                                }
+                            },
+                            shape = CircleShape,
+                            color = if (isDictationPaused) Color(0xFFFFA000).copy(alpha = 0.18f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f),
+                            modifier = Modifier.size(26.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = if (isDictationPaused) Icons.Default.PlayArrow else Icons.Default.Pause,
+                                    contentDescription = if (isDictationPaused) "Resume" else "Pause",
+                                    tint = if (isDictationPaused) Color(0xFFFFA000) else MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(15.dp)
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.width(6.dp))
+
+                        Surface(
+                            onClick = { stopLiveDictation() },
+                            shape = CircleShape,
+                            color = OperaRed.copy(alpha = 0.15f),
+                            modifier = Modifier.size(26.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.Stop,
+                                    contentDescription = "Stop",
+                                    tint = OperaRed,
+                                    modifier = Modifier.size(15.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 3. Audio Transcribing Banner (if active)
+            if (isTranscribingAudio) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = OperaRed.copy(alpha = 0.12f),
+                    border = BorderStroke(1.dp, OperaRed.copy(alpha = 0.4f)),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 2.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(13.dp),
+                            strokeWidth = 2.dp,
+                            color = OperaRed
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Transcribing audio via AGY Hub...",
+                            fontSize = 12.sp,
+                            color = OperaRed,
+                            fontFamily = com.example.gemini.theme.FigtreeFontFamily,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+            }
+
+            // 4. Opera Attached Files Top Drawer (filesContainerTop)
+            if (attachments.isNotEmpty() || isUploadingAttachment) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Surface(
+                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 6.dp, bottomEnd = 6.dp),
+                    color = if (isDark) OperaDarkSurface else OperaSurface,
+                    border = BorderStroke(1.5.dp, if (isDark) OperaDarkBorder else OperaBorder),
+                    shadowElevation = 1.dp,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp, vertical = 6.dp)
+                            .horizontalScroll(rememberScrollState()),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        if (isUploadingAttachment) {
+                            Surface(
+                                shape = RoundedCornerShape(10.dp),
+                                color = MaterialTheme.colorScheme.background,
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(13.dp),
+                                        strokeWidth = 2.dp,
+                                        color = OperaRed
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = "Uploading...",
+                                        fontSize = 11.sp,
+                                        fontFamily = com.example.gemini.theme.FigtreeFontFamily,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+                        }
+
+                        for (att in attachments) {
+                            val isImg = att.isImage || att.name.endsWith(".jpg", true) || att.name.endsWith(".png", true) ||
+                                    att.name.endsWith(".jpeg", true) || att.name.endsWith(".webp", true) ||
+                                    att.name.endsWith(".gif", true) || att.mimeType?.startsWith("image/") == true
+
+                            val imgSource = remember(att) {
+                                when {
+                                    !att.localUri.isNullOrBlank() -> att.localUri
+                                    !att.url.isNullOrBlank() -> att.url
+                                    att.path.isNotBlank() -> if (att.path.startsWith("file://") || att.path.startsWith("http")) att.path else "file://${att.path}"
+                                    else -> null
+                                }
+                            }
+
+                            Surface(
+                                shape = RoundedCornerShape(10.dp),
+                                color = MaterialTheme.colorScheme.background,
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Row(
+                                        modifier = Modifier
+                                            .clickable {
+                                                val ext = (att.name.ifBlank { att.path }).substringAfterLast('.', "").lowercase()
+                                                val isText = att.mimeType?.startsWith("text/") == true ||
+                                                        att.mimeType?.contains("json") == true ||
+                                                        att.mimeType?.contains("javascript") == true ||
+                                                        att.mimeType?.contains("xml") == true ||
+                                                        att.mimeType?.contains("yaml") == true ||
+                                                        att.mimeType?.contains("toml") == true ||
+                                                        ext in listOf("txt", "md", "markdown", "kt", "kts", "java", "py", "js", "ts", "jsx", "tsx", "html", "css", "json", "xml", "yaml", "yml", "toml", "sh", "bash", "c", "cpp", "h", "hpp", "rs", "go", "sql", "gradle", "properties", "conf", "ini", "log", "env")
+                                                if (isImg && imgSource != null) {
+                                                    previewImageUrl = imgSource
+                                                } else if (isText) {
+                                                    val targetPath = when {
+                                                        att.path.isNotBlank() -> att.path
+                                                        !att.localUri.isNullOrBlank() -> att.localUri
+                                                        else -> att.name
+                                                    }
+                                                    fileLinkHandler.onOpenFile(targetPath)
+                                                } else {
+                                                    try {
+                                                        val uri = when {
+                                                            !att.url.isNullOrBlank() && (att.url.startsWith("content://") || att.url.startsWith("file://")) -> Uri.parse(att.url)
+                                                            att.path.isNotBlank() && File(att.path).exists() -> {
+                                                                val file = File(att.path)
+                                                                androidx.core.content.FileProvider.getUriForFile(
+                                                                    context,
+                                                                    "${context.packageName}.fileprovider",
+                                                                    file
+                                                                )
+                                                            }
+                                                            !att.url.isNullOrBlank() -> Uri.parse(att.url)
+                                                            else -> null
+                                                        }
+                                                        if (uri != null) {
+                                                            val intent = Intent(Intent.ACTION_VIEW).apply {
+                                                                setDataAndType(uri, att.mimeType ?: "*/*")
+                                                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                                            }
+                                                            context.startActivity(Intent.createChooser(intent, "Open ${att.name}"))
+                                                        } else {
+                                                            Toast.makeText(context, att.name, Toast.LENGTH_SHORT).show()
+                                                        }
+                                                    } catch (e: Exception) {
+                                                        Toast.makeText(context, "Cannot open: ${e.message}", Toast.LENGTH_SHORT).show()
+                                                    }
+                                                }
+                                            }
+                                            .padding(start = 5.dp, end = 2.dp, top = 4.dp, bottom = 4.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        if (isImg && imgSource != null) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(34.dp)
+                                                    .clip(RoundedCornerShape(6.dp))
+                                            ) {
+                                                AsyncImage(
+                                                    model = imgSource,
+                                                    contentDescription = att.name,
+                                                    contentScale = ContentScale.Crop,
+                                                    modifier = Modifier.fillMaxSize()
+                                                )
+                                            }
+                                        } else if (att.isAudio) {
+                                            Icon(
+                                                imageVector = Icons.Rounded.Mic,
+                                                contentDescription = null,
+                                                tint = OperaRed,
+                                                modifier = Modifier.size(18.dp).padding(start = 2.dp)
+                                            )
+                                        } else {
+                                            Icon(
+                                                imageVector = Icons.AutoMirrored.Outlined.InsertDriveFile,
+                                                contentDescription = null,
+                                                tint = OperaRed,
+                                                modifier = Modifier.size(18.dp).padding(start = 2.dp)
+                                            )
+                                        }
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text(
+                                            text = att.name,
+                                            fontSize = 11.5.sp,
+                                            fontFamily = com.example.gemini.theme.FigtreeFontFamily,
+                                            fontWeight = FontWeight.Medium,
+                                            color = MaterialTheme.colorScheme.onSurface,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                            modifier = Modifier.widthIn(max = 120.dp)
+                                        )
+                                    }
+
+                                    IconButton(
+                                        onClick = { onRemoveAttachment(att.id) },
+                                        modifier = Modifier.size(24.dp).padding(end = 4.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Close,
+                                            contentDescription = "Remove",
+                                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                                            modifier = Modifier.size(13.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            // 5. Authentic Opera Red Pill Composer (56dp min-height, #FF1A1A, 20dp radius, 2px border #FFFFFF52, red glow shadow)
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .shadow(
+                        elevation = 8.dp,
+                        shape = RoundedCornerShape(20.dp),
+                        ambientColor = OperaRed,
+                        spotColor = OperaRed
+                    ),
+                shape = RoundedCornerShape(20.dp),
+                color = OperaRed,
+                border = BorderStroke(2.dp, OperaBorderOnPrimary)
+            ) {
                 if (isRecordingAudio) {
                     val infiniteTransition = rememberInfiniteTransition(label = "recPulse")
                     val pulseAlpha by infiniteTransition.animateFloat(
@@ -624,21 +984,22 @@ fun ChatInputBar(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 12.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
+                            .defaultMinSize(minHeight = 56.dp)
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Pulsing red recording dot (steady amber if paused)
+                        // Pulsing white recording dot (amber if paused)
                         Box(
                             modifier = Modifier
-                                .size(9.dp)
+                                .size(10.dp)
                                 .clip(CircleShape)
                                 .background(
                                     if (isRecordingPaused) Color(0xFFFFA000)
-                                    else Color(0xFFE53935).copy(alpha = pulseAlpha)
+                                    else Color.White.copy(alpha = pulseAlpha)
                                 )
                         )
 
-                        Spacer(modifier = Modifier.width(6.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
 
                         // Duration timer
                         Text(
@@ -646,31 +1007,31 @@ fun ChatInputBar(
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
                             fontFamily = FontFamily.Monospace,
-                            color = if (isRecordingPaused) Color(0xFFFFA000) else MaterialTheme.colorScheme.onSurface
+                            color = if (isRecordingPaused) Color(0xFFFFA000) else Color.White
                         )
 
                         if (recordMode == AudioRecordMode.TRANSCRIBE) {
                             Spacer(modifier = Modifier.width(6.dp))
                             Surface(
-                                shape = RoundedCornerShape(4.dp),
-                                color = ClaudeTerracotta.copy(alpha = 0.15f)
+                                shape = RoundedCornerShape(6.dp),
+                                color = Color.White.copy(alpha = 0.2f)
                             ) {
                                 Row(
-                                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
+                                    modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
                                         imageVector = Icons.Rounded.GraphicEq,
                                         contentDescription = null,
                                         modifier = Modifier.size(10.dp),
-                                        tint = ClaudeTerracotta
+                                        tint = Color.White
                                     )
-                                    Spacer(modifier = Modifier.width(2.dp))
+                                    Spacer(modifier = Modifier.width(3.dp))
                                     Text(
                                         text = "Transcribe",
-                                        fontSize = 9.5.sp,
+                                        fontSize = 10.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = ClaudeTerracotta
+                                        color = Color.White
                                     )
                                 }
                             }
@@ -678,7 +1039,7 @@ fun ChatInputBar(
 
                         Spacer(modifier = Modifier.width(6.dp))
 
-                        // Real-time live audio waveform visualizer based on speaking volume
+                        // Real-time live audio waveform visualizer
                         LiveAudioWaveform(
                             amplitudes = waveformAmplitudes,
                             isPaused = isRecordingPaused,
@@ -686,605 +1047,171 @@ fun ChatInputBar(
                                 .weight(1f)
                                 .height(26.dp)
                                 .padding(horizontal = 4.dp),
-                            barColor = if (isRecordingPaused) Color(0xFFFFA000) else Color(0xFFE53935)
+                            barColor = if (isRecordingPaused) Color(0xFFFFA000) else Color.White
                         )
 
                         Spacer(modifier = Modifier.width(4.dp))
 
                         // 1. Pause / Resume button
-                        Surface(
+                        IconButton(
                             onClick = { togglePauseAudioRecording() },
-                            shape = CircleShape,
-                            color = if (isRecordingPaused) Color(0xFFFFA000).copy(alpha = 0.15f) else MaterialTheme.colorScheme.background,
-                            border = BorderStroke(1.dp, if (isRecordingPaused) Color(0xFFFFA000) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)),
-                            modifier = Modifier.size(34.dp)
+                            modifier = Modifier.size(30.dp)
                         ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = if (isRecordingPaused) Icons.Default.PlayArrow else Icons.Default.Pause,
-                                    contentDescription = if (isRecordingPaused) "Resume" else "Pause",
-                                    tint = if (isRecordingPaused) Color(0xFFFFA000) else MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(17.dp)
-                                )
-                            }
+                            Icon(
+                                imageVector = if (isRecordingPaused) Icons.Default.PlayArrow else Icons.Default.Pause,
+                                contentDescription = if (isRecordingPaused) "Resume" else "Pause",
+                                tint = Color.White,
+                                modifier = Modifier.size(19.dp)
+                            )
                         }
-
-                        Spacer(modifier = Modifier.width(4.dp))
 
                         // 2. Cancel / Discard
                         IconButton(
                             onClick = { cancelAudioRecording() },
-                            modifier = Modifier.size(32.dp)
+                            modifier = Modifier.size(30.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.Close,
                                 contentDescription = "Cancel recording",
-                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                                modifier = Modifier.size(18.dp)
+                                tint = Color.White.copy(alpha = 0.85f),
+                                modifier = Modifier.size(19.dp)
                             )
                         }
 
-                        Spacer(modifier = Modifier.width(4.dp))
-
-                        // 3. Stop & Attach
-                        Surface(
-                            onClick = { stopAudioRecording(andSend = false) },
-                            shape = CircleShape,
-                            color = MaterialTheme.colorScheme.background,
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)),
-                            modifier = Modifier.size(34.dp)
+                        // 3. Send voice note
+                        IconButton(
+                            onClick = { stopAudioRecording(andSend = true) },
+                            modifier = Modifier.size(30.dp)
                         ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = Icons.Default.Stop,
-                                    contentDescription = "Stop & Attach",
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(17.dp)
-                                )
-                            }
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                contentDescription = "Send voice note",
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+                } else {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .defaultMinSize(minHeight = 56.dp)
+                            .padding(horizontal = 10.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // [+] Attachment Button (Opera plusButton: 28x28, white plus icon)
+                        IconButton(
+                            onClick = onAttachClick,
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Add,
+                                contentDescription = "Add attachments",
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(2.dp))
+
+                        // [Mic] Voice Record Button (Opera micButton: 28x28, white mic icon)
+                        IconButton(
+                            onClick = {
+                                if (voiceNotesAsText) {
+                                    startAutoTranscribe()
+                                } else {
+                                    recordMode = AudioRecordMode.VOICE_NOTE
+                                    triggerMicClick()
+                                }
+                            },
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.Mic,
+                                contentDescription = if (voiceNotesAsText) "Record and transcribe" else "Record voice note",
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
                         }
 
                         Spacer(modifier = Modifier.width(6.dp))
 
-                        // 4. Send directly
-                        Surface(
-                            onClick = { stopAudioRecording(andSend = true) },
-                            shape = CircleShape,
-                            color = ClaudeTerracotta,
-                            modifier = Modifier.size(34.dp)
-                        ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = Icons.Default.ArrowUpward,
-                                    contentDescription = "Send voice note",
-                                    tint = Color.White,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            }
-                        }
-                    }
-                } else {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 6.dp, vertical = 6.dp)
-                    ) {
-                        // Live Dictation Listening Banner with Pause / Resume and Stop
-                        if (isLiveDictating) {
-                            Surface(
-                                shape = RoundedCornerShape(10.dp),
-                                color = if (isDictationPaused) Color(0xFFFFA000).copy(alpha = 0.12f) else GeminiBlue.copy(alpha = 0.12f),
-                                border = BorderStroke(
-                                    1.dp,
-                                    if (isDictationPaused) Color(0xFFFFA000).copy(alpha = 0.4f) else GeminiBlue.copy(alpha = 0.4f)
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 4.dp, vertical = 4.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(8.dp)
-                                            .clip(CircleShape)
-                                            .background(if (isDictationPaused) Color(0xFFFFA000) else Color(0xFFE53935))
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = if (isDictationPaused) "Dictation paused (tap resume to speak)" else "Listening... Speak now",
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.Medium,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        modifier = Modifier.weight(1f)
-                                    )
-
-                                    // Pause / Resume button
-                                    Surface(
-                                        onClick = {
-                                            if (isDictationPaused) {
-                                                speechManager?.resumeTranscriptionSession()
-                                                isDictationPaused = false
-                                            } else {
-                                                speechManager?.pauseTranscriptionSession()
-                                                isDictationPaused = true
-                                            }
-                                        },
-                                        shape = CircleShape,
-                                        color = if (isDictationPaused) Color(0xFFFFA000).copy(alpha = 0.18f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f),
-                                        modifier = Modifier.size(26.dp)
-                                    ) {
-                                        Box(contentAlignment = Alignment.Center) {
-                                            Icon(
-                                                imageVector = if (isDictationPaused) Icons.Default.PlayArrow else Icons.Default.Pause,
-                                                contentDescription = if (isDictationPaused) "Resume" else "Pause",
-                                                tint = if (isDictationPaused) Color(0xFFFFA000) else MaterialTheme.colorScheme.onSurfaceVariant,
-                                                modifier = Modifier.size(15.dp)
-                                            )
-                                        }
-                                    }
-
-                                    Spacer(modifier = Modifier.width(6.dp))
-
-                                    // Stop button
-                                    Surface(
-                                        onClick = { stopLiveDictation() },
-                                        shape = CircleShape,
-                                        color = Color(0xFFE53935).copy(alpha = 0.12f),
-                                        modifier = Modifier.size(26.dp)
-                                    ) {
-                                        Box(contentAlignment = Alignment.Center) {
-                                            Icon(
-                                                imageVector = Icons.Default.Stop,
-                                                contentDescription = "Stop",
-                                                tint = Color(0xFFE53935),
-                                                modifier = Modifier.size(15.dp)
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        // Audio Transcribing Banner
-                        if (isTranscribingAudio) {
-                            Surface(
-                                shape = RoundedCornerShape(10.dp),
-                                color = ClaudeTerracotta.copy(alpha = 0.12f),
-                                border = BorderStroke(1.dp, ClaudeTerracotta.copy(alpha = 0.4f)),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 4.dp, vertical = 4.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(13.dp),
-                                        strokeWidth = 2.dp,
-                                        color = ClaudeTerracotta
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = "Transcribing audio via AGY Hub...",
-                                        fontSize = 12.sp,
-                                        color = ClaudeTerracotta,
-                                        fontWeight = FontWeight.Medium
-                                    )
-                                }
-                            }
-                        }
-
-                        // 1. Text Field Area on Top
-                        TextField(
-                        value = textFieldValue,
-                        onValueChange = onTextFieldValueChange,
-                        placeholder = {
-                            Text(
-                                text = "Reply to ${selectedModel.displayName.split(" ").firstOrNull() ?: "Gemini"}...",
-                                fontFamily = com.example.gemini.theme.FigtreeFontFamily,
-                                fontSize = 15.sp,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.42f)
-                            )
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .focusRequester(focusRequester)
-                            .padding(horizontal = 4.dp, vertical = 2.dp),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            disabledContainerColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            cursorColor = OperaRed
-                        ),
-                        textStyle = TextStyle(
-                            fontFamily = com.example.gemini.theme.FigtreeFontFamily,
-                            fontSize = 15.sp,
-                            lineHeight = 21.sp
-                        ),
-                        maxLines = 6,
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Default)
-                    )
-
-                    // 2. Attachments Preview (if any)
-                    if (attachments.isNotEmpty() || isUploadingAttachment) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 6.dp, vertical = 4.dp)
-                                .horizontalScroll(rememberScrollState()),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            if (isUploadingAttachment) {
-                                Surface(
-                                    shape = RoundedCornerShape(12.dp),
-                                    color = MaterialTheme.colorScheme.background,
-                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
-                                ) {
-                                    Row(
-                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        CircularProgressIndicator(
-                                            modifier = Modifier.size(14.dp),
-                                            strokeWidth = 2.dp,
-                                            color = ClaudeTerracotta
-                                        )
-                                        Spacer(modifier = Modifier.width(6.dp))
-                                        Text(
-                                            text = "Uploading attachment...",
-                                            fontSize = 11.5.sp,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                    }
-                                }
-                            }
-
-                            for (att in attachments) {
-                                val isImg = att.isImage || att.name.endsWith(".jpg", true) || att.name.endsWith(".png", true) ||
-                                        att.name.endsWith(".jpeg", true) || att.name.endsWith(".webp", true) ||
-                                        att.name.endsWith(".gif", true) || att.mimeType?.startsWith("image/") == true
-
-                                val imgSource = remember(att) {
-                                    when {
-                                        !att.localUri.isNullOrBlank() -> att.localUri
-                                        !att.url.isNullOrBlank() -> att.url
-                                        att.path.isNotBlank() -> if (att.path.startsWith("file://") || att.path.startsWith("http")) att.path else "file://${att.path}"
-                                        else -> null
-                                    }
-                                }
-
-                                Surface(
-                                    shape = RoundedCornerShape(12.dp),
-                                    color = MaterialTheme.colorScheme.background,
-                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
-                                ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        // Clickable preview + name container
-                                        Row(
-                                            modifier = Modifier
-                                                .clickable {
-                                                    val ext = (att.name.ifBlank { att.path }).substringAfterLast('.', "").lowercase()
-                                                    val isText = att.mimeType?.startsWith("text/") == true ||
-                                                            att.mimeType?.contains("json") == true ||
-                                                            att.mimeType?.contains("javascript") == true ||
-                                                            att.mimeType?.contains("xml") == true ||
-                                                            att.mimeType?.contains("yaml") == true ||
-                                                            att.mimeType?.contains("toml") == true ||
-                                                            ext in listOf("txt", "md", "markdown", "kt", "kts", "java", "py", "js", "ts", "jsx", "tsx", "html", "css", "json", "xml", "yaml", "yml", "toml", "sh", "bash", "c", "cpp", "h", "hpp", "rs", "go", "sql", "gradle", "properties", "conf", "ini", "log", "env")
-                                                    if (isImg && imgSource != null) {
-                                                        previewImageUrl = imgSource
-                                                    } else if (isText) {
-                                                        val targetPath = when {
-                                                            att.path.isNotBlank() -> att.path
-                                                            !att.localUri.isNullOrBlank() -> att.localUri
-                                                            else -> att.name
-                                                        }
-                                                        fileLinkHandler.onOpenFile(targetPath)
-                                                    } else {
-                                                        try {
-                                                            val uri = when {
-                                                                !att.url.isNullOrBlank() && (att.url.startsWith("content://") || att.url.startsWith("file://")) -> Uri.parse(att.url)
-                                                                att.path.isNotBlank() && File(att.path).exists() -> {
-                                                                    val file = File(att.path)
-                                                                    androidx.core.content.FileProvider.getUriForFile(
-                                                                        context,
-                                                                        "${context.packageName}.fileprovider",
-                                                                        file
-                                                                    )
-                                                                }
-                                                                !att.url.isNullOrBlank() -> Uri.parse(att.url)
-                                                                else -> null
-                                                            }
-                                                            if (uri != null) {
-                                                                val intent = Intent(Intent.ACTION_VIEW).apply {
-                                                                    setDataAndType(uri, att.mimeType ?: "*/*")
-                                                                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                                                }
-                                                                context.startActivity(Intent.createChooser(intent, "Open ${att.name}"))
-                                                            } else {
-                                                                Toast.makeText(context, att.name, Toast.LENGTH_SHORT).show()
-                                                            }
-                                                        } catch (e: Exception) {
-                                                            Toast.makeText(context, "Cannot open: ${e.message}", Toast.LENGTH_SHORT).show()
-                                                        }
-                                                    }
-                                                }
-                                                .padding(start = 5.dp, end = 2.dp, top = 4.dp, bottom = 4.dp),
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            if (isImg && imgSource != null) {
-                                                Box(
-                                                    modifier = Modifier
-                                                        .size(36.dp)
-                                                        .clip(RoundedCornerShape(8.dp))
-                                                ) {
-                                                    AsyncImage(
-                                                        model = imgSource,
-                                                        contentDescription = att.name,
-                                                        contentScale = ContentScale.Crop,
-                                                        modifier = Modifier.fillMaxSize()
-                                                    )
-                                                }
-                                            } else if (att.isAudio) {
-                                                Icon(
-                                                    imageVector = Icons.Rounded.Mic,
-                                                    contentDescription = null,
-                                                    tint = ClaudeTerracotta,
-                                                    modifier = Modifier.size(20.dp).padding(start = 4.dp)
-                                                )
-                                            } else {
-                                                Icon(
-                                                    imageVector = Icons.AutoMirrored.Outlined.InsertDriveFile,
-                                                    contentDescription = null,
-                                                    tint = ClaudeTerracotta,
-                                                    modifier = Modifier.size(20.dp).padding(start = 4.dp)
-                                                )
-                                            }
-                                            Spacer(modifier = Modifier.width(6.dp))
-                                            Text(
-                                                text = att.name,
-                                                fontSize = 12.sp,
-                                                fontWeight = FontWeight.Medium,
-                                                color = MaterialTheme.colorScheme.onSurface,
-                                                maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis,
-                                                modifier = Modifier.widthIn(max = 130.dp)
-                                            )
-                                        }
-
-                                        Spacer(modifier = Modifier.width(2.dp))
-                                        IconButton(
-                                            onClick = { onRemoveAttachment(att.id) },
-                                            modifier = Modifier.size(24.dp).padding(end = 4.dp)
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Outlined.Close,
-                                                contentDescription = "Remove",
-                                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                                                modifier = Modifier.size(13.dp)
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // 3. Bottom Action Row: [+] [Model Chip] ... [Voice / Send / Stop Button]
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 4.dp, end = 4.dp, bottom = 2.dp, top = 2.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // [+] Attachment Button
-                        Surface(
-                            onClick = onAttachClick,
-                            shape = CircleShape,
-                            color = MaterialTheme.colorScheme.background,
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)),
-                            modifier = Modifier.size(34.dp)
-                        ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Add,
-                                    contentDescription = "Add attachments",
-                                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
-                                    modifier = Modifier.size(19.dp)
-                                )
-                            }
-                        }
-
-                        // Middle Area: Model Selector Pill (takes up to 100% of the available space between [+] and right actions)
-                        Box(
+                        // Opera Text Input Field (Pure white text, placeholder "Ask anything...", Figtree font)
+                        BasicTextField(
+                            value = textFieldValue,
+                            onValueChange = onTextFieldValueChange,
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(horizontal = 6.dp),
-                            contentAlignment = Alignment.CenterStart
-                        ) {
-                            Surface(
-                                onClick = {
-                                    focusManager.clearFocus(force = true)
-                                    keyboardController?.hide()
-                                    onOpenModelSelector()
-                                },
-                                shape = RoundedCornerShape(18.dp),
-                                color = MaterialTheme.colorScheme.background,
-                                border = BorderStroke(
-                                    1.dp,
-                                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
-                                )
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.AutoAwesome,
-                                        contentDescription = null,
-                                        tint = familyColor,
-                                        modifier = Modifier.size(13.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Text(
-                                        text = selectedModel.displayName,
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        modifier = Modifier.weight(1f, fill = false)
-                                    )
-
-                                    val pct = quota?.percentage
-                                    if (pct != null) {
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        val badgeColor = if (pct > 50) QuotaGreen else if (pct > 20) QuotaAmber else QuotaRed
-                                        Box(
-                                            modifier = Modifier
-                                                .clip(RoundedCornerShape(6.dp))
-                                                .background(badgeColor.copy(alpha = 0.15f))
-                                                .padding(horizontal = 4.dp, vertical = 1.dp)
-                                        ) {
-                                            Text(
-                                                text = "$pct%",
-                                                fontSize = 9.5.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                color = badgeColor
-                                            )
-                                        }
+                                .focusRequester(focusRequester)
+                                .padding(vertical = 4.dp),
+                            textStyle = TextStyle(
+                                fontFamily = com.example.gemini.theme.FigtreeFontFamily,
+                                fontSize = 15.sp,
+                                lineHeight = 21.sp,
+                                color = Color.White
+                            ),
+                            cursorBrush = SolidColor(Color.White),
+                            maxLines = 6,
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Default),
+                            decorationBox = { innerTextField ->
+                                Box(contentAlignment = Alignment.CenterStart) {
+                                    if (textFieldValue.text.isEmpty()) {
+                                        Text(
+                                            text = "Ask anything...",
+                                            fontFamily = com.example.gemini.theme.FigtreeFontFamily,
+                                            fontSize = 15.sp,
+                                            color = Color.White.copy(alpha = 0.65f)
+                                        )
                                     }
-
-                                    Spacer(modifier = Modifier.width(2.dp))
-                                    Icon(
-                                        imageVector = Icons.Default.KeyboardArrowDown,
-                                        contentDescription = "Switch Model",
-                                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                                        modifier = Modifier.size(14.dp)
-                                    )
+                                    innerTextField()
                                 }
                             }
-                        }
+                        )
 
-                        // Dedicated Speech-to-Text Live Dictation Button (AGY Hub)
-                        if (!isStreaming && !isRecordingAudio) {
-                            Surface(
-                                onClick = {
-                                    if (isLiveDictating) {
-                                        stopLiveDictation()
-                                    } else {
-                                        startLiveDictation()
-                                    }
-                                },
-                                shape = CircleShape,
-                                color = if (isLiveDictating) GeminiBlue.copy(alpha = 0.15f) else MaterialTheme.colorScheme.background,
-                                border = BorderStroke(
-                                    1.dp,
-                                    if (isLiveDictating) GeminiBlue.copy(alpha = 0.5f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
-                                ),
-                                modifier = Modifier.size(34.dp)
-                            ) {
-                                Box(contentAlignment = Alignment.Center) {
-                                    Icon(
-                                        imageVector = Icons.Rounded.GraphicEq,
-                                        contentDescription = if (isLiveDictating) "Stop Dictation" else "Live Dictation",
-                                        tint = if (isLiveDictating) GeminiBlue else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
-                                        modifier = Modifier.size(18.dp)
-                                    )
-                                }
-                            }
-                            Spacer(modifier = Modifier.width(6.dp))
-                        }
+                        Spacer(modifier = Modifier.width(6.dp))
 
-                        // Action Button (Send / Stop / Voice Recorder)
+                        // Right Action Button (Opera sendButton: Stop if streaming, else ArrowForward Send Button)
                         if (isStreaming) {
-                            Surface(
+                            IconButton(
                                 onClick = onStopStreaming,
-                                shape = CircleShape,
-                                color = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.size(36.dp)
+                                modifier = Modifier.size(32.dp)
                             ) {
-                                Box(contentAlignment = Alignment.Center) {
-                                    Icon(
-                                        imageVector = Icons.Default.Stop,
-                                        contentDescription = "Stop",
-                                        tint = Color.White,
-                                        modifier = Modifier.size(18.dp)
-                                    )
-                                }
+                                Icon(
+                                    imageVector = Icons.Default.Stop,
+                                    contentDescription = "Stop generating",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(20.dp)
+                                )
                             }
-                        } else if (canSend) {
-                            val sendBtnColor = if (!isAuth) Color(0xFF6B7280) else if (!isOnline) Color(0xFF6B7280) else if (isBackgroundActive) Color(0xFFFFB300) else MaterialTheme.colorScheme.primary
-                            val sendIconColor = if (!isAuth || !isOnline) Color(0xFFD1D5DB) else if (isBackgroundActive) Color(0xFF1E1E1E) else MaterialTheme.colorScheme.onPrimary
-                            Surface(
+                        } else {
+                            IconButton(
                                 onClick = {
                                     val trimmed = textFieldValue.text.trim()
-                                        if (!isAuth) {
-                                            Toast.makeText(context, "Please sign in first to send messages.", Toast.LENGTH_SHORT).show()
-                                            return@Surface
-                                        }
-                                        if (!isOnline) {
-                                            Toast.makeText(context, offlineMessage, Toast.LENGTH_SHORT).show()
-                                            return@Surface
-                                        }
+                                    if (!isAuth) {
+                                        Toast.makeText(context, "Please sign in first to send messages.", Toast.LENGTH_SHORT).show()
+                                        return@IconButton
+                                    }
+                                    if (!isOnline) {
+                                        Toast.makeText(context, offlineMessage, Toast.LENGTH_SHORT).show()
+                                        return@IconButton
+                                    }
+                                    if (canSend) {
                                         if (isLiveDictating) {
                                             stopLiveDictation()
                                         }
                                         onSendMessage(trimmed)
                                         onTextFieldValueChange(TextFieldValue(""))
-                                },
-                                shape = CircleShape,
-                                color = sendBtnColor,
-                                modifier = Modifier.size(36.dp)
-                            ) {
-                                Box(contentAlignment = Alignment.Center) {
-                                    Icon(
-                                        imageVector = Icons.Default.ArrowUpward,
-                                        contentDescription = "Send",
-                                        tint = sendIconColor,
-                                        modifier = Modifier.size(19.dp)
-                                    )
-                                }
-                            }
-                        } else {
-
-                            // Claude-style Microphone Voice Recorder Button
-                            val voiceBgColor = if (isDark) Color(0xFFEDEDED) else Color(0xFF1F1F1F)
-                            val voiceIconColor = if (isDark) Color(0xFF1B1B1B) else Color.White
-
-                            Surface(
-                                onClick = {
-                                    if (voiceNotesAsText) {
-                                        startAutoTranscribe()
-                                    } else {
-                                        recordMode = AudioRecordMode.VOICE_NOTE
-                                        triggerMicClick()
                                     }
                                 },
-                                shape = CircleShape,
-                                color = voiceBgColor,
-                                shadowElevation = 1.dp,
-                                modifier = Modifier.size(36.dp)
+                                enabled = canSend,
+                                modifier = Modifier.size(32.dp)
                             ) {
-                                Box(contentAlignment = Alignment.Center) {
-                                    Icon(
-                                        imageVector = Icons.Rounded.Mic,
-                                        contentDescription = if (voiceNotesAsText) "Record and transcribe" else "Record voice note",
-                                        tint = voiceIconColor,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                }
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                    contentDescription = "Send message",
+                                    tint = if (canSend) Color.White else Color.White.copy(alpha = 0.45f),
+                                    modifier = Modifier.size(20.dp)
+                                )
                             }
                         }
                     }
@@ -1292,7 +1219,6 @@ fun ChatInputBar(
             }
         }
     }
-}
 }
 
 enum class AudioRecordMode { VOICE_NOTE, TRANSCRIBE, LIVE_DICTATION }
