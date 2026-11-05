@@ -134,6 +134,9 @@ class ManageSpaceActivity : ComponentActivity() {
                 ManageSpaceScreen(
                     onBack = { finish() },
                     onFactoryReset = {
+                        try {
+                            com.example.gemini.data.agent.PersistentChatHistoryManager.backupAllSync(applicationContext)
+                        } catch (_: Exception) {}
                         val am = getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
                         am?.clearApplicationUserData()
                     }

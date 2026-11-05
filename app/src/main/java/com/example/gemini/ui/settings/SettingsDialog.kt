@@ -4576,6 +4576,10 @@ private fun BackupsSubScreen(
     var showRestorePasswordText by remember { mutableStateOf(false) }
 
     var showProjectsBackupRestoreDialog by remember { mutableStateOf(false) }
+    var isPersistentSyncing by remember { mutableStateOf(false) }
+    var persistentStatusMsg by remember { mutableStateOf<String?>(null) }
+    val persistentDir = remember { com.example.gemini.data.agent.PersistentChatHistoryManager.getStorageDir(context) }
+    val persistentCount by com.example.gemini.data.agent.PersistentChatHistoryManager.savedCount.collectAsState()
 
     val filePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -4679,6 +4683,164 @@ private fun BackupsSubScreen(
                 }
             }
         }
+
+        // Card 0: Persistent Chat History (Auto-Preserved across APK delete and clear data)
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(14.dp),
+            colors = CardDefaults.cardColors(containerColor = cardBg),
+            border = BorderStroke(1.dp, Color(0xFF10B981).copy(alpha = 0.5f))
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Surface(
+                        shape = CircleShape,
+                        color = Color(0xFF10B981).copy(alpha = 0.15f),
+                        modifier = Modifier.size(38.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Outlined.Security,
+                                contentDescription = null,
+                                tint = Color(0xFF10B981),
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Auto-Preserved Chat History",
+                            fontSize = 14.5.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = "Survives APK uninstall and Clear Data",
+                            fontSize = 11.5.sp,
+                            color = Color(0xFF10B981),
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = "Conversations, messages, and brain transcripts are continuously mirrored to public storage. Even if you clear app storage in Android Settings or uninstall and reinstall Antigravity, all your chat history is preserved and automatically restored.",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
+                    lineHeight = 17.sp
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Outlined.Folder, contentDescription = null, modifier = Modifier.size(14.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = persistentDir.absolutePath,
+                                fontSize = 11.sp,
+                                fontFamily = FontFamily.Monospace,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f)
+                            )
+                        }
+                        if (persistentCount > 0) {
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Preserved chats: $persistentCount conversations saved",
+                                fontSize = 11.sp,
+                                color = Color(0xFF10B981),
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+                }
+
+                if (persistentStatusMsg != null) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = persistentStatusMsg ?: "",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF10B981)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Button(
+                        onClick = {
+                            isPersistentSyncing = true
+                            scope.launch(Dispatchers.IO) {
+                                try {
+                                    com.example.gemini.data.agent.PersistentChatHistoryManager.backupAllSync(context)
+                                    val count = com.example.gemini.data.agent.PersistentChatHistoryManager.getRestoredConversations(context).size
+                                    withContext(Dispatchers.Main) {
+                                        persistentStatusMsg = "Successfully synced $count chats to storage!"
+                                        isPersistentSyncing = false
+                                    }
+                                } catch (e: Exception) {
+                                    withContext(Dispatchers.Main) {
+                                        persistentStatusMsg = "Sync failed: ${e.message}"
+                                        isPersistentSyncing = false
+                                    }
+                                }
+                            }
+                        },
+                        shape = RoundedCornerShape(10.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF10B981)),
+                        modifier = Modifier.weight(1f),
+                        enabled = !isPersistentSyncing
+                    ) {
+                        Icon(Icons.Outlined.CloudUpload, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(if (isPersistentSyncing) "Syncing..." else "Sync Now", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                    }
+
+                    OutlinedButton(
+                        onClick = {
+                            isPersistentSyncing = true
+                            scope.launch(Dispatchers.IO) {
+                                try {
+                                    val restored = com.example.gemini.data.agent.PersistentChatHistoryManager.checkAndRestoreIfFresh(context)
+                                    withContext(Dispatchers.Main) {
+                                        persistentStatusMsg = "Restored ${restored.size} chats from storage!"
+                                        isPersistentSyncing = false
+                                    }
+                                } catch (e: Exception) {
+                                    withContext(Dispatchers.Main) {
+                                        persistentStatusMsg = "Restore failed: ${e.message}"
+                                        isPersistentSyncing = false
+                                    }
+                                }
+                            }
+                        },
+                        shape = RoundedCornerShape(10.dp),
+                        border = BorderStroke(1.dp, Color(0xFF10B981)),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF10B981)),
+                        modifier = Modifier.weight(1f),
+                        enabled = !isPersistentSyncing
+                    ) {
+                        Icon(Icons.Outlined.SettingsBackupRestore, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("Restore Now", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(14.dp))
 
         // Card 1: Rootfs Environment Backup
         Card(

@@ -482,6 +482,28 @@ class AgyChatBackend(
 
     /** Starts hub monitoring, conversation sync and auth checks (formerly ChatViewModel.init). */
     fun start() {
+        // 0. Pre-load preserved chat history from external storage immediately
+        backendScope.launch(Dispatchers.IO) {
+            if (_conversations.value.isEmpty()) {
+                val restored = com.example.gemini.data.agent.PersistentChatHistoryManager.getRestoredConversations(application)
+                if (restored.isNotEmpty()) {
+                    withContext(Dispatchers.Main) {
+                        if (_conversations.value.isEmpty()) {
+                            _conversations.value = restored
+                            if (_currentConversation.value == null) {
+                                val first = restored.first()
+                                _currentConversation.value = first
+                                val cachedMsgs = com.example.gemini.data.agent.PersistentChatHistoryManager.getRestoredMessages(application, first.id)
+                                if (cachedMsgs.isNotEmpty() && _messages.value.isEmpty()) {
+                                    _messages.value = cachedMsgs
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         // 1. Hub status live monitoring via WebSocket
         backendScope.launch {
             while (currentCoroutineContext().isActive) {
@@ -662,6 +684,16 @@ class AgyChatBackend(
                         val sortedConvs = currentMap.values.sortedByDescending { it.updatedAt }
                         _conversations.value = sortedConvs
                         com.example.gemini.data.daemon.TermuxDaemonManager.loadProjects(sortedConvs)
+                        if (sortedConvs.isNotEmpty()) {
+                            backendScope.launch(Dispatchers.IO) {
+                                com.example.gemini.data.agent.PersistentChatHistoryManager.backupAllSync(
+                                    context = application,
+                                    conversations = sortedConvs,
+                                    currentMessages = _messages.value.takeIf { it.isNotEmpty() },
+                                    currentConvId = _currentConversation.value?.id
+                                )
+                            }
+                        }
 
                         // Automatically synchronize active conversation title and metadata from daemon
                         if (activeId != null) {
@@ -889,6 +921,13 @@ class AgyChatBackend(
             _currentConversation.value = conv
             knownDaemonCascadeIds.add(id)
 
+            // Immediately load cached messages from persistent storage so user sees the conversation without waiting
+            val cachedMsgs = com.example.gemini.data.agent.PersistentChatHistoryManager.getRestoredMessages(application, id)
+            if (cachedMsgs.isNotEmpty() && _messages.value.isEmpty()) {
+                _messages.value = cachedMsgs
+                _isLoadingConversation.value = false
+            }
+
             // Connect persistent stream for real-time live streaming.
             // StreamAgentStateUpdates delivers the complete history in Chunk 0!
             startPersistentStream(id)
@@ -978,6 +1017,11 @@ class AgyChatBackend(
                                 msgs.flatMap { it.attachments }.filter { it.isImage && it.path.isNotBlank() }.forEach { att ->
                                     val rawUri = if (att.path.startsWith("file://") || att.path.startsWith("http")) att.path else "file://${att.path}"
                                     com.example.gemini.data.remote.HubMediaResolver.resolveMediaUri(application, rawUri, agyHubClient, hubUrl)
+                                }
+
+                                val currConv = _conversations.value.find { it.id == conversationId } ?: _currentConversation.value
+                                if (currConv != null) {
+                                    com.example.gemini.data.agent.PersistentChatHistoryManager.backupConversationDebounced(application, currConv, msgs)
                                 }
                             }
                         }
@@ -1073,6 +1117,7 @@ class AgyChatBackend(
         backendScope.launch {
             _conversations.value = _conversations.value.filter { it.id != id }
             knownDaemonCascadeIds.remove(id)
+            com.example.gemini.data.agent.PersistentChatHistoryManager.deleteConversation(application, id)
             val hubUrl = AuthPreferences.currentHubUrl
             agyHubClient.deleteCascadeTrajectory(id, hubUrl)
             if (_currentConversation.value?.id == id) {
@@ -1185,6 +1230,11 @@ class AgyChatBackend(
                 listOf(updatedConv) + _conversations.value
             }
             _conversations.value = newConversations.sortedByDescending { it.updatedAt }
+            com.example.gemini.data.agent.PersistentChatHistoryManager.backupConversationDebounced(
+                application,
+                updatedConv,
+                updatedList
+            )
 
             // Prepare media payload for all attachments (images, audio, files)
             val mediaList = mutableListOf<com.example.gemini.data.remote.AgyHubClient.AgyMediaItem>()

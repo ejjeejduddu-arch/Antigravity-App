@@ -1,13 +1,13 @@
 {
-  "version_code": 122,
-  "version_name": "1.0.22",
+  "version_code": 123,
+  "version_name": "1.0.23",
   "min_supported_version_code": 1,
   "changelog": [
-    "Mobile auto-responsive design for all screen sizes (compact, standard, foldable, tablet)",
-    "Advanced staggered entrance animations with spring physics and pulsating halo glow",
-    "Interactive option card selection micro-physics with spring bounce and animated borders",
-    "Updated installer and app branding to Antigravity Environment",
-    "Screen-adaptive responsive message bubble width for all mobile devices"
+    "Persistent external chat history storage surviving app uninstall and clear data",
+    "Auto-restore of conversations, messages, and brain transcripts on startup",
+    "Continuous real-time background mirroring to /sdcard/Documents/Antigravity/chat_history",
+    "Manual Sync and Restore controls in Settings under Backups with preserved chat count",
+    "Integrated backup_bootstrap, backup_chats, and restore_chats system binaries"
   ],
   "is_critical": false
 }

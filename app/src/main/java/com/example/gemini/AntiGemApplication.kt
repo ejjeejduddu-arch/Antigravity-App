@@ -16,6 +16,8 @@ class AntiGemApplication : Application() {
         super.onCreate()
         UpdateCheckWorker.schedule(this)
         PluginUpdateCheckWorker.schedule(this)
+        // Auto-restore persistent chat history if app was uninstalled or data was cleared
+        com.example.gemini.data.agent.PersistentChatHistoryManager.checkAndRestoreIfFresh(this)
         // Reconnects adb when Wireless debugging turns back on (it gets a new port every time)
         AdbConnectManager.init(this)
         // Forks build with their own key, so only official release APKs report real usage.
