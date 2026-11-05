@@ -3,7 +3,7 @@
   "version_name": "1.0.20",
   "min_supported_version_code": 1,
   "changelog": [
-    "Initial official release of Antigravity App",
+    "Initial official release of Antigravity App v1.0.20",
     "Automated CI/CD release workflow with signed APK artifacts",
     "Notes and todos with dedicated MCP tool integration",
     "Enhanced code editor and integrated browser runtime"
