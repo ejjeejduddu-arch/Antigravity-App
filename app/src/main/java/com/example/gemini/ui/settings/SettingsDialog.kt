@@ -6706,6 +6706,7 @@ private fun DataProtectionSubScreen(
                 }
             }
         }
+    }
 
         // Feature 2: Clear Data Shield (ManageSpaceActivity)
         Card(
