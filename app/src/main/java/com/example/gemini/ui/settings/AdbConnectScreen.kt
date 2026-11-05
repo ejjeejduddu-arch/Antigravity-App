@@ -199,7 +199,7 @@ fun AdbConnectScreen(cardBg: Color, cardBorder: BorderStroke) {
                     Hint("When Wireless debugging turns on again, for example after Wi-Fi reconnects, Antigravity finds the new port and connects while it's running.")
                 }
                 Spacer(Modifier.width(8.dp))
-                Switch(checked = state.autoReconnect, onCheckedChange = AdbConnectManager::setAutoReconnect)
+                com.example.gemini.ui.components.OperaToggle(checked = state.autoReconnect, onCheckedChange = AdbConnectManager::setAutoReconnect)
             }
             if (state.devices.isNotEmpty()) {
                 HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))

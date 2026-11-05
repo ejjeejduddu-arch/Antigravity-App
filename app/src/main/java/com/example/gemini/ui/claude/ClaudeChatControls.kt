@@ -439,7 +439,7 @@ fun ClaudeModelSheet(
                             Text("Thinking", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
                             Text("Reason before answering (shown as a summary)", fontSize = 11.5.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f))
                         }
-                        Switch(checked = thinking, onCheckedChange = { backend.setThinking(it) }, colors = SwitchDefaults.colors(checkedTrackColor = ClaudeAccent))
+                        com.example.gemini.ui.components.OperaToggle(checked = thinking, onCheckedChange = { backend.setThinking(it) })
                     }
                     if (info?.supportsFastMode == true) {
                         HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f))

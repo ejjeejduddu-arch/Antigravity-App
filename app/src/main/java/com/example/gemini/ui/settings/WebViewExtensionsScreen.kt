@@ -123,7 +123,7 @@ fun WebViewExtensionsScreen(onChanged: () -> Unit) {
                             }
                         }) { Icon(Icons.Outlined.Download, "Download as ZIP") }
                         IconButton(enabled = !busy, onClick = { removing = extension; deleteData = false }) { Icon(Icons.Outlined.Delete, "Remove", tint = MaterialTheme.colorScheme.error) }
-                        Switch(checked = extension.isEnabled, enabled = !busy, onCheckedChange = { enabled -> runOperation { manager.setEnabled(extension.id, enabled); null } })
+                        com.example.gemini.ui.components.OperaToggle(checked = extension.isEnabled, enabled = !busy, onCheckedChange = { enabled -> runOperation { manager.setEnabled(extension.id, enabled); null } })
                     }
                     if (extension.description.isNotBlank()) Text(extension.description, style = MaterialTheme.typography.bodySmall)
                     val source = extension.source

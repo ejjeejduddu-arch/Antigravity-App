@@ -305,13 +305,9 @@ fun TerminalLauncherOnboardingDialog(
                             )
                         }
 
-                        Switch(
+                        com.example.gemini.ui.components.OperaToggle(
                             checked = isEnabled,
-                            onCheckedChange = { isEnabled = it },
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = Color.White,
-                                checkedTrackColor = ClaudeTerracotta
-                            )
+                            onCheckedChange = { isEnabled = it }
                         )
                     }
                 }

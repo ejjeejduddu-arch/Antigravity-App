@@ -612,7 +612,7 @@ private fun ProviderEditor(
                             )
                         } else {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Switch(checked = freeOnly, onCheckedChange = { freeOnly = it }, colors = SwitchDefaults.colors(checkedTrackColor = ClaudeAccent))
+                                com.example.gemini.ui.components.OperaToggle(checked = freeOnly, onCheckedChange = { freeOnly = it })
                                 Spacer(Modifier.width(10.dp))
                                 Text("Only free models that can call tools", fontSize = 12.5.sp)
                             }
@@ -713,7 +713,7 @@ private fun ProviderEditor(
                                     fontSize = 11.sp, color = muted
                                 )
                             }
-                            Switch(checked = sendThinking, onCheckedChange = { sendThinking = it }, colors = SwitchDefaults.colors(checkedTrackColor = ClaudeAccent))
+                            com.example.gemini.ui.components.OperaToggle(checked = sendThinking, onCheckedChange = { sendThinking = it })
                         }
                         if (sendThinking) {
                             OutlinedTextField(
@@ -749,7 +749,7 @@ private fun ProviderEditor(
                                 Text("Disable experimental betas", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
                                 Text("Turn on if the provider answers 400 about unknown fields or beta headers.", fontSize = 11.sp, color = muted)
                             }
-                            Switch(checked = disableBetas, onCheckedChange = { disableBetas = it }, colors = SwitchDefaults.colors(checkedTrackColor = ClaudeAccent))
+                            com.example.gemini.ui.components.OperaToggle(checked = disableBetas, onCheckedChange = { disableBetas = it })
                         }
                     }
 

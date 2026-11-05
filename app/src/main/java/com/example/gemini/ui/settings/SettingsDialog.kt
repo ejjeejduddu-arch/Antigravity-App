@@ -24,6 +24,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.ColorFilter
+import com.example.gemini.R
+import com.example.gemini.ui.components.OperaToggle
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.material.icons.Icons
@@ -273,21 +278,35 @@ fun SettingsDialog(
                 .navigationBarsPadding()
                 .windowInsetsPadding(WindowInsets.imeAnimationTarget)
         ) {
-            // Top App Bar
+            // Top App Bar (Authentic Opera Settings TopBar)
             TopAppBar(
                 title = {
-                    // a Claude Code page names itself here (it has no header of its own)
                     val isClaudePage = currentSection == SettingsSection.CLAUDE && claude != null
-                    Column {
-                        Text(
-                            text = if (isClaudePage) "Claude Code · ${claudePage.title}" else currentSection.title,
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        if (currentSection != SettingsSection.MAIN) {
+                    if (currentSection == SettingsSection.MAIN) {
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "Settings",
+                                fontFamily = PetronaFontFamily,
+                                fontSize = 22.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    } else {
+                        Column {
+                            Text(
+                                text = if (isClaudePage) "Claude Code · ${claudePage.title}" else currentSection.title,
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
                             Text(
                                 text = if (isClaudePage) claudePage.subtitle else currentSection.subtitle,
                                 fontSize = 11.5.sp,
@@ -307,20 +326,24 @@ fun SettingsDialog(
                         }
                     }) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            imageVector = if (currentSection == SettingsSection.MAIN) Icons.Outlined.Close else Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = if (currentSection == SettingsSection.MAIN) "Close Settings" else "Back",
                             tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
                 actions = {
-                    TextButton(onClick = onDismiss) {
-                        Text(
-                            text = "Done",
-                            color = OperaRed,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp
-                        )
+                    if (currentSection == SettingsSection.MAIN) {
+                        Spacer(modifier = Modifier.width(48.dp))
+                    } else {
+                        TextButton(onClick = onDismiss) {
+                            Text(
+                                text = "Done",
+                                color = OperaRed,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -601,8 +624,44 @@ private fun MainSettingsMenu(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        // Authentic Opera Update Banner Pill (Screenshot 2)
+        Surface(
+            shape = RoundedCornerShape(12.dp),
+            color = OperaRed,
+            border = BorderStroke(1.5.dp, OperaBorderOnPrimary),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Update: Antigravity v${BuildConfig.VERSION_NAME} is active",
+                    fontFamily = FigtreeFontFamily,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 13.sp,
+                    color = Color.White,
+                    modifier = Modifier.weight(1f)
+                )
+                Surface(
+                    shape = RoundedCornerShape(6.dp),
+                    color = Color.White.copy(alpha = 0.22f)
+                ) {
+                    Text(
+                        text = "LATEST",
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 10.5.sp,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                    )
+                }
+            }
+        }
+
         SettingsGroupHeader("Agents", OperaRed, "Which agents run, and the local server they share")
         SettingsCategoryCard(
+            drawableRes = R.drawable.opera_icon_maestro,
             icon = Icons.Outlined.SmartToy,
             iconTint = OperaRed,
             title = "Agents",
@@ -624,6 +683,7 @@ private fun MainSettingsMenu(
             else -> "Offline" to OperaRed
         }
         SettingsCategoryCard(
+            drawableRes = R.drawable.opera_icon_cloud,
             icon = Icons.Outlined.Dns,
             iconTint = OperaRed,
             title = "Servers & Connectivity",
@@ -636,6 +696,7 @@ private fun MainSettingsMenu(
         )
 
         SettingsCategoryCard(
+            drawableRes = R.drawable.opera_icon_tool,
             icon = Icons.Outlined.Extension,
             iconTint = OperaRed,
             title = "Custom Antigravity Plugins",
@@ -646,6 +707,7 @@ private fun MainSettingsMenu(
         )
 
         SettingsCategoryCard(
+            drawableRes = R.drawable.opera_icon_more,
             icon = Icons.Outlined.Terminal,
             iconTint = OperaRed,
             title = "Slash Commands",
@@ -667,6 +729,7 @@ private fun MainSettingsMenu(
         }
         val mcpColor = OperaRed
         SettingsCategoryCard(
+            drawableRes = R.drawable.opera_icon_tool,
             icon = Icons.Outlined.Extension,
             iconTint = OperaRed,
             title = "MCP Servers & Tools",
@@ -683,6 +746,7 @@ private fun MainSettingsMenu(
         val totalPluginsCount = installedPlugins.size
         val skillsBadge = "$totalSkillsCount Skills • $totalPluginsCount Plugins"
         SettingsCategoryCard(
+            drawableRes = R.drawable.opera_icon_tiles,
             icon = Icons.Outlined.AutoAwesome,
             iconTint = OperaRed,
             title = "Skills & Plugins",
@@ -702,6 +766,7 @@ private fun MainSettingsMenu(
         }
         val sandboxSummary = if (commandSandboxEnabled) "Sandbox ON" else "Sandbox OFF"
         SettingsCategoryCard(
+            drawableRes = R.drawable.opera_icon_confidentiality,
             icon = Icons.Outlined.Security,
             iconTint = OperaRed,
             title = "Commands & Permissions",
@@ -731,6 +796,7 @@ private fun MainSettingsMenu(
         }
 
         SettingsCategoryCard(
+            drawableRes = R.drawable.opera_icon_general,
             icon = Icons.Outlined.Palette,
             iconTint = OperaRed,
             title = "Appearance & Theme",
@@ -745,6 +811,7 @@ private fun MainSettingsMenu(
 
         // Section 5: Terminal & Shell
         SettingsCategoryCard(
+            drawableRes = R.drawable.opera_icon_service,
             icon = Icons.Outlined.Terminal,
             iconTint = OperaRed,
             title = "Terminal & Shell Execution",
@@ -759,6 +826,7 @@ private fun MainSettingsMenu(
         // Section 5.5: Backups & Restore (only for rootfs installed app)
         if (isLocalToolsInstalled) {
             SettingsCategoryCard(
+                drawableRes = R.drawable.opera_icon_cloud,
                 icon = Icons.Outlined.Backup,
                 iconTint = OperaRed,
                 title = "Backups & Restore",
@@ -773,6 +841,7 @@ private fun MainSettingsMenu(
 
         // Section 5.6: Data Loss Protection
         SettingsCategoryCard(
+            drawableRes = R.drawable.opera_icon_confidentiality,
             icon = Icons.Outlined.Security,
             iconTint = OperaRed,
             title = "Data Loss Protection",
@@ -801,6 +870,7 @@ private fun MainSettingsMenu(
 
         SettingsGroupHeader("Utilities", OperaRed, "Handy device tools")
         SettingsCategoryCard(
+            drawableRes = R.drawable.opera_icon_support,
             icon = Icons.Outlined.Handyman,
             iconTint = OperaRed,
             title = "Utilities",
@@ -812,6 +882,7 @@ private fun MainSettingsMenu(
 
         // Section 7: About & Info
         SettingsCategoryCard(
+            drawableRes = R.drawable.opera_icon_info,
             icon = Icons.Outlined.Info,
             iconTint = OperaRed,
             title = "About & Info",
@@ -883,7 +954,8 @@ private fun UtilitiesSubScreen(
 
 @Composable
 private fun SettingsCategoryCard(
-    icon: ImageVector,
+    icon: ImageVector? = null,
+    drawableRes: Int? = null,
     iconTint: Color = OperaRed,
     title: String,
     subtitle: String,
@@ -905,22 +977,32 @@ private fun SettingsCategoryCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Authentic Opera Solid Red Squircle with White Icon
             Box(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(iconTint.copy(alpha = 0.12f)),
+                    .background(OperaRed),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = iconTint,
-                    modifier = Modifier.size(22.dp)
-                )
+                if (drawableRes != null) {
+                    Image(
+                        painter = painterResource(id = drawableRes),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(Color.White),
+                        modifier = Modifier.size(20.dp)
+                    )
+                } else if (icon != null) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(14.dp))
@@ -928,6 +1010,7 @@ private fun SettingsCategoryCard(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
+                    fontFamily = FontFamily.Monospace,
                     fontSize = 14.5.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -935,7 +1018,8 @@ private fun SettingsCategoryCard(
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = subtitle,
-                    fontSize = 11.5.sp,
+                    fontFamily = FigtreeFontFamily,
+                    fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -952,6 +1036,7 @@ private fun SettingsCategoryCard(
                         text = badgeText,
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.Monospace,
                         color = badgeColor,
                         modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp)
                     )
@@ -1289,13 +1374,9 @@ private fun AppearanceSubScreen(
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                 }
-                Switch(
+                OperaToggle(
                     checked = groupChatsByWorkspace,
-                    onCheckedChange = onToggleGroupChatsByWorkspace,
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color.White,
-                        checkedTrackColor = ClaudeTerracotta
-                    )
+                    onCheckedChange = onToggleGroupChatsByWorkspace
                 )
             }
         }
@@ -1332,13 +1413,9 @@ private fun AppearanceSubScreen(
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                 }
-                Switch(
+                OperaToggle(
                     checked = workingAnimation,
-                    onCheckedChange = { enabled -> appearanceScope.launch { appearancePrefs.saveWorkingAnimationEnabled(enabled) } },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color.White,
-                        checkedTrackColor = ClaudeTerracotta
-                    )
+                    onCheckedChange = { enabled -> appearanceScope.launch { appearancePrefs.saveWorkingAnimationEnabled(enabled) } }
                 )
             }
         }
@@ -1372,13 +1449,9 @@ private fun AppearanceSubScreen(
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                 }
-                Switch(
+                OperaToggle(
                     checked = chatDividers,
-                    onCheckedChange = { enabled -> appearanceScope.launch { appearancePrefs.saveChatDividersEnabled(enabled) } },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color.White,
-                        checkedTrackColor = ClaudeTerracotta
-                    )
+                    onCheckedChange = { enabled -> appearanceScope.launch { appearancePrefs.saveChatDividersEnabled(enabled) } }
                 )
             }
         }
@@ -1410,13 +1483,9 @@ private fun AppearanceSubScreen(
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
                     }
-                    Switch(
+                    OperaToggle(
                         checked = isFloatingSwitcherEnabled,
-                        onCheckedChange = onToggleFloatingSwitcher,
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.White,
-                            checkedTrackColor = ClaudeTerracotta
-                        )
+                        onCheckedChange = onToggleFloatingSwitcher
                     )
                 }
 
@@ -1696,7 +1765,7 @@ private fun AppearanceSubScreen(
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
                     }
-                    Switch(
+                    OperaToggle(
                         checked = isTerminalLauncherEnabled,
                         onCheckedChange = { enable ->
                             isTerminalLauncherEnabled = enable
@@ -1708,11 +1777,7 @@ private fun AppearanceSubScreen(
                             coroutineScope.launch {
                                 authPrefs.setTerminalLauncherEnabled(enable)
                             }
-                        },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.White,
-                            checkedTrackColor = ClaudeTerracotta
-                        )
+                        }
                     )
                 }
 
@@ -3089,10 +3154,9 @@ private fun McpSubScreen(
                             }
                         }
 
-                        Switch(
+                        OperaToggle(
                             checked = server.isEnabled,
-                            onCheckedChange = { onToggleServer(server.name, it) },
-                            colors = SwitchDefaults.colors(checkedThumbColor = ClaudeTerracotta, checkedTrackColor = ClaudeTerracotta.copy(alpha = 0.4f))
+                            onCheckedChange = { onToggleServer(server.name, it) }
                         )
                     }
 
@@ -4037,13 +4101,9 @@ private fun TerminalSubScreen(
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
                     }
-                    Switch(
+                    OperaToggle(
                         checked = useSshTerminal,
-                        onCheckedChange = { onToggleUseSshTerminal(it) },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.White,
-                            checkedTrackColor = QuotaGreen
-                        )
+                        onCheckedChange = { onToggleUseSshTerminal(it) }
                     )
                 }
 
@@ -6745,7 +6805,7 @@ private fun DataProtectionSubScreen(
                             color = if (isShieldEnabled) GeminiBlue else Color.Gray
                         )
                     }
-                    Switch(
+                    OperaToggle(
                         checked = isShieldEnabled,
                         onCheckedChange = { enabled ->
                             ManageSpaceActivity.setShieldEnabled(context, enabled)
@@ -7448,13 +7508,9 @@ private fun CommandsSubScreen(
                             lineHeight = 15.sp
                         )
                     }
-                    Switch(
+                    OperaToggle(
                         checked = activeSandbox,
-                        onCheckedChange = { onSetGlobalTerminalSandbox(it) },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.White,
-                            checkedTrackColor = ClaudeTerracotta
-                        )
+                        onCheckedChange = { onSetGlobalTerminalSandbox(it) }
                     )
                 }
 
@@ -7480,13 +7536,9 @@ private fun CommandsSubScreen(
                             lineHeight = 15.sp
                         )
                     }
-                    Switch(
+                    OperaToggle(
                         checked = requireApprovalForFileEdits,
-                        onCheckedChange = onSetRequireApprovalForFileEdits,
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.White,
-                            checkedTrackColor = ClaudeTerracotta
-                        )
+                        onCheckedChange = onSetRequireApprovalForFileEdits
                     )
                 }
             }
@@ -8426,15 +8478,11 @@ private fun DiagnosticsSubScreen(
                             )
                         }
                     }
-                    Switch(
+                    OperaToggle(
                         checked = isNetworkInspectorEnabled,
                         onCheckedChange = { targetState ->
                             pendingInspectorRestart = targetState
-                        },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.White,
-                            checkedTrackColor = Color(0xFF0284C7)
-                        )
+                        }
                     )
                 }
 
@@ -8470,13 +8518,9 @@ private fun DiagnosticsSubScreen(
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                             )
                         }
-                        Switch(
+                        OperaToggle(
                             checked = isFloatingNetworkInspectorEnabled,
-                            onCheckedChange = onToggleFloatingNetworkInspector,
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = Color.White,
-                                checkedTrackColor = Color(0xFF0284C7)
-                            )
+                            onCheckedChange = onToggleFloatingNetworkInspector
                         )
                     }
 
@@ -8568,13 +8612,9 @@ private fun DiagnosticsSubScreen(
                             )
                         }
                     }
-                    Switch(
+                    OperaToggle(
                         checked = isFloatingDiagnosticsEnabled,
-                        onCheckedChange = onToggleFloatingDiagnostics,
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.White,
-                            checkedTrackColor = QuotaGreen
-                        )
+                        onCheckedChange = onToggleFloatingDiagnostics
                     )
                 }
 

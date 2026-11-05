@@ -397,8 +397,7 @@ private fun DefaultsPage(deps: ClaudeSettingsDeps) {
                 SectionTitle("Thinking")
                 Hint("Reason before answering")
             }
-            Switch(checked = thinking, onCheckedChange = { deps.config.setValue("alwaysThinkingEnabled", JsonPrimitive(it)) },
-                colors = SwitchDefaults.colors(checkedTrackColor = ClaudeAccent))
+            com.example.gemini.ui.components.OperaToggle(checked = thinking, onCheckedChange = { deps.config.setValue("alwaysThinkingEnabled", JsonPrimitive(it)) })
         }
     }
 
@@ -473,11 +472,10 @@ private fun PermissionsPage(deps: ClaudeSettingsDeps) {
                     }
                 )
             }
-            Switch(
+            com.example.gemini.ui.components.OperaToggle(
                 checked = sandbox?.enabled == true,
                 enabled = sandbox?.available == true,
-                onCheckedChange = { deps.config.setSandboxEnabled(it) },
-                colors = SwitchDefaults.colors(checkedTrackColor = ClaudeAccent)
+                onCheckedChange = { deps.config.setSandboxEnabled(it) }
             )
         }
     }
@@ -909,10 +907,9 @@ private fun PluginsPage(deps: ClaudeSettingsDeps) {
                                     Hint(listOfNotNull(p.version?.let { "v$it" }, p.scope, p.key.substringAfter('@', "").takeIf { it.isNotBlank() }).joinToString(" · "))
                                 }
                                 if (op != null) PluginProgress(op)
-                                else if (p.enabled != null) Switch(
+                                else if (p.enabled != null) com.example.gemini.ui.components.OperaToggle(
                                     checked = p.enabled,
-                                    onCheckedChange = { deps.config.pluginAction(if (it) "enable" else "disable", ClaudePluginAction(plugin = p.key, scope = p.scope)) },
-                                    colors = SwitchDefaults.colors(checkedTrackColor = ClaudeAccent)
+                                    onCheckedChange = { deps.config.pluginAction(if (it) "enable" else "disable", ClaudePluginAction(plugin = p.key, scope = p.scope)) }
                                 )
                             }
                             if (p.description.isNotBlank()) Text(p.description, fontSize = 11.5.sp, maxLines = 3, overflow = TextOverflow.Ellipsis,

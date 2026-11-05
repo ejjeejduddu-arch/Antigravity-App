@@ -286,23 +286,37 @@ fun MessageBubble(
                 }
             }
         } else {
-            // Assistant response
-            Column(modifier = Modifier.fillMaxWidth()) {
-                if (message.content.isNotEmpty() || message.toolCalls.isNotEmpty()) {
-                    SelectionContainer {
-                        MarkdownContent(
-                            content = message.content,
-                            toolCalls = message.toolCalls,
-                            onApproveTool = if (onApproveTool != null) { toolCall -> onApproveTool(toolCall, message.id) } else null,
-                            onRejectTool = if (onRejectTool != null) { toolCall -> onRejectTool(toolCall, message.id) } else null,
-                            onTerminateTool = if (onTerminateTool != null) { toolCall -> onTerminateTool(toolCall, message.id) } else null,
-                            onSubmitChoices = if (onSubmitChoices != null) { toolCall, responses, summary -> onSubmitChoices(toolCall, message.id, responses, summary) } else null,
-                            onSkipChoices = if (onSkipChoices != null) { toolCall, responses -> onSkipChoices(toolCall, message.id, responses) } else null
-                        )
-                    }
+            // Assistant response (Dedicated Opera AI Card container)
+            val isDarkTheme = androidx.compose.foundation.isSystemInDarkTheme()
+            val aiCardBg = if (isDarkTheme) com.example.gemini.theme.OperaDarkSurface else com.example.gemini.theme.OperaSurface
+            val aiCardBorder = if (isDarkTheme) com.example.gemini.theme.OperaDarkBorder else com.example.gemini.theme.OperaBorder
+            val aiShape = RoundedCornerShape(16.dp)
 
-                } else if (message.isStreaming && !hasActiveRunningTool && message.content.isEmpty() && message.thoughtText.isNullOrEmpty() && message.toolCalls.isEmpty()) {
-                    ModelTypingIndicator(modelId = modelId)
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .shadow(elevation = 2.dp, shape = aiShape, ambientColor = com.example.gemini.theme.OperaShadowInk, spotColor = com.example.gemini.theme.OperaShadowInk)
+                        .clip(aiShape)
+                        .background(aiCardBg)
+                        .border(BorderStroke(1.dp, aiCardBorder), aiShape)
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                ) {
+                    if (message.content.isNotEmpty() || message.toolCalls.isNotEmpty()) {
+                        SelectionContainer {
+                            MarkdownContent(
+                                content = message.content,
+                                toolCalls = message.toolCalls,
+                                onApproveTool = if (onApproveTool != null) { toolCall -> onApproveTool(toolCall, message.id) } else null,
+                                onRejectTool = if (onRejectTool != null) { toolCall -> onRejectTool(toolCall, message.id) } else null,
+                                onTerminateTool = if (onTerminateTool != null) { toolCall -> onTerminateTool(toolCall, message.id) } else null,
+                                onSubmitChoices = if (onSubmitChoices != null) { toolCall, responses, summary -> onSubmitChoices(toolCall, message.id, responses, summary) } else null,
+                                onSkipChoices = if (onSkipChoices != null) { toolCall, responses -> onSkipChoices(toolCall, message.id, responses) } else null
+                            )
+                        }
+                    } else if (message.isStreaming && !hasActiveRunningTool && message.content.isEmpty() && message.thoughtText.isNullOrEmpty() && message.toolCalls.isEmpty()) {
+                        ModelTypingIndicator(modelId = modelId)
+                    }
                 }
 
                 // Token Telemetry and Action Icons (Copy, Retry, Raw Payload, Artifacts)
@@ -474,14 +488,14 @@ fun UserMessageBubble(
                 }
                 .widthIn(max = maxBubbleWidth)
                 .bringIntoViewRequester(bubbleBringIntoView)
-                .clip(RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp, bottomStart = 18.dp, bottomEnd = 4.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .clip(RoundedCornerShape(16.dp))
+                .background(com.example.gemini.theme.OperaRed)
                 .border(
                     BorderStroke(
-                        1.dp,
-                        MaterialTheme.colorScheme.outline.copy(alpha = 0.35f)
+                        1.5.dp,
+                        com.example.gemini.theme.OperaBorderOnPrimary
                     ),
-                    RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp, bottomStart = 18.dp, bottomEnd = 4.dp)
+                    RoundedCornerShape(16.dp)
                 )
                 .clickable { showUserActions = !showUserActions }
                 .padding(horizontal = 16.dp, vertical = 12.dp)
@@ -535,8 +549,9 @@ fun UserMessageBubble(
                         ranges.forEach {
                             addStyle(
                                 androidx.compose.ui.text.SpanStyle(
-                                    color = ClaudeTerracotta,
-                                    fontWeight = FontWeight.SemiBold
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                    background = Color.White.copy(alpha = 0.22f)
                                 ),
                                 it.first, it.last + 1
                             )
@@ -548,9 +563,10 @@ fun UserMessageBubble(
                         SelectionContainer {
                             Text(
                                 text = styledContent,
+                                fontFamily = com.example.gemini.theme.FigtreeFontFamily,
                                 fontSize = 15.sp,
                                 lineHeight = 22.sp,
-                                color = MaterialTheme.colorScheme.onSurface,
+                                color = Color.White,
                                 maxLines = if (isTextExpanded) Int.MAX_VALUE else 6,
                                 overflow = TextOverflow.Ellipsis,
                                 onTextLayout = { if (!isTextExpanded) isTextOverflowing = it.hasVisualOverflow }
@@ -571,14 +587,15 @@ fun UserMessageBubble(
                                 Text(
                                     text = if (isTextExpanded) "Show less" else "Show more (${lineCount} lines)",
                                     fontSize = 12.sp,
+                                    fontFamily = com.example.gemini.theme.FigtreeFontFamily,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = ClaudeTerracotta
+                                    color = Color.White.copy(alpha = 0.9f)
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Icon(
                                     imageVector = if (isTextExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                                     contentDescription = null,
-                                    tint = ClaudeTerracotta,
+                                    tint = Color.White.copy(alpha = 0.9f),
                                     modifier = Modifier.size(14.dp)
                                 )
                             }

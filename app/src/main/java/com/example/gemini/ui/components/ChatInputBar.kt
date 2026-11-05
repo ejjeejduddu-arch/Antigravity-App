@@ -594,7 +594,7 @@ fun ChatInputBar(
 
     Surface(
         modifier = modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.background
+        color = Color.Transparent
     ) {
         Column(
             modifier = Modifier

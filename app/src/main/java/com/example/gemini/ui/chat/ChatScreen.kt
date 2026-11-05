@@ -1113,164 +1113,27 @@ fun ChatScreen(
         Scaffold(
             snackbarHost = {},
             topBar = {
-                TopAppBar(
-                    title = {
-                        val displayedChatTitle = remember(currentConv?.title, conversations, currentConv?.id) {
-                            val fromList = conversations.firstOrNull { it.id == currentConv?.id }
-                            val listTitle = fromList?.title?.takeIf {
-                                it.isNotBlank() && it != "New Chat" && it != "Conversation"
-                            }
-                            val activeTitle = currentConv?.title?.takeIf {
-                                it.isNotBlank() && it != "New Chat" && it != "Conversation"
-                            }
-                            listTitle ?: activeTitle ?: currentConv?.title?.takeIf { it.isNotBlank() } ?: "Antigravity Chat"
-                        }
-
-                        Column {
-                            Text(
-                                text = displayedChatTitle,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                val isChatStarted = messages.isNotEmpty()
-                                val displayedProjectName = remember(currentConv?.workspaceUri, isChatStarted) {
-                                    val convUri = currentConv?.workspaceUri
-                                    if (!convUri.isNullOrBlank()) {
-                                        val clean = convUri.removePrefix("file://").trimEnd('/')
-                                        File(clean).name.ifBlank { "Workspace" }
-                                    } else {
-                                        if (isChatStarted) "Outside" else "Select Project"
-                                    }
-                                }
-
-                                Surface(
-                                    shape = RoundedCornerShape(4.dp),
-                                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = if (isChatStarted) 0.4f else 0.6f),
-                                    modifier = if (isChatStarted) Modifier else Modifier.clickable {
-                                        showProjectPickerDialog = true
-                                    }
-                                ) {
-                                    Row(
-                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Folder,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(11.dp),
-                                            tint = if (isChatStarted) MaterialTheme.colorScheme.primary.copy(alpha = 0.7f) else MaterialTheme.colorScheme.primary
-                                        )
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Text(
-                                            text = displayedProjectName,
-                                            style = MaterialTheme.typography.labelSmall,
-                                            fontSize = 11.sp,
-                                            color = if (isChatStarted) MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f) else MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                        if (!isChatStarted) {
-                                            Icon(
-                                                imageVector = Icons.Default.ArrowDropDown,
-                                                contentDescription = null,
-                                                modifier = Modifier.size(14.dp),
-                                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    navigationIcon = {
+                com.example.gemini.ui.components.OperaTopBar(
+                    onMenuClick = {
                         if (conversationBackStack.isNotEmpty()) {
-                            IconButton(onClick = navigateBackConversation) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = "Back",
-                                    tint = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
+                            navigateBackConversation()
                         } else {
-                            IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                                Icon(
-                                    imageVector = Icons.Default.Menu,
-                                    contentDescription = "Open Drawer",
-                                    tint = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
+                            scope.launch { drawerState.open() }
                         }
                     },
-                    actions = {
-                        if (isInFloatingWindow) {
-                            IconButton(onClick = onMinimizeWindow) {
-                                Icon(
-                                    imageVector = Icons.Default.Remove,
-                                    contentDescription = "Minimize to Bubble",
-                                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f)
-                                )
-                            }
-                            IconButton(onClick = onOpenFullScreen) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Outlined.OpenInNew,
-                                    contentDescription = "Open Full Screen",
-                                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f)
-                                )
-                            }
-                        }
-                        if (isLocalToolsInstalled || com.example.gemini.data.local.LocalEnvironmentManager.isInstalled(context) || systemConnectionState.status != com.example.gemini.data.remote.SystemStatus.OFFLINE) {
-                            // upper half Antigravity, lower half Claude Code (one solid dot when they agree)
-                            com.example.gemini.ui.agents.AgentStatusIndicator(
-                                entries = agentEntries,
-                                onOpenServerLogs = { showLocalServerOutputDialog = true }
-                            )
-                        }
-                        IconButton(onClick = onNavigateToBrowser) {
-                            Icon(
-                                imageVector = Icons.Outlined.Language,
-                                contentDescription = "Web Browser Preview",
-                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f)
-                            )
-                        }
-                        IconButton(onClick = {
-                            if (useSshTerminal || (isLocalToolsInstalled && isLocalToolsEnabled)) {
-                                onNavigateToTerminal()
-                            } else if (isLocalToolsInstalled) {
-                                viewModel.setLocalToolsEnabled(true)
-                                onNavigateToTerminal()
-                            } else {
-                                showLocalToolsInstallDialog = true
-                            }
-                        }) {
-                            Icon(
-                                imageVector = Icons.Outlined.Terminal,
-                                contentDescription = "Terminal",
-                                tint = if (useSshTerminal || (isLocalToolsInstalled && isLocalToolsEnabled)) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f)
-                            )
-                        }
-                        IconButton(onClick = onNavigateToIde) {
-                            Icon(
-                                imageVector = Icons.Default.Code,
-                                contentDescription = "Code Editor IDE",
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                        if (isDevModeEnabled) {
-                            IconButton(onClick = { showChatTelemetryDialog = true }) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Analytics,
-                                    contentDescription = "Chat Telemetry & Tokens",
-                                    tint = ClaudeTerracotta
-                                )
-                            }
-                        }
+                    onNewChatClick = {
+                        viewModel.startNewChat()
                     },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background
-                    )
+                    selectedModelName = currentModel.displayName.ifBlank { "Model" },
+                    onModelSelectorClick = {
+                        showModelSelector = true
+                    },
+                    onSettingsClick = {
+                        showSettingsDialog = true
+                    },
+                    isDarkTheme = isDarkTheme,
+                    onMinimizeWindow = if (isInFloatingWindow) onMinimizeWindow else null,
+                    onOpenFullScreen = if (isInFloatingWindow) onOpenFullScreen else null
                 )
             },
             containerColor = MaterialTheme.colorScheme.background,
@@ -1533,32 +1396,47 @@ fun ChatScreen(
                                             }
                                         }
                                         is ChatFeedItem.AssistantBlock -> {
+                                            val isTool = feedItem.block is MarkdownBlock.AgentTool
+                                            val aiCardBg = if (isDarkTheme) com.example.gemini.theme.OperaDarkSurface else com.example.gemini.theme.OperaSurface
+                                            val aiCardBorder = if (isDarkTheme) com.example.gemini.theme.OperaDarkBorder else com.example.gemini.theme.OperaBorder
+                                            val aiCardShape = RoundedCornerShape(14.dp)
+
                                             Box(
                                                 modifier = Modifier
                                                     .fillMaxWidth()
-                                                    .padding(horizontal = 16.dp, vertical = 2.dp)
+                                                    .padding(horizontal = 14.dp, vertical = 2.dp)
                                             ) {
-                                                val isTool = feedItem.block is MarkdownBlock.AgentTool
-                                                val blockView: @Composable () -> Unit = {
-                                                    MarkdownBlockView(
-                                                        block = feedItem.block,
-                                                        onApproveTool = if (isTool) { { toolCall -> viewModel.approveAndExecuteTerminalTool(toolCall, feedItem.messageId) } } else null,
-                                                        onRejectTool = if (isTool) { { toolCall -> if (toolCall.toolType == ToolType.ASK_CHOICE) viewModel.cancelUserChoices(toolCall, feedItem.messageId) else viewModel.rejectTerminalTool(toolCall, feedItem.messageId) } } else null,
-                                                        onTerminateTool = if (isTool) { { toolCall -> viewModel.terminateRunningTerminalTool(toolCall, feedItem.messageId) } } else null,
-                                                        onSubmitChoices = if (isTool) { { toolCall, responses, summaryPayload -> viewModel.submitUserChoices(toolCall, feedItem.messageId, responses, summaryPayload) } } else null,
-                                                        onSkipChoices = if (isTool) { { toolCall, responses -> viewModel.skipUserChoices(toolCall, feedItem.messageId, responses) } } else null
-                                                    )
+                                                val contentModifier = if (!isTool) {
+                                                    Modifier
+                                                        .fillMaxWidth()
+                                                        .shadow(elevation = 1.dp, shape = aiCardShape, ambientColor = com.example.gemini.theme.OperaShadowInk, spotColor = com.example.gemini.theme.OperaShadowInk)
+                                                        .clip(aiCardShape)
+                                                        .background(aiCardBg)
+                                                        .border(BorderStroke(1.dp, aiCardBorder), aiCardShape)
+                                                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                                                } else {
+                                                    Modifier.fillMaxWidth()
                                                 }
-                                                // Text is selectable per block: each list item has its own selection container, so a
-                                                // selection never outlives the item when it scrolls away (one container spanning many
-                                                // items crashed). Interactive blocks (tool cards, web views, media) keep their own gestures.
-                                                val selectable = when (feedItem.block) {
-                                                    is MarkdownBlock.Paragraph, is MarkdownBlock.Header, is MarkdownBlock.Bullet,
-                                                    is MarkdownBlock.Numbered, is MarkdownBlock.Task, is MarkdownBlock.Blockquote,
-                                                    is MarkdownBlock.Alert, is MarkdownBlock.Table -> true
-                                                    else -> false
+
+                                                Box(modifier = contentModifier) {
+                                                    val blockView: @Composable () -> Unit = {
+                                                        MarkdownBlockView(
+                                                            block = feedItem.block,
+                                                            onApproveTool = if (isTool) { { toolCall -> viewModel.approveAndExecuteTerminalTool(toolCall, feedItem.messageId) } } else null,
+                                                            onRejectTool = if (isTool) { { toolCall -> if (toolCall.toolType == ToolType.ASK_CHOICE) viewModel.cancelUserChoices(toolCall, feedItem.messageId) else viewModel.rejectTerminalTool(toolCall, feedItem.messageId) } } else null,
+                                                            onTerminateTool = if (isTool) { { toolCall -> viewModel.terminateRunningTerminalTool(toolCall, feedItem.messageId) } } else null,
+                                                            onSubmitChoices = if (isTool) { { toolCall, responses, summaryPayload -> viewModel.submitUserChoices(toolCall, feedItem.messageId, responses, summaryPayload) } } else null,
+                                                            onSkipChoices = if (isTool) { { toolCall, responses -> viewModel.skipUserChoices(toolCall, feedItem.messageId, responses) } } else null
+                                                        )
+                                                    }
+                                                    val selectable = when (feedItem.block) {
+                                                        is MarkdownBlock.Paragraph, is MarkdownBlock.Header, is MarkdownBlock.Bullet,
+                                                        is MarkdownBlock.Numbered, is MarkdownBlock.Task, is MarkdownBlock.Blockquote,
+                                                        is MarkdownBlock.Alert, is MarkdownBlock.Table -> true
+                                                        else -> false
+                                                    }
+                                                    if (selectable) SelectionContainer { blockView() } else blockView()
                                                 }
-                                                if (selectable) SelectionContainer { blockView() } else blockView()
                                             }
                                         }
                                         // with the working animation on, the working row below replaces these dots
