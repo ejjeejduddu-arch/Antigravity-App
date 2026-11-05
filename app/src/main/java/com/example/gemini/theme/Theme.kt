@@ -26,29 +26,80 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-private val DarkColorScheme = darkColorScheme(
-    primary = ClaudeTerracotta,
-    secondary = ClaudeTerracottaDark,
-    background = ClaudeDarkBg,
-    surface = ClaudeDarkBg,
+val LocalMindDarkColorScheme = darkColorScheme(
+    primary = DarkAccent,
+    onPrimary = DarkBackground,
+    secondary = Color(0xFF10A37F),
+    onSecondary = Color.White,
+    background = DarkBackground,
+    onBackground = DarkPrimaryText,
+    surface = DarkSurface,
+    onSurface = DarkPrimaryText,
+    surfaceVariant = DarkSurfaceCard,
+    onSurfaceVariant = DarkMutedText,
+    outline = DarkBorder,
+    outlineVariant = Color(0xFF333333),
     surfaceTint = Color.Transparent,
-    onPrimary = Color.White,
-    onBackground = TextPrimaryDark,
-    onSurface = TextPrimaryDark,
-    surfaceVariant = ClaudeUserBubbleDark
+    error = ErrorRed,
+    onError = Color.White
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = ClaudeTerracotta,
-    secondary = ClaudeTerracottaDark,
-    background = ClaudeCream,
-    surface = ClaudeCream,
-    surfaceTint = Color.Transparent,
+val LocalMindLightColorScheme = lightColorScheme(
+    primary = LightAccent,
     onPrimary = Color.White,
-    onBackground = TextPrimaryLight,
-    onSurface = TextPrimaryLight,
-    surfaceVariant = ClaudeUserBubbleLight
+    secondary = Color(0xFF10A37F),
+    onSecondary = Color.White,
+    background = LightBackground,
+    onBackground = LightPrimaryText,
+    surface = LightSurface,
+    onSurface = LightPrimaryText,
+    surfaceVariant = Color(0xFFF4F4F5),
+    onSurfaceVariant = LightMutedText,
+    outline = LightBorder,
+    outlineVariant = Color(0xFFE4E4E7),
+    surfaceTint = Color.Transparent,
+    error = ErrorRed,
+    onError = Color.White
 )
+
+val LocalMindClaudeColorScheme = lightColorScheme(
+    primary = ClaudeAccent,
+    onPrimary = Color.White,
+    secondary = ClaudeSecondaryText,
+    onSecondary = Color.White,
+    background = ClaudeBackground,
+    onBackground = ClaudePrimaryText,
+    surface = ClaudeSurface,
+    onSurface = ClaudePrimaryText,
+    surfaceVariant = Color(0xFFEFECE6),
+    onSurfaceVariant = ClaudeMutedText,
+    outline = ClaudeBorder,
+    outlineVariant = Color(0xFFE5E2D9),
+    surfaceTint = Color.Transparent,
+    error = ErrorRed,
+    onError = Color.White
+)
+
+val LocalMindClaudeDarkColorScheme = darkColorScheme(
+    primary = ClaudeAccent,
+    onPrimary = Color.White,
+    secondary = ClaudeDarkSecondaryText,
+    onSecondary = Color.White,
+    background = ClaudeDarkBackground,
+    onBackground = ClaudeDarkPrimaryText,
+    surface = ClaudeDarkSurface,
+    onSurface = ClaudeDarkPrimaryText,
+    surfaceVariant = Color(0xFF262624),
+    onSurfaceVariant = ClaudeDarkSecondaryText,
+    outline = ClaudeDarkBorder,
+    outlineVariant = Color(0xFF3F3E3B),
+    surfaceTint = Color.Transparent,
+    error = ErrorRed,
+    onError = Color.White
+)
+
+private val DarkColorScheme = LocalMindDarkColorScheme
+private val LightColorScheme = LocalMindLightColorScheme
 
 val LocalIsDarkTheme = staticCompositionLocalOf { false }
 
@@ -110,10 +161,23 @@ fun isSystemInDarkThemeRobust(): Boolean {
 
 @Composable
 fun GeminiTheme(
+    themeMode: String = "SYSTEM",
     darkTheme: Boolean = isSystemInDarkThemeRobust(),
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+    val effectiveIsDark = when (themeMode) {
+        "DARK", "CLAUDE_DARK" -> true
+        "LIGHT", "CLAUDE" -> false
+        else -> darkTheme
+    }
+
+    val colorScheme = when (themeMode) {
+        "DARK" -> LocalMindDarkColorScheme
+        "LIGHT" -> LocalMindLightColorScheme
+        "CLAUDE" -> LocalMindClaudeColorScheme
+        "CLAUDE_DARK" -> LocalMindClaudeDarkColorScheme
+        else -> if (effectiveIsDark) LocalMindDarkColorScheme else LocalMindLightColorScheme
+    }
 
     val view = LocalView.current
     if (!view.isInEditMode) {
@@ -124,14 +188,14 @@ fun GeminiTheme(
                 window.statusBarColor = colorScheme.background.toArgb()
                 window.navigationBarColor = colorScheme.background.toArgb()
                 val insetsController = WindowCompat.getInsetsController(window, view)
-                insetsController.isAppearanceLightStatusBars = !darkTheme
-                insetsController.isAppearanceLightNavigationBars = !darkTheme
+                insetsController.isAppearanceLightStatusBars = !effectiveIsDark
+                insetsController.isAppearanceLightNavigationBars = !effectiveIsDark
             }
         }
     }
 
     CompositionLocalProvider(
-        LocalIsDarkTheme provides darkTheme
+        LocalIsDarkTheme provides effectiveIsDark
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
@@ -140,3 +204,4 @@ fun GeminiTheme(
         )
     }
 }
+

@@ -124,12 +124,13 @@ class ManageSpaceActivity : ComponentActivity() {
             val themeMode by authPreferences.themeMode.collectAsState(initial = initialThemeMode)
             val isSystemDark = isSystemInDarkThemeRobust()
             val useDarkTheme = when (themeMode) {
-                "DARK" -> true
-                "LIGHT" -> false
+                "DARK", "CLAUDE_DARK" -> true
+                "LIGHT", "CLAUDE" -> false
                 else -> isSystemDark
             }
 
-            GeminiTheme(darkTheme = useDarkTheme) {
+            GeminiTheme(themeMode = themeMode, darkTheme = useDarkTheme) {
+
                 ManageSpaceScreen(
                     onBack = { finish() },
                     onFactoryReset = {

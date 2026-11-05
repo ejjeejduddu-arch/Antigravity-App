@@ -55,12 +55,13 @@ class FloatingChatActivity : ComponentActivity() {
             val themeMode by chatViewModel.themeMode.collectAsState(initial = initialThemeMode)
             val isSystemDark = isSystemInDarkThemeRobust()
             val useDarkTheme = when (themeMode) {
-                "DARK" -> true
-                "LIGHT" -> false
+                "DARK", "CLAUDE_DARK" -> true
+                "LIGHT", "CLAUDE" -> false
                 else -> isSystemDark
             }
 
-            GeminiTheme(darkTheme = useDarkTheme) {
+            GeminiTheme(themeMode = themeMode, darkTheme = useDarkTheme) {
+
                 FloatingChatWindow(
                     viewModel = chatViewModel,
                     onOpenFullApp = {

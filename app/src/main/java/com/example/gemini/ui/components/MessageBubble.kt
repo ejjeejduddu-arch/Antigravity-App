@@ -12,6 +12,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -133,14 +134,47 @@ fun MessageBubble(
 
         // Message Content Bubble
         if (isUser) {
+            var isUserBubbleVisible by remember { mutableStateOf(false) }
+            val userScale by animateFloatAsState(
+                targetValue = if (isUserBubbleVisible) 1f else 0.98f,
+                animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing),
+                label = "userBubbleScale"
+            )
+            val userAlpha by animateFloatAsState(
+                targetValue = if (isUserBubbleVisible) 1f else 0f,
+                animationSpec = tween(durationMillis = 200, easing = LinearEasing),
+                label = "userBubbleAlpha"
+            )
+            val userOffsetX by animateFloatAsState(
+                targetValue = if (isUserBubbleVisible) 0f else 12f,
+                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
+                label = "userBubbleOffsetX"
+            )
+            LaunchedEffect(Unit) {
+                isUserBubbleVisible = true
+            }
+
             Column(horizontalAlignment = Alignment.End) {
                 Box(
                     modifier = Modifier
-                        .widthIn(max = 320.dp)
-                        .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 16.dp, bottomEnd = 4.dp))
+                        .graphicsLayer {
+                            alpha = userAlpha
+                            scaleX = userScale
+                            scaleY = userScale
+                            translationX = userOffsetX
+                        }
+                        .widthIn(max = 340.dp)
+                        .clip(RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp, bottomStart = 18.dp, bottomEnd = 4.dp))
                         .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .border(
+                            BorderStroke(
+                                1.dp,
+                                MaterialTheme.colorScheme.outline.copy(alpha = 0.35f)
+                            ),
+                            RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp, bottomStart = 18.dp, bottomEnd = 4.dp)
+                        )
                         .clickable { showUserActions = !showUserActions }
-                        .padding(horizontal = 14.dp, vertical = 10.dp)
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
                 ) {
                     SelectionContainer {
                         Text(
@@ -151,6 +185,7 @@ fun MessageBubble(
                         )
                     }
                 }
+
 
                 // Action icons shown on tap/press below sent user message
                 AnimatedVisibility(
@@ -395,15 +430,49 @@ fun UserMessageBubble(
             }
         }
 
+        var isUserBubbleVisible by remember { mutableStateOf(false) }
+        val userScale by animateFloatAsState(
+            targetValue = if (isUserBubbleVisible) 1f else 0.98f,
+            animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing),
+            label = "userBubbleScale"
+        )
+        val userAlpha by animateFloatAsState(
+            targetValue = if (isUserBubbleVisible) 1f else 0f,
+            animationSpec = tween(durationMillis = 200, easing = LinearEasing),
+            label = "userBubbleAlpha"
+        )
+        val userOffsetX by animateFloatAsState(
+            targetValue = if (isUserBubbleVisible) 0f else 12f,
+            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
+            label = "userBubbleOffsetX"
+        )
+        LaunchedEffect(Unit) {
+            isUserBubbleVisible = true
+        }
+
         Box(
             modifier = Modifier
-                .widthIn(max = 330.dp)
+                .graphicsLayer {
+                    alpha = userAlpha
+                    scaleX = userScale
+                    scaleY = userScale
+                    translationX = userOffsetX
+                }
+                .widthIn(max = 340.dp)
                 .bringIntoViewRequester(bubbleBringIntoView)
-                .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 16.dp, bottomEnd = 4.dp))
+                .clip(RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp, bottomStart = 18.dp, bottomEnd = 4.dp))
                 .background(MaterialTheme.colorScheme.surfaceVariant)
+                .border(
+                    BorderStroke(
+                        1.dp,
+                        MaterialTheme.colorScheme.outline.copy(alpha = 0.35f)
+                    ),
+                    RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp, bottomStart = 18.dp, bottomEnd = 4.dp)
+                )
                 .clickable { showUserActions = !showUserActions }
-                .padding(horizontal = 14.dp, vertical = 10.dp)
+                .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
+
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 // 1. Audio attachments player
                 val audioAtts = remember(message.attachments) { message.attachments.filter { it.isAudio } }

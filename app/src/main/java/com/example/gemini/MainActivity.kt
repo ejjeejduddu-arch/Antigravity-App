@@ -80,10 +80,11 @@ class MainActivity : ComponentActivity() {
             val themeMode by chatViewModel.themeMode.collectAsState(initial = initialThemeMode)
             val isSystemDark = com.example.gemini.theme.isSystemInDarkThemeRobust()
             val useDarkTheme = when (themeMode) {
-                "DARK" -> true
-                "LIGHT" -> false
+                "DARK", "CLAUDE_DARK" -> true
+                "LIGHT", "CLAUDE" -> false
                 else -> isSystemDark
             }
+
 
             val requestedMode by chatViewModel.requestedViewMode.collectAsState()
             val initialViewMode = remember {
@@ -198,7 +199,7 @@ class MainActivity : ComponentActivity() {
 
             val showFullScreenInstaller = !isInstalledState && !hasSkippedInstaller
 
-            GeminiTheme(darkTheme = useDarkTheme) {
+            GeminiTheme(themeMode = themeMode, darkTheme = useDarkTheme) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

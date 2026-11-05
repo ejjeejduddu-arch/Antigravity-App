@@ -597,16 +597,18 @@ fun ChatInputBar(
                 .fillMaxWidth()
                 .padding(horizontal = 14.dp, vertical = 6.dp)
         ) {
-            // Claude-style unified rounded input card
+            // LocalMind-inspired unified rounded input card
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(24.dp),
-                color = if (isDark) Color(0xFF21211E) else Color.White,
+                shape = RoundedCornerShape(26.dp),
+                color = if (isDark) DarkSurfaceInput else LightSurface,
                 border = BorderStroke(
                     1.dp,
-                    if (isDark) Color.White.copy(alpha = 0.08f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
-                )
+                    if (isDark) DarkBorder.copy(alpha = 0.6f) else LightBorder
+                ),
+                shadowElevation = if (isDark) 4.dp else 1.dp
             ) {
+
                 if (isRecordingAudio) {
                     val infiniteTransition = rememberInfiniteTransition(label = "recPulse")
                     val pulseAlpha by infiniteTransition.animateFloat(
@@ -1208,7 +1210,7 @@ fun ChatInputBar(
                             Surface(
                                 onClick = onStopStreaming,
                                 shape = CircleShape,
-                                color = ClaudeTerracotta,
+                                color = MaterialTheme.colorScheme.error,
                                 modifier = Modifier.size(36.dp)
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
@@ -1221,7 +1223,8 @@ fun ChatInputBar(
                                 }
                             }
                         } else if (canSend) {
-                            val sendBtnColor = if (!isAuth) Color(0xFF6B7280) else if (!isOnline) Color(0xFF6B7280) else if (isBackgroundActive) Color(0xFFFFB300) else ClaudeTerracotta
+                            val sendBtnColor = if (!isAuth) Color(0xFF6B7280) else if (!isOnline) Color(0xFF6B7280) else if (isBackgroundActive) Color(0xFFFFB300) else MaterialTheme.colorScheme.primary
+                            val sendIconColor = if (!isAuth || !isOnline) Color(0xFFD1D5DB) else if (isBackgroundActive) Color(0xFF1E1E1E) else MaterialTheme.colorScheme.onPrimary
                             Surface(
                                 onClick = {
                                     val trimmed = textFieldValue.text.trim()
@@ -1247,12 +1250,13 @@ fun ChatInputBar(
                                     Icon(
                                         imageVector = Icons.Default.ArrowUpward,
                                         contentDescription = "Send",
-                                        tint = if (isAuth && isOnline) (if (isBackgroundActive) Color(0xFF1E1E1E) else Color.White) else Color(0xFFD1D5DB),
+                                        tint = sendIconColor,
                                         modifier = Modifier.size(19.dp)
                                     )
                                 }
                             }
                         } else {
+
                             // Claude-style Microphone Voice Recorder Button
                             val voiceBgColor = if (isDark) Color(0xFFEDEDED) else Color(0xFF1F1F1F)
                             val voiceIconColor = if (isDark) Color(0xFF1B1B1B) else Color.White

@@ -727,10 +727,13 @@ private fun MainSettingsMenu(
         SettingsGroupHeader("App", MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f), "Shared by both agents")
         // Section 1: Appearance & Display
         val themeLabel = when (themeMode) {
-            "DARK" -> "Dark Mode"
-            "LIGHT" -> "Light Mode"
+            "DARK" -> "Dark (Shadcn)"
+            "LIGHT" -> "Light (Shadcn)"
+            "CLAUDE" -> "Claude Light"
+            "CLAUDE_DARK" -> "Claude Dark"
             else -> "Auto (System)"
         }
+
         SettingsCategoryCard(
             icon = Icons.Outlined.Palette,
             iconTint = ClaudeTerracotta,
@@ -1007,52 +1010,103 @@ private fun AppearanceSubScreen(
         )
 
         // 3 Theme Options Cards
-        Row(
+        Column(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            val themes = listOf(
-                Triple("SYSTEM", "Auto (System)", Icons.Outlined.BrightnessAuto),
-                Triple("LIGHT", "Light", Icons.Outlined.LightMode),
-                Triple("DARK", "Dark", Icons.Outlined.DarkMode)
+            val themesRow1 = listOf(
+                Triple("SYSTEM", "Auto", Icons.Outlined.BrightnessAuto),
+                Triple("DARK", "Dark", Icons.Outlined.DarkMode),
+                Triple("LIGHT", "Light", Icons.Outlined.LightMode)
+            )
+            val themesRow2 = listOf(
+                Triple("CLAUDE", "Claude Light", Icons.Outlined.Palette),
+                Triple("CLAUDE_DARK", "Claude Dark", Icons.Outlined.ColorLens)
             )
 
-            themes.forEach { (mode, label, icon) ->
-                val isSelected = themeMode.equals(mode, ignoreCase = true)
-                Surface(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clip(RoundedCornerShape(12.dp))
-                        .clickable { onSetThemeMode(mode) },
-                    shape = RoundedCornerShape(12.dp),
-                    color = if (isSelected) ClaudeTerracotta.copy(alpha = 0.12f) else cardBg,
-                    border = BorderStroke(
-                        1.5.dp,
-                        if (isSelected) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier.padding(vertical = 14.dp, horizontal = 8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                themesRow1.forEach { (mode, label, icon) ->
+                    val isSelected = themeMode.equals(mode, ignoreCase = true)
+                    Surface(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable { onSetThemeMode(mode) },
+                        shape = RoundedCornerShape(12.dp),
+                        color = if (isSelected) ClaudeTerracotta.copy(alpha = 0.12f) else cardBg,
+                        border = BorderStroke(
+                            1.5.dp,
+                            if (isSelected) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                        )
                     ) {
-                        Icon(
-                            imageVector = icon,
-                            contentDescription = label,
-                            tint = if (isSelected) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                            modifier = Modifier.size(24.dp)
+                        Column(
+                            modifier = Modifier.padding(vertical = 12.dp, horizontal = 6.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = label,
+                                tint = if (isSelected) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                                modifier = Modifier.size(22.dp)
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = label,
+                                fontSize = 11.5.sp,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                color = if (isSelected) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
+                }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                themesRow2.forEach { (mode, label, icon) ->
+                    val isSelected = themeMode.equals(mode, ignoreCase = true)
+                    Surface(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable { onSetThemeMode(mode) },
+                        shape = RoundedCornerShape(12.dp),
+                        color = if (isSelected) ClaudeTerracotta.copy(alpha = 0.12f) else cardBg,
+                        border = BorderStroke(
+                            1.5.dp,
+                            if (isSelected) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
                         )
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Text(
-                            text = label,
-                            fontSize = 11.5.sp,
-                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                            color = if (isSelected) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface
-                        )
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(vertical = 12.dp, horizontal = 6.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = label,
+                                tint = if (isSelected) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                                modifier = Modifier.size(22.dp)
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = label,
+                                fontSize = 11.5.sp,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                color = if (isSelected) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface
+                            )
+                        }
                     }
                 }
             }
         }
+
 
         Spacer(modifier = Modifier.height(6.dp))
 
