@@ -1,14 +1,13 @@
 {
-  "version_code": 131,
-  "version_name": "1.0.31",
+  "version_code": 132,
+  "version_name": "1.0.32",
   "min_supported_version_code": 1,
   "changelog": [
-    "Updated official app display name to 'Antigravity App' across Android launcher, task switcher, splash screen, and settings",
-    "Applied authentic Opera Red (#FF1A1A) styling across ALL Settings & Preferences cards, category headers, icon containers, and status badges",
-    "Unified accent colors across Antigravity, Claude Code, and system utilities to signature Opera Red (#FF1A1A)",
-    "Replaced legacy AntiGem naming throughout settings, plugins manager, and storage dialogs with Antigravity App",
-    "Opera Red (#FF1A1A) TopAppBar 'Done' button and active navigation pills",
-    "Redesigned Chatting Box into unified Opera Red (#FF1A1A) Card enclosing text field and all action controls"
+    "Added authentic Opera ambient background animation (OperaAmbientBackground) with dynamic breathing glowing aura orbs, high-fidelity texture overlay, and multi-stop gradient washes",
+    "Added authentic Opera Butterfly Hero Mascot animation (OperaButterflyHero) with cubic-bezier intro ascent reveal, continuous gentle hover & breathing pulse, and accelerometer/gyroscope parallax tilt",
+    "Animated editorial Petrona typography with smooth delayed fade-up reveal on new chat canvas",
+    "Smooth top and bottom edge gradient fade overlays on chat message viewport for editorial scroll clearance",
+    "Updated official app display name to 'Antigravity App' and unified Opera Red styling across the entire app"
   ],
   "is_critical": false
 }

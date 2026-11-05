@@ -1289,6 +1289,18 @@ fun ChatScreen(
                         .weight(1f)
                         .fillMaxWidth()
                 ) {
+                    val systemDark = androidx.compose.foundation.isSystemInDarkTheme()
+                    val isDarkTheme = when (themeMode) {
+                        "DARK" -> true
+                        "LIGHT" -> false
+                        else -> systemDark
+                    }
+
+                    com.example.gemini.ui.components.OperaAmbientBackground(
+                        isDarkTheme = isDarkTheme,
+                        showEdgeGradients = messages.isNotEmpty()
+                    )
+
                     val sysStatus = systemConnectionState.status
                     val isServerInitializing = sysStatus == com.example.gemini.data.remote.SystemStatus.STARTING || sysStatus == com.example.gemini.data.remote.SystemStatus.ACQUIRING_CSRF || (sysStatus == com.example.gemini.data.remote.SystemStatus.OFFLINE && isInitialGracePeriod)
                     val isServerStopped = sysStatus == com.example.gemini.data.remote.SystemStatus.OFFLINE && !isInitialGracePeriod
@@ -1431,35 +1443,9 @@ fun ChatScreen(
                                         }
                                     }
                                     else -> {
-                                        // Opera Butterfly Hero Badge
-                                        Box(
-                                            modifier = Modifier
-                                                .padding(bottom = 20.dp)
-                                                .size(72.dp),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            androidx.compose.foundation.Image(
-                                                painter = androidx.compose.ui.res.painterResource(id = com.example.gemini.R.drawable.opera_splash_icon),
-                                                contentDescription = "Opera Antigravity",
-                                                modifier = Modifier.size(64.dp)
-                                            )
-                                        }
-
-                                        Text(
-                                            text = "How can I help you today?",
-                                            fontFamily = com.example.gemini.theme.PetronaFontFamily,
-                                            fontSize = 28.sp,
-                                            fontWeight = FontWeight.Medium,
-                                            color = MaterialTheme.colorScheme.onSurface,
-                                            textAlign = TextAlign.Center
-                                        )
-                                        Spacer(modifier = Modifier.height(10.dp))
-                                        Text(
-                                            text = "AI for all • Privacy for freedom • Ask Maestro anything",
-                                            fontFamily = com.example.gemini.theme.FigtreeFontFamily,
-                                            fontSize = 14.5.sp,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                                            textAlign = TextAlign.Center
+                                        com.example.gemini.ui.components.OperaButterflyHero(
+                                            isDarkTheme = isDarkTheme,
+                                            incognito = currentConv?.id?.startsWith("incognito") == true
                                         )
                                     }
                                 }
