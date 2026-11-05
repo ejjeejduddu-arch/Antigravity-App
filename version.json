@@ -1,8 +1,10 @@
 {
-  "version_code": 126,
-  "version_name": "1.0.26",
+  "version_code": 127,
+  "version_name": "1.0.27",
   "min_supported_version_code": 1,
   "changelog": [
+    "Upgraded application launcher icon and splash branding to official Antigravity dark squircle rainbow arch icon",
+    "Updated adaptive icon background to #161616 for seamless integration across all Android launchers",
     "Removed all informal emojis across the application UI and replaced them with premium, crisp Material vector icons",
     "Enhanced telemetry, permission rules, settings presets, and tool call cards with clean typography and vector badges",
     "Integrated Opera Design System: Opera Red (#FF1A1A) interaction color, warm cream editorial canvas (#FEFBF6), and sleek dark mode (#0F0F0E)",
