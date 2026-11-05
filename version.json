@@ -1,17 +1,17 @@
 {
-  "version_code": 128,
-  "version_name": "1.0.28",
+  "version_code": 129,
+  "version_name": "1.0.29",
   "min_supported_version_code": 1,
   "changelog": [
-    "Implemented authentic Opera Red pill chat composer: 56dp min-height, Opera Red (#FF1A1A), 20dp radius, 2px border, red glow shadow, white [+] and [Mic] buttons, white text, and right arrow forward send button",
-    "Floating Opera model selector chip above composer and seamless top attachment drawer",
+    "Redesigned Chatting Box into unified Opera Clean Card: 20dp rounded surface card enclosing text field and ALL buttons (+, Model selector pill, Dictation, Opera Red Send) in a single card",
+    "Enhanced Opera typography with Figtree 15sp font and crisp 'Ask anything...' placeholder",
+    "Vibrant Opera Red (#FF1A1A) circular send button with white arrow",
+    "In-card attachments preview and live audio waveform recorder",
     "Fixed in-app APK auto-updater repository URLs to point to active ejjeejduddu-arch/Antigravity-App repository",
     "Silenced unofficial build toast notification on app launch",
-    "Upgraded application launcher icon and splash branding to official Antigravity dark squircle rainbow arch icon",
-    "Removed all informal emojis across the application UI and replaced them with premium Material vector icons",
     "Integrated full Opera Design System: Opera Red (#FF1A1A) interaction color, warm cream editorial canvas (#FEFBF6), and sleek dark mode (#0F0F0E)",
     "Added authentic Opera fonts: Petrona (display serif), Figtree (reading sans), and Fragment Mono (UI chrome)",
-    "New animated Opera App Opening Splash Screen with glowing aura, spring scale entrance, and smooth wipe reveal"
+    "Official Antigravity dark squircle rainbow arch icon for launcher and splash branding"
   ],
   "is_critical": false
 }
