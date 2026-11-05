@@ -37,11 +37,12 @@ import com.example.gemini.theme.QuotaAmber
 import com.example.gemini.theme.QuotaGreen
 import com.example.gemini.theme.QuotaRed
 import com.example.gemini.theme.isAppInDarkTheme
+import com.example.gemini.theme.OperaRed
 import com.example.gemini.ui.components.ClaudeAccent
 
 /** Uppercase group label used to separate Antigravity / Claude Code / App settings. */
 @Composable
-fun SettingsGroupHeader(title: String, accent: Color, subtitle: String? = null, modifier: Modifier = Modifier) {
+fun SettingsGroupHeader(title: String, accent: Color = OperaRed, subtitle: String? = null, modifier: Modifier = Modifier) {
     Column(modifier = modifier.padding(top = 10.dp, bottom = 2.dp, start = 4.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.size(8.dp).clip(RoundedCornerShape(2.dp)).background(accent))

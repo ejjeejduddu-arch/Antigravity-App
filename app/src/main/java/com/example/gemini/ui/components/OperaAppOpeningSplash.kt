@@ -137,7 +137,7 @@ fun OperaAppOpeningSplash(
 
             // Brand Title in Petrona Editorial Serif
             Text(
-                text = "Antigravity",
+                text = "Antigravity App",
                 fontFamily = PetronaFontFamily,
                 fontWeight = FontWeight.Medium,
                 fontSize = 32.sp,

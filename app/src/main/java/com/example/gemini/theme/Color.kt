@@ -114,7 +114,7 @@ val QuotaGreen = SuccessGreen
 val QuotaAmber = WarningAmber
 val QuotaRed = ErrorRed
 
-val GeminiBlue = Color(0xFF3B82F6)
-val GeminiPurple = Color(0xFF8B5CF6)
+val GeminiBlue = OperaRed
+val GeminiPurple = OperaRed
 
 

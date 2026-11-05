@@ -317,7 +317,7 @@ fun SettingsDialog(
                     TextButton(onClick = onDismiss) {
                         Text(
                             text = "Done",
-                            color = ClaudeTerracotta,
+                            color = OperaRed,
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp
                         )
@@ -601,10 +601,10 @@ private fun MainSettingsMenu(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        SettingsGroupHeader("Agents", MaterialTheme.colorScheme.primary, "Which agents run, and the local server they share")
+        SettingsGroupHeader("Agents", OperaRed, "Which agents run, and the local server they share")
         SettingsCategoryCard(
             icon = Icons.Outlined.SmartToy,
-            iconTint = MaterialTheme.colorScheme.primary,
+            iconTint = OperaRed,
             title = "Agents",
             subtitle = when {
                 agyOn && claudeOn -> "Antigravity and Claude Code"
@@ -612,24 +612,24 @@ private fun MainSettingsMenu(
                 else -> "Antigravity only"
             },
             badgeText = "${enabledAgents.size} on",
-            badgeColor = MaterialTheme.colorScheme.primary,
+            badgeColor = OperaRed,
             cardBg = cardBg,
             cardBorder = cardBorder,
             onClick = { onNavigate(SettingsSection.AGENTS) }
         )
         // Section 2: Servers & Network
         val (serverBadge, serverColor) = when {
-            isServerOnline && isBridgeOnline -> "Online" to QuotaGreen
-            isServerOnline || isBridgeOnline -> "Partial" to Color(0xFFFFA000)
-            else -> "Offline" to Color.Red
+            isServerOnline && isBridgeOnline -> "Online" to OperaRed
+            isServerOnline || isBridgeOnline -> "Partial" to OperaRed
+            else -> "Offline" to OperaRed
         }
         SettingsCategoryCard(
             icon = Icons.Outlined.Dns,
-            iconTint = serverColor,
+            iconTint = OperaRed,
             title = "Servers & Connectivity",
             subtitle = "AGY Hub & IDE Bridge endpoints",
             badgeText = serverBadge,
-            badgeColor = serverColor,
+            badgeColor = OperaRed,
             cardBg = cardBg,
             cardBorder = cardBorder,
             onClick = { onNavigate(SettingsSection.SERVERS) }
@@ -637,8 +637,8 @@ private fun MainSettingsMenu(
 
         SettingsCategoryCard(
             icon = Icons.Outlined.Extension,
-            iconTint = MaterialTheme.colorScheme.primary,
-            title = "Custom AntiGem Plugins",
+            iconTint = OperaRed,
+            title = "Custom Antigravity Plugins",
             subtitle = "Install ZIP, update, rename, enable or disable plugins with MCP tools and skills",
             cardBg = cardBg,
             cardBorder = cardBorder,
@@ -647,7 +647,7 @@ private fun MainSettingsMenu(
 
         SettingsCategoryCard(
             icon = Icons.Outlined.Terminal,
-            iconTint = MaterialTheme.colorScheme.primary,
+            iconTint = OperaRed,
             title = "Slash Commands",
             subtitle = "Create / commands that expand into longer prompts or attach a plugin skill",
             cardBg = cardBg,
@@ -656,7 +656,7 @@ private fun MainSettingsMenu(
         )
 
         if (agyOn) {
-        SettingsGroupHeader("Antigravity", GeminiBlue, "Google Antigravity agent (agy hub)")
+        SettingsGroupHeader("Antigravity", OperaRed, "Google Antigravity agent (agy hub)")
         // Section 3: MCP Servers & Tools
         val activeMcpCount = mcpServers.count { it.isEnabled }
         val totalMcpCount = mcpServers.size
@@ -665,18 +665,14 @@ private fun MainSettingsMenu(
             activeMcpCount > 0 -> "$activeMcpCount Active"
             else -> "Disabled"
         }
-        val mcpColor = when {
-            activeMcpCount > 0 -> QuotaGreen
-            totalMcpCount > 0 -> Color(0xFFFFA000)
-            else -> ClaudeTerracotta
-        }
+        val mcpColor = OperaRed
         SettingsCategoryCard(
             icon = Icons.Outlined.Extension,
-            iconTint = mcpColor,
+            iconTint = OperaRed,
             title = "MCP Servers & Tools",
             subtitle = if (totalMcpCount > 0) "$totalMcpCount server(s) • global mcp_config.json" else "Model Context Protocol tools & integrations",
             badgeText = mcpBadge,
-            badgeColor = mcpColor,
+            badgeColor = OperaRed,
             cardBg = cardBg,
             cardBorder = cardBorder,
             onClick = { onNavigate(SettingsSection.MCP) }
@@ -688,11 +684,11 @@ private fun MainSettingsMenu(
         val skillsBadge = "$totalSkillsCount Skills • $totalPluginsCount Plugins"
         SettingsCategoryCard(
             icon = Icons.Outlined.AutoAwesome,
-            iconTint = GeminiBlue,
+            iconTint = OperaRed,
             title = "Skills & Plugins",
             subtitle = "Installed skills, Google plugins catalog, and markdown guides",
             badgeText = skillsBadge,
-            badgeColor = GeminiBlue,
+            badgeColor = OperaRed,
             cardBg = cardBg,
             cardBorder = cardBorder,
             onClick = { onNavigate(SettingsSection.SKILLS_PLUGINS) }
@@ -700,18 +696,18 @@ private fun MainSettingsMenu(
 
         // Section 5: Commands & Permissions
         val (policyBadge, policyColor) = when {
-            commandAutoExecutionPolicy.contains("EAGER", ignoreCase = true) -> "Auto-Run" to QuotaGreen
-            commandAutoExecutionPolicy.contains("AUTO", ignoreCase = true) -> "Smart Safety" to Color(0xFF00ACC1)
-            else -> "Ask User" to Color(0xFFF59E0B)
+            commandAutoExecutionPolicy.contains("EAGER", ignoreCase = true) -> "Auto-Run" to OperaRed
+            commandAutoExecutionPolicy.contains("AUTO", ignoreCase = true) -> "Smart Safety" to OperaRed
+            else -> "Ask User" to OperaRed
         }
         val sandboxSummary = if (commandSandboxEnabled) "Sandbox ON" else "Sandbox OFF"
         SettingsCategoryCard(
             icon = Icons.Outlined.Security,
-            iconTint = policyColor,
+            iconTint = OperaRed,
             title = "Commands & Permissions",
             subtitle = "Policy: $policyBadge • $sandboxSummary",
             badgeText = policyBadge,
-            badgeColor = policyColor,
+            badgeColor = OperaRed,
             cardBg = cardBg,
             cardBorder = cardBorder,
             onClick = { onNavigate(SettingsSection.COMMANDS) }
@@ -720,11 +716,11 @@ private fun MainSettingsMenu(
         }
 
         if (claudeGroup != null && claudeOn) {
-            SettingsGroupHeader("Claude Code", ClaudeAccent, "Anthropic Claude Code CLI")
+            SettingsGroupHeader("Claude Code", OperaRed, "Anthropic Claude Code CLI")
             claudeGroup()
         }
 
-        SettingsGroupHeader("App", MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f), "Shared by both agents")
+        SettingsGroupHeader("App", OperaRed, "Shared by both agents")
         // Section 1: Appearance & Display
         val themeLabel = when (themeMode) {
             "DARK" -> "Dark (Shadcn)"
@@ -736,10 +732,11 @@ private fun MainSettingsMenu(
 
         SettingsCategoryCard(
             icon = Icons.Outlined.Palette,
-            iconTint = ClaudeTerracotta,
+            iconTint = OperaRed,
             title = "Appearance & Theme",
             subtitle = "$themeLabel • ${(chatFontScale * 100).toInt()}% text scale",
             badgeText = themeLabel,
+            badgeColor = OperaRed,
             cardBg = cardBg,
             cardBorder = cardBorder,
             onClick = { onNavigate(SettingsSection.APPEARANCE) }
@@ -749,10 +746,11 @@ private fun MainSettingsMenu(
         // Section 5: Terminal & Shell
         SettingsCategoryCard(
             icon = Icons.Outlined.Terminal,
-            iconTint = Color(0xFF00ACC1),
+            iconTint = OperaRed,
             title = "Terminal & Shell Execution",
             subtitle = if (useSshTerminal) "SSH Mode (Termux sshd)" else "Local Linux Environment",
             badgeText = if (useSshTerminal) "SSH" else "Local",
+            badgeColor = OperaRed,
             cardBg = cardBg,
             cardBorder = cardBorder,
             onClick = { onNavigate(SettingsSection.TERMINAL) }
@@ -762,11 +760,11 @@ private fun MainSettingsMenu(
         if (isLocalToolsInstalled) {
             SettingsCategoryCard(
                 icon = Icons.Outlined.Backup,
-                iconTint = GeminiBlue,
+                iconTint = OperaRed,
                 title = "Backups & Restore",
                 subtitle = "Backup rootfs environment and AGY chat histories",
                 badgeText = "Rootfs Active",
-                badgeColor = GeminiBlue,
+                badgeColor = OperaRed,
                 cardBg = cardBg,
                 cardBorder = cardBorder,
                 onClick = { onNavigate(SettingsSection.BACKUPS) }
@@ -776,11 +774,11 @@ private fun MainSettingsMenu(
         // Section 5.6: Data Loss Protection
         SettingsCategoryCard(
             icon = Icons.Outlined.Security,
-            iconTint = Color(0xFF10B981),
+            iconTint = OperaRed,
             title = "Data Loss Protection",
             subtitle = "Accidental uninstall shield & App Info clear data protection",
             badgeText = "Shield",
-            badgeColor = Color(0xFF10B981),
+            badgeColor = OperaRed,
             cardBg = cardBg,
             cardBorder = cardBorder,
             onClick = { onNavigate(SettingsSection.DATA_PROTECTION) }
@@ -788,23 +786,23 @@ private fun MainSettingsMenu(
 
         // Section 6: Diagnostics & Performance
         val diagBadge = if (isFloatingDiagnosticsEnabled) "HUD ON" else "HUD OFF"
-        val diagColor = if (isFloatingDiagnosticsEnabled) QuotaGreen else Color.Gray
+        val diagColor = OperaRed
         SettingsCategoryCard(
             icon = Icons.Outlined.Speed,
-            iconTint = if (isFloatingDiagnosticsEnabled) QuotaGreen else Color(0xFF00ACC1),
+            iconTint = OperaRed,
             title = "Diagnostics & Performance",
             subtitle = if (isFloatingDiagnosticsEnabled) "Floating live metrics HUD enabled" else "Live network connections, active streams & thread HUD",
             badgeText = diagBadge,
-            badgeColor = diagColor,
+            badgeColor = OperaRed,
             cardBg = cardBg,
             cardBorder = cardBorder,
             onClick = { onNavigate(SettingsSection.DIAGNOSTICS) }
         )
 
-        SettingsGroupHeader("Utilities", Color(0xFF00ACC1), "Handy device tools")
+        SettingsGroupHeader("Utilities", OperaRed, "Handy device tools")
         SettingsCategoryCard(
             icon = Icons.Outlined.Handyman,
-            iconTint = Color(0xFF00ACC1),
+            iconTint = OperaRed,
             title = "Utilities",
             subtitle = "ADB Connect, Android Automation",
             cardBg = cardBg,
@@ -815,11 +813,11 @@ private fun MainSettingsMenu(
         // Section 7: About & Info
         SettingsCategoryCard(
             icon = Icons.Outlined.Info,
-            iconTint = Color(0xFF8B5CF6),
+            iconTint = OperaRed,
             title = "About & Info",
             subtitle = "v${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE}) • ${BuildConfig.APPLICATION_ID}",
             badgeText = "v${BuildConfig.VERSION_NAME}",
-            badgeColor = Color(0xFF8B5CF6),
+            badgeColor = OperaRed,
             cardBg = cardBg,
             cardBorder = cardBorder,
             onClick = { onNavigate(SettingsSection.ABOUT) }
@@ -849,7 +847,7 @@ private fun UtilitiesSubScreen(
     ) {
         SettingsCategoryCard(
             icon = Icons.Outlined.PhonelinkSetup,
-            iconTint = if (connected != null) QuotaGreen else Color(0xFF00ACC1),
+            iconTint = OperaRed,
             title = "ADB Connect",
             subtitle = connected?.serial ?: "Use adb in the terminal over Wireless debugging",
             badgeText = when {
@@ -857,7 +855,7 @@ private fun UtilitiesSubScreen(
                 adb.adbInstalled == false -> "Not installed"
                 else -> null
             },
-            badgeColor = if (connected != null) QuotaGreen else Color(0xFFF59E0B),
+            badgeColor = OperaRed,
             cardBg = cardBg,
             cardBorder = cardBorder,
             onClick = { onNavigate(SettingsSection.ADB_CONNECT) }
@@ -871,11 +869,11 @@ private fun UtilitiesSubScreen(
         }
         SettingsCategoryCard(
             icon = Icons.Outlined.TouchApp,
-            iconTint = if (automationAllowed) QuotaGreen else Color(0xFF8B5CF6),
+            iconTint = OperaRed,
             title = "Android Automation",
             subtitle = "Let AI agents read the screen, tap, type and open apps (MCP)",
             badgeText = if (automationAllowed) "Allowed" else "Off",
-            badgeColor = if (automationAllowed) QuotaGreen else Color.Gray,
+            badgeColor = OperaRed,
             cardBg = cardBg,
             cardBorder = cardBorder,
             onClick = { onNavigate(SettingsSection.ANDROID_AUTOMATION) }
@@ -886,11 +884,11 @@ private fun UtilitiesSubScreen(
 @Composable
 private fun SettingsCategoryCard(
     icon: ImageVector,
-    iconTint: Color,
+    iconTint: Color = OperaRed,
     title: String,
     subtitle: String,
     badgeText: String? = null,
-    badgeColor: Color = ClaudeTerracotta,
+    badgeColor: Color = OperaRed,
     cardBg: Color,
     cardBorder: BorderStroke,
     onClick: () -> Unit
@@ -1232,7 +1230,7 @@ private fun AppearanceSubScreen(
                         color = ClaudeTerracotta.copy(alpha = 0.15f)
                     ) {
                         Text(
-                            text = "How does AntiGem connect to AGY Hub?",
+                            text = "How does Antigravity App connect to AGY Hub?",
                             fontSize = (13 * chatFontScale).sp,
                             color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
@@ -1252,7 +1250,7 @@ private fun AppearanceSubScreen(
                     ) {
                         Column(modifier = Modifier.padding(12.dp)) {
                             Text(
-                                text = "AntiGem connects via gRPC-Web to stream live agent steps and tool executions.",
+                                text = "Antigravity App connects via gRPC-Web to stream live agent steps and tool executions.",
                                 fontSize = (13 * chatFontScale).sp,
                                 lineHeight = (18 * chatFontScale).sp,
                                 color = MaterialTheme.colorScheme.onSurface
@@ -1795,7 +1793,7 @@ private fun AppearanceSubScreen(
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
                                     Text(
-                                        text = "Modern AntiGem styled icon & name",
+                                        text = "Modern Antigravity styled icon & name",
                                         fontSize = 10.5.sp,
                                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                     )
@@ -2045,7 +2043,7 @@ private fun ServersSubScreen(
             },
             title = {
                 Text(
-                    text = "Reopen AntiGem?",
+                    text = "Reopen Antigravity App?",
                     fontWeight = FontWeight.Bold,
                     fontSize = 17.sp
                 )
@@ -2328,7 +2326,7 @@ private fun ServersSubScreen(
                 )
                 if (com.example.gemini.data.local.LocalEnvironmentManager.isTermuxPackage(LocalContext.current)) {
                     Text(
-                        text = "• Claude Code: the default is AntiGem's launcher, which runs the newest official Claude version through the bundled glibc. Claude updates never replace it.",
+                        text = "• Claude Code: the default is Antigravity's launcher, which runs the newest official Claude version through the bundled glibc. Claude updates never replace it.",
                         fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
@@ -2822,7 +2820,7 @@ private fun McpSubScreen(
             val presets = listOf(
                 // No spec: opens the picker for an installed plugin's own MCP
                 McpPreset("Custom Plugin MCP", "Pick an installed plugin", Icons.Outlined.Extension, ClaudeTerracotta, null),
-                McpPreset("Plugin Developer", "Build & test AntiGem plugins", Icons.Outlined.DeveloperMode, GeminiPurple,
+                McpPreset("Plugin Developer", "Build & test Antigravity plugins", Icons.Outlined.DeveloperMode, GeminiPurple,
                     localSpec(bridge.DEVELOPER_MCP_NAME, "/extension_developer")),
                 McpPreset("Browser", "Control the in-app browser", Icons.Outlined.Language, GeminiBlue, localSpec("browser_mcp", "/browser")),
                 McpPreset("Terminal", "Run commands in the terminal", Icons.Outlined.Terminal, QuotaGreen, localSpec("terminal_mcp", "/terminal")),
@@ -4554,7 +4552,7 @@ private fun TerminalSubScreen(
                     )
 
                     Text(
-                        text = "AntiGem is wiping all local app data, rootfs, and settings.\n\nThe app will automatically close in $countdownSeconds seconds. Simply re-open AntiGem to start fresh.",
+                        text = "Antigravity App is wiping all local app data, rootfs, and settings.\n\nThe app will automatically close in $countdownSeconds seconds. Simply re-open Antigravity App to start fresh.",
                         fontSize = 13.5.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
@@ -6604,7 +6602,7 @@ private fun DataProtectionSubScreen(
 
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "Why enable this? AntiGem hosts a full local Linux environment with your Node/Python packages, Git repos, and active coding projects. An accidental drag-to-uninstall from the home screen wipes all of it permanently.\n\nActivating Android Device Administrator greys out the 'Uninstall' button at the OS level across phone launchers. You can safely disable this anytime if you wish to uninstall.",
+                    text = "Why enable this? Antigravity hosts a full local Linux environment with your Node/Python packages, Git repos, and active coding projects. An accidental drag-to-uninstall from the home screen wipes all of it permanently.\n\nActivating Android Device Administrator greys out the 'Uninstall' button at the OS level across phone launchers. You can safely disable this anytime if you wish to uninstall.",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                     lineHeight = 16.sp
@@ -6758,7 +6756,7 @@ private fun DataProtectionSubScreen(
 
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "When enabled (default), tapping 'Clear Data' in Android's phone Settings > App Info opens AntiGem's Safe Space Manager instead of wiping everything instantly with one click. This prevents accidental wipes and allows safe cache-only cleanup.\n\nYou can toggle this off anytime if you prefer the standard raw Android 'Clear Data' button.",
+                    text = "When enabled (default), tapping 'Clear Data' in Android's phone Settings > App Info opens Antigravity's Safe Space Manager instead of wiping everything instantly with one click. This prevents accidental wipes and allows safe cache-only cleanup.\n\nYou can toggle this off anytime if you prefer the standard raw Android 'Clear Data' button.",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                     lineHeight = 16.sp
@@ -6791,7 +6789,7 @@ private fun DataProtectionSubScreen(
             title = { Text("Disable Uninstall Protection?") },
             text = {
                 Text(
-                    "This will remove AntiGem's Device Admin status. The app will become vulnerable to accidental home-screen uninstallation.",
+                    "This will remove Antigravity's Device Admin status. The app will become vulnerable to accidental home-screen uninstallation.",
                     fontSize = 13.sp
                 )
             },
@@ -8791,20 +8789,20 @@ private fun AboutSubScreen(
                         Icon(
                             imageVector = Icons.Outlined.Info,
                             contentDescription = null,
-                            tint = Color(0xFF8B5CF6),
+                            tint = OperaRed,
                             modifier = Modifier.size(32.dp)
                         )
                     }
                 }
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "Antigravity",
+                    text = "Antigravity App",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "Antigravity Mobile Hub & AI Pair Programmer",
+                    text = "Antigravity App Mobile Hub & AI Pair Programmer",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
@@ -8812,8 +8810,8 @@ private fun AboutSubScreen(
                 Spacer(modifier = Modifier.height(10.dp))
                 Surface(
                     shape = RoundedCornerShape(20.dp),
-                    color = Color(0xFF8B5CF6).copy(alpha = 0.12f),
-                    border = BorderStroke(1.dp, Color(0xFF8B5CF6).copy(alpha = 0.3f))
+                    color = OperaRed.copy(alpha = 0.12f),
+                    border = BorderStroke(1.dp, OperaRed.copy(alpha = 0.3f))
                 ) {
                     Text(
                         text = "Version ${BuildConfig.VERSION_NAME} (Build ${BuildConfig.VERSION_CODE})",
