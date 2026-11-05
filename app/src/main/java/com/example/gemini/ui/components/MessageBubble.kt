@@ -167,14 +167,14 @@ fun MessageBubble(
                             translationX = userOffsetX
                         }
                         .widthIn(max = maxBubbleWidth)
-                        .clip(RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp, bottomStart = 18.dp, bottomEnd = 4.dp))
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .clip(RoundedCornerShape(15.dp))
+                        .background(MaterialTheme.colorScheme.primary)
                         .border(
                             BorderStroke(
-                                1.dp,
-                                MaterialTheme.colorScheme.outline.copy(alpha = 0.35f)
+                                1.5.dp,
+                                com.example.gemini.theme.OperaBorderOnPrimary
                             ),
-                            RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp, bottomStart = 18.dp, bottomEnd = 4.dp)
+                            RoundedCornerShape(15.dp)
                         )
                         .clickable { showUserActions = !showUserActions }
                         .padding(horizontal = 16.dp, vertical = 12.dp)
@@ -182,9 +182,10 @@ fun MessageBubble(
                     SelectionContainer {
                         Text(
                             text = message.content,
+                            fontFamily = com.example.gemini.theme.FigtreeFontFamily,
                             fontSize = 15.sp,
-                            lineHeight = 22.sp,
-                            color = MaterialTheme.colorScheme.onSurface
+                            lineHeight = 21.sp,
+                            color = Color.White
                         )
                     }
                 }

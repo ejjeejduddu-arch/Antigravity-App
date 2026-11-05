@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Pure white splash background -->
-    <item android:drawable="@android:color/white" />
+    <!-- Warm cream Opera splash background -->
+    <item>
+        <color android:color="#FEFBF6" />
+    </item>
 
-    <!-- Centered AntiGem Logo -->
+    <!-- Centered Opera Logo -->
     <item
         android:gravity="center"
         android:width="160dp"

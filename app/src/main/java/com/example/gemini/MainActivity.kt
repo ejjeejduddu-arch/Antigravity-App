@@ -196,6 +196,7 @@ class MainActivity : ComponentActivity() {
                 )
             }
             var hasSkippedInstaller by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
+            var showOperaOpeningSplash by remember { mutableStateOf(true) }
 
             val showFullScreenInstaller = !isInstalledState && !hasSkippedInstaller
 
@@ -446,6 +447,14 @@ class MainActivity : ComponentActivity() {
                                     com.example.gemini.ui.updater.AppUpdateDialog(
                                         updateInfo = updateInfo,
                                         onDismiss = { pendingUpdateInfo = null }
+                                    )
+                                }
+
+                                // Opera-inspired Animated Opening Splash Screen with spring reveal
+                                if (showOperaOpeningSplash) {
+                                    com.example.gemini.ui.components.OperaAppOpeningSplash(
+                                        isDarkTheme = useDarkTheme,
+                                        onAnimationFinished = { showOperaOpeningSplash = false }
                                     )
                                 }
                             }

@@ -2,64 +2,113 @@ package com.example.gemini.theme
 
 import androidx.compose.ui.graphics.Color
 
-// LocalMind Shadcn Design Tokens (Dark Theme)
-val DarkBackground = Color(0xFF212121) // surface-main
-val DarkSurface = Color(0xFF171717) // surface-sidebar
-val DarkSurfaceInput = Color(0xFF2F2F2F) // surface-input
-val DarkSurfaceCard = Color(0xFF2F2F2F) // surface-card
-val DarkBorder = Color(0xFF424242) // border-subtle
-val DarkPrimaryText = Color(0xFFECECEC) // text-primary
-val DarkMutedText = Color(0xFFB4B4B4) // text-muted
-val DarkAccent = Color(0xFFFFFFFF) // primary accent (white on dark)
+// Opera Design System Tokens (Light Theme)
+val OperaRed = Color(0xFFFF1A1A)             // Primary Opera Red (interaction color, buttons, user bubbles)
+val OperaRedBright = Color(0xFFFF4D4D)       // Primary bright (pressed / hover feedback)
+val OperaCream = Color(0xFFFEFBF6)           // Warm editorial cream canvas
+val OperaGroupedBg = Color(0xFFFAF9F6)       // Grouped canvas background
+val OperaSurface = Color(0xFFFFFFFF)         // Clean white cards and fields
+val OperaSurfaceMuted = Color(0xFFF9F9F9)    // Muted surface
+val OperaSurfaceSubtle = Color(0xFFF5F5F5)   // Subtle surface
+val OperaSurfacePressed = Color(0xFFEAEAEA)  // Pressed row / feedback surface
+val OperaSurfaceCode = Color(0xFFF0F0F0)     // Code block host surface
+val OperaBorder = Color(0x0D000000)          // 2px sticker outline (8% ink)
+val OperaBorderOnPrimary = Color(0x52FFFFFF) // Border on primary red surfaces
+val OperaShadowInk = Color(0x13000000)       // Hard offset sticker shadow ink
 
-// LocalMind Shadcn Design Tokens (Light Theme)
-val LightBackground = Color(0xFFFAFAFA)
-val LightSurface = Color(0xFFFFFFFF)
-val LightSurfaceInput = Color(0xFFFFFFFF)
-val LightSurfaceCard = Color(0xFFFFFFFF)
-val LightBorder = Color(0xFFE5E5E5)
-val LightPrimaryText = Color(0xFF0A0A0A)
-val LightMutedText = Color(0xFF71717A)
-val LightAccent = Color(0xFF0A0A0A) // primary accent (black on light)
+val OperaTextPrimary = Color(0xFF000000)     // Full-black text on cream for crisp editorial contrast
+val OperaTextSecondary = Color(0xFF444444)   // Secondary body text
+val OperaTextMuted = Color(0xFF888888)       // Muted captions & help text
+val OperaTextOnPrimary = Color(0xFFFFFFFF)   // White on red
 
-// LocalMind Claude Light Theme Tokens
-val ClaudeBackground = Color(0xFFF5F4ED)
-val ClaudeSurface = Color(0xFFFAF9F5)
-val ClaudeBorder = Color(0xFFF0EEE6)
-val ClaudePrimaryText = Color(0xFF141413)
-val ClaudeSecondaryText = Color(0xFF5E5D59)
-val ClaudeMutedText = Color(0xFF87867F)
-val ClaudeAccent = Color(0xFFFF6B4A) // deep orange accent
+// Opera Design System Tokens (Dark Theme)
+val OperaDarkBackground = Color(0xFF0F0F0E)       // Deep canvas background
+val OperaDarkGroupedBg = Color(0xFF0B0B0A)        // Deep grouped background
+val OperaDarkSurface = Color(0xFF1A1A1A)          // Dark surface
+val OperaDarkSurfaceMuted = Color(0xFF1F1F1F)     // Dark muted surface
+val OperaDarkSurfaceSubtle = Color(0xFF242424)    // Dark subtle surface
+val OperaDarkSurfacePressed = Color(0xFF2C2C2C)   // Dark pressed surface
+val OperaDarkBorder = Color(0x12FFFFFF)           // Dark subtle border
+val OperaDarkShadowInk = Color(0x80000000)        // Dark shadow ink
 
-// LocalMind Claude Dark Theme Tokens
-val ClaudeDarkBackground = Color(0xFF141413)
-val ClaudeDarkSurface = Color(0xFF30302E)
-val ClaudeDarkBorder = Color(0xFF30302E)
-val ClaudeDarkPrimaryText = Color(0xFFFAF9F5)
-val ClaudeDarkSecondaryText = Color(0xFFB0AEA5)
+val OperaDarkTextPrimary = Color(0xFFFFFFFF)      // Pure white text
+val OperaDarkTextSecondary = Color(0xFFC9C9C9)    // Secondary light gray
+val OperaDarkTextMuted = Color(0xFF8A8A8A)        // Muted gray
+
+// Opera Incognito (Ephemeral Mode)
+val OperaIncognito = Color(0xFF565A75)            // Purple-gray identity
+val OperaIncognitoBright = Color(0xFF70748E)      // Pressed incognito
+val OperaIncognitoPressed = Color(0xFF3E4157)     // Pressed dark
+val OperaIncognitoSurface = Color(0xFF2A2A35)     // Composer dark surface
+
+// Code & Status
+val OperaCodeBlockBg = Color(0xFF1E1E1E)          // Light theme code block
+val OperaCodeBlockBgDark = Color(0xFF0A0A0A)      // Dark theme code block
+val OperaCodeInlineText = Color(0xFFD63384)       // Pink inline code
+val OperaCodeInlineTextDark = Color(0xFFFF7AB6)   // Dark mode inline code pink
+val OperaSnackbarBg = Color(0xFF444444)           // Dark floating pill snackbar
+val OperaSnackbarBgDark = Color(0xFF2E2E2E)
+
+// Voice / Accent Colors
+val VoiceRed = Color(0xFFFF1A1A)
+val VoicePink = Color(0xFFEE8695)
+val VoiceAmber = Color(0xFFE49D22)
+val VoiceBlue = Color(0xFF1A6DD2)
 
 // Status & Feedback Colors
 val SuccessGreen = Color(0xFF22C55E)
-val ErrorRed = Color(0xFFEF4444)
+val ErrorRed = Color(0xFFFF4444)
 val WarningAmber = Color(0xFFF59E0B)
 
-// Backward-compatible aliases for seamless compilation
-val ClaudeTerracotta = Color(0xFFFF6B4A)
-val ClaudeTerracottaDark = Color(0xFFE05335)
-val ClaudeCream = LightBackground
-val ClaudeWarmSurface = LightSurface
-val ClaudeUserBubbleLight = LightSurface
-val ClaudeThinkingLight = Color(0xFFF4F4F5)
+// Backward-compatible design tokens mapped to Opera Design System
+val LightBackground = OperaCream
+val LightSurface = OperaSurface
+val LightSurfaceInput = OperaSurface
+val LightSurfaceCard = OperaSurface
+val LightBorder = OperaBorder
+val LightPrimaryText = OperaTextPrimary
+val LightMutedText = OperaTextMuted
+val LightAccent = OperaRed
 
-val ClaudeDarkBg = DarkBackground
-val ClaudeUserBubbleDark = DarkSurfaceCard
-val ClaudeThinkingDark = Color(0xFF262626)
+val DarkBackground = OperaDarkBackground
+val DarkSurface = OperaDarkSurface
+val DarkSurfaceInput = OperaDarkSurfaceSubtle
+val DarkSurfaceCard = OperaDarkSurfaceMuted
+val DarkBorder = OperaDarkBorder
+val DarkPrimaryText = OperaDarkTextPrimary
+val DarkMutedText = OperaDarkTextMuted
+val DarkAccent = OperaRed
 
-val CodeBlockBgDark = Color(0xFF18181B)
-val TextPrimaryLight = LightPrimaryText
-val TextSecondaryLight = LightMutedText
-val TextPrimaryDark = DarkPrimaryText
-val TextSecondaryDark = DarkMutedText
+val ClaudeBackground = OperaCream
+val ClaudeSurface = OperaSurface
+val ClaudeBorder = OperaBorder
+val ClaudePrimaryText = OperaTextPrimary
+val ClaudeSecondaryText = OperaTextSecondary
+val ClaudeMutedText = OperaTextMuted
+val ClaudeAccent = OperaRed
+
+val ClaudeDarkBackground = OperaDarkBackground
+val ClaudeDarkSurface = OperaDarkSurface
+val ClaudeDarkBorder = OperaDarkBorder
+val ClaudeDarkPrimaryText = OperaDarkTextPrimary
+val ClaudeDarkSecondaryText = OperaDarkTextSecondary
+
+val ClaudeTerracotta = OperaRed
+val ClaudeTerracottaDark = OperaRedBright
+val ClaudeCream = OperaCream
+val ClaudeWarmSurface = OperaSurface
+val ClaudeUserBubbleLight = OperaRed
+val ClaudeThinkingLight = OperaSurfaceSubtle
+
+val ClaudeDarkBg = OperaDarkBackground
+val ClaudeUserBubbleDark = OperaRed
+val ClaudeThinkingDark = OperaDarkSurfaceMuted
+
+val CodeBlockBgDark = OperaCodeBlockBgDark
+val TextPrimaryLight = OperaTextPrimary
+val TextSecondaryLight = OperaTextSecondary
+val TextPrimaryDark = OperaDarkTextPrimary
+val TextSecondaryDark = OperaDarkTextSecondary
 
 val QuotaGreen = SuccessGreen
 val QuotaAmber = WarningAmber
@@ -67,4 +116,5 @@ val QuotaRed = ErrorRed
 
 val GeminiBlue = Color(0xFF3B82F6)
 val GeminiPurple = Color(0xFF8B5CF6)
+
 

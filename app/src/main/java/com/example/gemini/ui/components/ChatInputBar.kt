@@ -597,16 +597,16 @@ fun ChatInputBar(
                 .fillMaxWidth()
                 .padding(horizontal = 14.dp, vertical = 6.dp)
         ) {
-            // LocalMind-inspired unified rounded input card
+            // Opera-inspired unified rounded input card
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(26.dp),
-                color = if (isDark) DarkSurfaceInput else LightSurface,
+                shape = RoundedCornerShape(20.dp),
+                color = if (isDark) OperaDarkSurface else OperaSurface,
                 border = BorderStroke(
-                    1.dp,
-                    if (isDark) DarkBorder.copy(alpha = 0.6f) else LightBorder
+                    1.5.dp,
+                    if (isDark) OperaDarkBorder else OperaBorder
                 ),
-                shadowElevation = if (isDark) 4.dp else 1.dp
+                shadowElevation = if (isDark) 4.dp else 1.5.dp
             ) {
 
                 if (isRecordingAudio) {
@@ -885,6 +885,7 @@ fun ChatInputBar(
                         placeholder = {
                             Text(
                                 text = "Reply to ${selectedModel.displayName.split(" ").firstOrNull() ?: "Gemini"}...",
+                                fontFamily = com.example.gemini.theme.FigtreeFontFamily,
                                 fontSize = 15.sp,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.42f)
                             )
@@ -901,9 +902,10 @@ fun ChatInputBar(
                             unfocusedIndicatorColor = Color.Transparent,
                             focusedTextColor = MaterialTheme.colorScheme.onSurface,
                             unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            cursorColor = ClaudeTerracotta
+                            cursorColor = OperaRed
                         ),
                         textStyle = TextStyle(
+                            fontFamily = com.example.gemini.theme.FigtreeFontFamily,
                             fontSize = 15.sp,
                             lineHeight = 21.sp
                         ),

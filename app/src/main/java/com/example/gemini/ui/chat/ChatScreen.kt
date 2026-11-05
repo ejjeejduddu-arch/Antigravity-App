@@ -1431,18 +1431,34 @@ fun ChatScreen(
                                         }
                                     }
                                     else -> {
+                                        // Opera Butterfly Hero Badge
+                                        Box(
+                                            modifier = Modifier
+                                                .padding(bottom = 20.dp)
+                                                .size(72.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            androidx.compose.foundation.Image(
+                                                painter = androidx.compose.ui.res.painterResource(id = com.example.gemini.R.drawable.opera_splash_icon),
+                                                contentDescription = "Opera Antigravity",
+                                                modifier = Modifier.size(64.dp)
+                                            )
+                                        }
+
                                         Text(
                                             text = "How can I help you today?",
-                                            fontSize = 22.sp,
-                                            fontWeight = FontWeight.SemiBold,
+                                            fontFamily = com.example.gemini.theme.PetronaFontFamily,
+                                            fontSize = 28.sp,
+                                            fontWeight = FontWeight.Medium,
                                             color = MaterialTheme.colorScheme.onSurface,
                                             textAlign = TextAlign.Center
                                         )
-                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Spacer(modifier = Modifier.height(10.dp))
                                         Text(
-                                            text = "Ask a question, brainstorm ideas, or start coding",
-                                            fontSize = 14.sp,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.55f),
+                                            text = "AI for all • Privacy for freedom • Ask Maestro anything",
+                                            fontFamily = com.example.gemini.theme.FigtreeFontFamily,
+                                            fontSize = 14.5.sp,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                                             textAlign = TextAlign.Center
                                         )
                                     }

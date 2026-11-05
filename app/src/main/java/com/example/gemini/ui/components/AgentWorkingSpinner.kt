@@ -66,8 +66,8 @@ fun AgentWorkingSpinner(color: Color, modifier: Modifier = Modifier, compacting:
     val measurer = rememberTextMeasurer(cacheSize = 64)
     // a quiet status line (like VS Code's softened foreground); the accent-colored star is what draws the eye
     val textColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f)
-    val glyphStyle = remember(color) { TextStyle(color = color, fontSize = 21.sp, fontFamily = FontFamily.Monospace) }
-    val wordStyle = remember(textColor) { TextStyle(color = textColor, fontSize = 14.sp, fontWeight = FontWeight.Medium) }
+    val glyphStyle = remember(color) { TextStyle(color = color, fontSize = 21.sp, fontFamily = com.example.gemini.theme.FragmentMonoFontFamily) }
+    val wordStyle = remember(textColor) { TextStyle(color = textColor, fontSize = 14.sp, fontWeight = FontWeight.Medium, fontFamily = com.example.gemini.theme.FigtreeFontFamily) }
     val density = LocalDensity.current
 
     // measured once: every glyph, and the widest text the row can show

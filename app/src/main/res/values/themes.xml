@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Base application theme with white splash screen and centered logo -->
+    <!-- Base application theme with Opera warm cream splash screen and centered logo -->
     <style name="Theme.Gemini" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>
-        <item name="android:windowSplashScreenBackground">#FFFFFF</item>
+        <item name="android:windowSplashScreenBackground">#FEFBF6</item>
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>
-        <item name="android:statusBarColor">#FFFFFF</item>
+        <item name="android:statusBarColor">#FEFBF6</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
