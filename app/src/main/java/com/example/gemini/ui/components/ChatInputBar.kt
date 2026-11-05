@@ -706,22 +706,19 @@ fun ChatInputBar(
                 }
             }
 
-            // UNIFIED CHATTING BOX CARD (Card wraps around text field and ALL buttons together)
+            // AUTHENTIC OPERA RED CHATTING BOX CARD (Card wraps around text field and ALL buttons together)
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
                     .shadow(
-                        elevation = if (isDark) 4.dp else 2.dp,
+                        elevation = 8.dp,
                         shape = RoundedCornerShape(20.dp),
-                        ambientColor = OperaShadowInk,
-                        spotColor = OperaShadowInk
+                        ambientColor = OperaRed,
+                        spotColor = OperaRed
                     ),
                 shape = RoundedCornerShape(20.dp),
-                color = if (isDark) OperaDarkSurface else OperaSurface,
-                border = BorderStroke(
-                    1.5.dp,
-                    if (isDark) OperaDarkBorder else OperaBorder
-                )
+                color = OperaRed,
+                border = BorderStroke(2.dp, OperaBorderOnPrimary)
             ) {
                 if (isRecordingAudio) {
                     val infiniteTransition = rememberInfiniteTransition(label = "recPulse")
@@ -741,14 +738,14 @@ fun ChatInputBar(
                             .padding(horizontal = 12.dp, vertical = 10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Pulsing red recording dot
+                        // Pulsing white recording dot
                         Box(
                             modifier = Modifier
                                 .size(9.dp)
                                 .clip(CircleShape)
                                 .background(
                                     if (isRecordingPaused) Color(0xFFFFA000)
-                                    else OperaRed.copy(alpha = pulseAlpha)
+                                    else Color.White.copy(alpha = pulseAlpha)
                                 )
                         )
 
@@ -760,14 +757,14 @@ fun ChatInputBar(
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
                             fontFamily = FontFamily.Monospace,
-                            color = if (isRecordingPaused) Color(0xFFFFA000) else MaterialTheme.colorScheme.onSurface
+                            color = if (isRecordingPaused) Color(0xFFFFA000) else Color.White
                         )
 
                         if (recordMode == AudioRecordMode.TRANSCRIBE) {
                             Spacer(modifier = Modifier.width(6.dp))
                             Surface(
                                 shape = RoundedCornerShape(4.dp),
-                                color = OperaRed.copy(alpha = 0.15f)
+                                color = Color.White.copy(alpha = 0.2f)
                             ) {
                                 Row(
                                     modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
@@ -777,14 +774,14 @@ fun ChatInputBar(
                                         imageVector = Icons.Rounded.GraphicEq,
                                         contentDescription = null,
                                         modifier = Modifier.size(10.dp),
-                                        tint = OperaRed
+                                        tint = Color.White
                                     )
                                     Spacer(modifier = Modifier.width(2.dp))
                                     Text(
                                         text = "Transcribe",
                                         fontSize = 9.5.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = OperaRed
+                                        color = Color.White
                                     )
                                 }
                             }
@@ -799,7 +796,7 @@ fun ChatInputBar(
                                 .weight(1f)
                                 .height(26.dp)
                                 .padding(horizontal = 4.dp),
-                            barColor = if (isRecordingPaused) Color(0xFFFFA000) else OperaRed
+                            barColor = if (isRecordingPaused) Color(0xFFFFA000) else Color.White
                         )
 
                         Spacer(modifier = Modifier.width(4.dp))
@@ -808,15 +805,15 @@ fun ChatInputBar(
                         Surface(
                             onClick = { togglePauseAudioRecording() },
                             shape = CircleShape,
-                            color = if (isRecordingPaused) Color(0xFFFFA000).copy(alpha = 0.15f) else MaterialTheme.colorScheme.background,
-                            border = BorderStroke(1.dp, if (isRecordingPaused) Color(0xFFFFA000) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)),
+                            color = if (isRecordingPaused) Color(0xFFFFA000).copy(alpha = 0.25f) else Color.White.copy(alpha = 0.2f),
+                            border = BorderStroke(1.dp, if (isRecordingPaused) Color(0xFFFFA000) else Color.White.copy(alpha = 0.4f)),
                             modifier = Modifier.size(34.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
                                     imageVector = if (isRecordingPaused) Icons.Default.PlayArrow else Icons.Default.Pause,
                                     contentDescription = if (isRecordingPaused) "Resume" else "Pause",
-                                    tint = if (isRecordingPaused) Color(0xFFFFA000) else MaterialTheme.colorScheme.onSurface,
+                                    tint = Color.White,
                                     modifier = Modifier.size(17.dp)
                                 )
                             }
@@ -832,7 +829,7 @@ fun ChatInputBar(
                             Icon(
                                 imageVector = Icons.Outlined.Close,
                                 contentDescription = "Cancel recording",
-                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                                tint = Color.White.copy(alpha = 0.85f),
                                 modifier = Modifier.size(18.dp)
                             )
                         }
@@ -843,15 +840,15 @@ fun ChatInputBar(
                         Surface(
                             onClick = { stopAudioRecording(andSend = false) },
                             shape = CircleShape,
-                            color = MaterialTheme.colorScheme.background,
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)),
+                            color = Color.White.copy(alpha = 0.2f),
+                            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.4f)),
                             modifier = Modifier.size(34.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
                                     imageVector = Icons.Default.Stop,
                                     contentDescription = "Stop & Attach",
-                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    tint = Color.White,
                                     modifier = Modifier.size(17.dp)
                                 )
                             }
@@ -859,18 +856,18 @@ fun ChatInputBar(
 
                         Spacer(modifier = Modifier.width(6.dp))
 
-                        // Send directly (Opera Red)
+                        // Send directly (White circle with Opera Red arrow)
                         Surface(
                             onClick = { stopAudioRecording(andSend = true) },
                             shape = CircleShape,
-                            color = OperaRed,
+                            color = Color.White,
                             modifier = Modifier.size(34.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                                     contentDescription = "Send voice note",
-                                    tint = Color.White,
+                                    tint = OperaRed,
                                     modifier = Modifier.size(18.dp)
                                 )
                             }
@@ -882,21 +879,21 @@ fun ChatInputBar(
                             .fillMaxWidth()
                             .padding(horizontal = 10.dp, vertical = 8.dp)
                     ) {
-                        // 1. Text Field Area on Top
+                        // 1. Text Field Area on Top (White text, Figtree font, Opera white placeholder)
                         BasicTextField(
                             value = textFieldValue,
                             onValueChange = onTextFieldValueChange,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .focusRequester(focusRequester)
-                                .padding(horizontal = 4.dp, vertical = 6.dp),
+                                .padding(horizontal = 6.dp, vertical = 6.dp),
                             textStyle = TextStyle(
                                 fontFamily = com.example.gemini.theme.FigtreeFontFamily,
                                 fontSize = 15.sp,
                                 lineHeight = 21.sp,
-                                color = MaterialTheme.colorScheme.onSurface
+                                color = Color.White
                             ),
-                            cursorBrush = SolidColor(OperaRed),
+                            cursorBrush = SolidColor(Color.White),
                             maxLines = 6,
                             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Default),
                             decorationBox = { innerTextField ->
@@ -906,7 +903,7 @@ fun ChatInputBar(
                                             text = "Ask anything...",
                                             fontFamily = com.example.gemini.theme.FigtreeFontFamily,
                                             fontSize = 15.sp,
-                                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.42f)
+                                            color = Color.White.copy(alpha = 0.65f)
                                         )
                                     }
                                     innerTextField()
@@ -914,7 +911,7 @@ fun ChatInputBar(
                             }
                         )
 
-                        // 2. Attachments Preview (if any)
+                        // 2. Attachments Preview (if any) inside the Red Card
                         if (attachments.isNotEmpty() || isUploadingAttachment) {
                             Row(
                                 modifier = Modifier
@@ -927,8 +924,8 @@ fun ChatInputBar(
                                 if (isUploadingAttachment) {
                                     Surface(
                                         shape = RoundedCornerShape(10.dp),
-                                        color = MaterialTheme.colorScheme.background,
-                                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
+                                        color = Color.White.copy(alpha = 0.2f),
+                                        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.35f))
                                     ) {
                                         Row(
                                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp),
@@ -937,14 +934,14 @@ fun ChatInputBar(
                                             CircularProgressIndicator(
                                                 modifier = Modifier.size(13.dp),
                                                 strokeWidth = 2.dp,
-                                                color = OperaRed
+                                                color = Color.White
                                             )
                                             Spacer(modifier = Modifier.width(6.dp))
                                             Text(
                                                 text = "Uploading...",
                                                 fontSize = 11.sp,
                                                 fontFamily = com.example.gemini.theme.FigtreeFontFamily,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                color = Color.White
                                             )
                                         }
                                     }
@@ -966,8 +963,8 @@ fun ChatInputBar(
 
                                     Surface(
                                         shape = RoundedCornerShape(10.dp),
-                                        color = MaterialTheme.colorScheme.background,
-                                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
+                                        color = Color.White.copy(alpha = 0.2f),
+                                        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.35f))
                                     ) {
                                         Row(verticalAlignment = Alignment.CenterVertically) {
                                             Row(
@@ -1039,14 +1036,14 @@ fun ChatInputBar(
                                                     Icon(
                                                         imageVector = Icons.Rounded.Mic,
                                                         contentDescription = null,
-                                                        tint = OperaRed,
+                                                        tint = Color.White,
                                                         modifier = Modifier.size(18.dp).padding(start = 2.dp)
                                                     )
                                                 } else {
                                                     Icon(
                                                         imageVector = Icons.AutoMirrored.Outlined.InsertDriveFile,
                                                         contentDescription = null,
-                                                        tint = OperaRed,
+                                                        tint = Color.White,
                                                         modifier = Modifier.size(18.dp).padding(start = 2.dp)
                                                     )
                                                 }
@@ -1056,7 +1053,7 @@ fun ChatInputBar(
                                                     fontSize = 11.5.sp,
                                                     fontFamily = com.example.gemini.theme.FigtreeFontFamily,
                                                     fontWeight = FontWeight.Medium,
-                                                    color = MaterialTheme.colorScheme.onSurface,
+                                                    color = Color.White,
                                                     maxLines = 1,
                                                     overflow = TextOverflow.Ellipsis,
                                                     modifier = Modifier.widthIn(max = 120.dp)
@@ -1070,7 +1067,7 @@ fun ChatInputBar(
                                                 Icon(
                                                     imageVector = Icons.Outlined.Close,
                                                     contentDescription = "Remove",
-                                                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                                                    tint = Color.White.copy(alpha = 0.8f),
                                                     modifier = Modifier.size(13.dp)
                                                 )
                                             }
@@ -1082,34 +1079,34 @@ fun ChatInputBar(
 
                         Spacer(modifier = Modifier.height(2.dp))
 
-                        // 3. Bottom Action Row: [+] [✦ Model ▾] ... [waveform] [Send / Mic / Stop] ALL INSIDE THIS CARD
+                        // 3. Bottom Action Row: [+] [✦ Model ▾] ... [waveform] [Send / Mic / Stop] ALL INSIDE THIS RED CARD
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 2.dp, vertical = 2.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            // [+] Attachment Button
+                            // [+] Attachment Button (White icon, glass circle)
                             Surface(
                                 onClick = onAttachClick,
                                 shape = CircleShape,
-                                color = MaterialTheme.colorScheme.background,
-                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)),
+                                color = Color.White.copy(alpha = 0.18f),
+                                border = BorderStroke(1.dp, Color.White.copy(alpha = 0.35f)),
                                 modifier = Modifier.size(34.dp)
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
                                     Icon(
                                         imageVector = Icons.Outlined.Add,
                                         contentDescription = "Add attachments",
-                                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
-                                        modifier = Modifier.size(19.dp)
+                                        tint = Color.White,
+                                        modifier = Modifier.size(20.dp)
                                     )
                                 }
                             }
 
                             Spacer(modifier = Modifier.width(6.dp))
 
-                            // Model Selector Pill [✦ Model Name ▾] (INSIDE the card)
+                            // Model Selector Pill [✦ Model Name ▾] (INSIDE the Red Card with white glass styling)
                             Surface(
                                 onClick = {
                                     focusManager.clearFocus(force = true)
@@ -1117,46 +1114,45 @@ fun ChatInputBar(
                                     onOpenModelSelector()
                                 },
                                 shape = RoundedCornerShape(14.dp),
-                                color = MaterialTheme.colorScheme.background,
-                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)),
+                                color = Color.White.copy(alpha = 0.18f),
+                                border = BorderStroke(1.dp, Color.White.copy(alpha = 0.35f)),
                                 modifier = Modifier.height(34.dp)
                             ) {
                                 Row(
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                    modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
                                         imageVector = Icons.Outlined.AutoAwesome,
                                         contentDescription = null,
-                                        tint = OperaRed,
+                                        tint = Color.White,
                                         modifier = Modifier.size(13.dp)
                                     )
-                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Spacer(modifier = Modifier.width(5.dp))
                                     Text(
                                         text = selectedModel.displayName,
                                         fontFamily = com.example.gemini.theme.FigtreeFontFamily,
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.SemiBold,
-                                        color = MaterialTheme.colorScheme.onSurface,
+                                        color = Color.White,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis
                                     )
 
                                     val pct = quota?.percentage
                                     if (pct != null) {
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        val badgeColor = if (pct > 50) QuotaGreen else if (pct > 20) QuotaAmber else QuotaRed
+                                        Spacer(modifier = Modifier.width(5.dp))
                                         Box(
                                             modifier = Modifier
                                                 .clip(RoundedCornerShape(6.dp))
-                                                .background(badgeColor.copy(alpha = 0.15f))
+                                                .background(Color.White.copy(alpha = 0.25f))
                                                 .padding(horizontal = 4.dp, vertical = 1.dp)
                                         ) {
                                             Text(
                                                 text = "$pct%",
                                                 fontSize = 9.sp,
                                                 fontWeight = FontWeight.Bold,
-                                                color = badgeColor
+                                                color = Color.White
                                             )
                                         }
                                     }
@@ -1165,7 +1161,7 @@ fun ChatInputBar(
                                     Icon(
                                         imageVector = Icons.Default.KeyboardArrowDown,
                                         contentDescription = "Switch Model",
-                                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                                        tint = Color.White.copy(alpha = 0.85f),
                                         modifier = Modifier.size(14.dp)
                                     )
                                 }
@@ -1184,10 +1180,10 @@ fun ChatInputBar(
                                         }
                                     },
                                     shape = CircleShape,
-                                    color = if (isLiveDictating) OperaRed.copy(alpha = 0.15f) else MaterialTheme.colorScheme.background,
+                                    color = if (isLiveDictating) Color.White else Color.White.copy(alpha = 0.18f),
                                     border = BorderStroke(
                                         1.dp,
-                                        if (isLiveDictating) OperaRed.copy(alpha = 0.5f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
+                                        if (isLiveDictating) Color.White else Color.White.copy(alpha = 0.35f)
                                     ),
                                     modifier = Modifier.size(34.dp)
                                 ) {
@@ -1195,7 +1191,7 @@ fun ChatInputBar(
                                         Icon(
                                             imageVector = Icons.Rounded.GraphicEq,
                                             contentDescription = if (isLiveDictating) "Stop Dictation" else "Live Dictation",
-                                            tint = if (isLiveDictating) OperaRed else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
+                                            tint = if (isLiveDictating) OperaRed else Color.White,
                                             modifier = Modifier.size(18.dp)
                                         )
                                     }
@@ -1203,19 +1199,19 @@ fun ChatInputBar(
                                 Spacer(modifier = Modifier.width(6.dp))
                             }
 
-                            // Send / Mic / Stop Action Button (Opera Red when sendable)
+                            // Send / Mic / Stop Action Button
                             if (isStreaming) {
                                 Surface(
                                     onClick = onStopStreaming,
                                     shape = CircleShape,
-                                    color = MaterialTheme.colorScheme.error,
+                                    color = Color.White,
                                     modifier = Modifier.size(36.dp)
                                 ) {
                                     Box(contentAlignment = Alignment.Center) {
                                         Icon(
                                             imageVector = Icons.Default.Stop,
                                             contentDescription = "Stop",
-                                            tint = Color.White,
+                                            tint = OperaRed,
                                             modifier = Modifier.size(18.dp)
                                         )
                                     }
@@ -1239,21 +1235,19 @@ fun ChatInputBar(
                                         onTextFieldValueChange(TextFieldValue(""))
                                     },
                                     shape = CircleShape,
-                                    color = OperaRed,
+                                    color = Color.White,
                                     modifier = Modifier.size(36.dp)
                                 ) {
                                     Box(contentAlignment = Alignment.Center) {
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                                             contentDescription = "Send",
-                                            tint = Color.White,
-                                            modifier = Modifier.size(19.dp)
+                                            tint = OperaRed,
+                                            modifier = Modifier.size(20.dp)
                                         )
                                     }
                                 }
                             } else {
-                                val voiceBgColor = if (isDark) Color(0xFF2C2C2C) else Color(0xFFF0F0F0)
-                                val voiceIconColor = MaterialTheme.colorScheme.onSurface
                                 Surface(
                                     onClick = {
                                         if (voiceNotesAsText) {
@@ -1264,14 +1258,15 @@ fun ChatInputBar(
                                         }
                                     },
                                     shape = CircleShape,
-                                    color = voiceBgColor,
+                                    color = Color.White.copy(alpha = 0.2f),
+                                    border = BorderStroke(1.dp, Color.White.copy(alpha = 0.35f)),
                                     modifier = Modifier.size(36.dp)
                                 ) {
                                     Box(contentAlignment = Alignment.Center) {
                                         Icon(
                                             imageVector = Icons.Rounded.Mic,
                                             contentDescription = if (voiceNotesAsText) "Record and transcribe" else "Record voice note",
-                                            tint = voiceIconColor,
+                                            tint = Color.White,
                                             modifier = Modifier.size(20.dp)
                                         )
                                     }

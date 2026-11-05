@@ -1,12 +1,12 @@
 {
-  "version_code": 129,
-  "version_name": "1.0.29",
+  "version_code": 130,
+  "version_name": "1.0.30",
   "min_supported_version_code": 1,
   "changelog": [
-    "Redesigned Chatting Box into unified Opera Clean Card: 20dp rounded surface card enclosing text field and ALL buttons (+, Model selector pill, Dictation, Opera Red Send) in a single card",
-    "Enhanced Opera typography with Figtree 15sp font and crisp 'Ask anything...' placeholder",
-    "Vibrant Opera Red (#FF1A1A) circular send button with white arrow",
-    "In-card attachments preview and live audio waveform recorder",
+    "Redesigned Chatting Box into unified Opera Red (#FF1A1A) Card: 20dp rounded Opera Red card enclosing text field and ALL buttons (+, Model selector pill, Dictation, Send) in a single card with white controls",
+    "Enhanced Opera typography with Figtree 15sp font and pure white 'Ask anything...' placeholder",
+    "White circular send button with Opera Red (#FF1A1A) arrow and white action controls",
+    "In-card attachments preview and live audio waveform recorder in Opera Red card",
     "Fixed in-app APK auto-updater repository URLs to point to active ejjeejduddu-arch/Antigravity-App repository",
     "Silenced unofficial build toast notification on app launch",
     "Integrated full Opera Design System: Opera Red (#FF1A1A) interaction color, warm cream editorial canvas (#FEFBF6), and sleek dark mode (#0F0F0E)",
