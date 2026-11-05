@@ -312,25 +312,47 @@ private fun CascadePluginCard(
             ) {
                 if (plugin.local != null && plugin.local.commands.isNotEmpty()) {
                     val cmd = plugin.local.commands.values.firstOrNull()?.template
-                    Text(
-                        text = "⚡ Stdio: ${cmd?.command ?: "CLI"} ${(cmd?.args ?: emptyList()).take(2).joinToString(" ")}...",
-                        fontSize = 11.sp,
-                        fontFamily = FontFamily.Monospace,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.weight(1f)
-                    )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Terminal,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                            modifier = Modifier.size(12.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Stdio: ${cmd?.command ?: "CLI"} ${(cmd?.args ?: emptyList()).take(2).joinToString(" ")}...",
+                            fontSize = 11.sp,
+                            fontFamily = FontFamily.Monospace,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 } else if (plugin.remote != null && plugin.remote.template != null) {
-                    Text(
-                        text = "🌐 Remote: ${plugin.remote.template.serverUrl}",
-                        fontSize = 11.sp,
-                        fontFamily = FontFamily.Monospace,
-                        color = GeminiBlue,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.weight(1f)
-                    )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.CloudQueue,
+                            contentDescription = null,
+                            tint = GeminiBlue,
+                            modifier = Modifier.size(12.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Remote: ${plugin.remote.template.serverUrl}",
+                            fontSize = 11.sp,
+                            fontFamily = FontFamily.Monospace,
+                            color = GeminiBlue,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
 
                 if (plugin.readme.isNotBlank()) {

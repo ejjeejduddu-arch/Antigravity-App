@@ -700,9 +700,9 @@ private fun MainSettingsMenu(
 
         // Section 5: Commands & Permissions
         val (policyBadge, policyColor) = when {
-            commandAutoExecutionPolicy.contains("EAGER", ignoreCase = true) -> "⚡ Auto-Run" to QuotaGreen
-            commandAutoExecutionPolicy.contains("AUTO", ignoreCase = true) -> "🛡️ Smart Safety" to Color(0xFF00ACC1)
-            else -> "✋ Ask User" to Color(0xFFF59E0B)
+            commandAutoExecutionPolicy.contains("EAGER", ignoreCase = true) -> "Auto-Run" to QuotaGreen
+            commandAutoExecutionPolicy.contains("AUTO", ignoreCase = true) -> "Smart Safety" to Color(0xFF00ACC1)
+            else -> "Ask User" to Color(0xFFF59E0B)
         }
         val sandboxSummary = if (commandSandboxEnabled) "Sandbox ON" else "Sandbox OFF"
         SettingsCategoryCard(
@@ -2156,7 +2156,7 @@ private fun ServersSubScreen(
                         modifier = Modifier
                             .size(8.dp)
                             .clip(CircleShape)
-                            .background(if (isServerOnline || hubTestStatus?.startsWith("✓") == true) QuotaGreen else Color.Red)
+                            .background(if (isServerOnline || hubTestStatus?.contains("Connected") == true) QuotaGreen else Color.Red)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
@@ -2173,7 +2173,7 @@ private fun ServersSubScreen(
                         text = hubTestStatus ?: "",
                         fontSize = 11.5.sp,
                         fontWeight = FontWeight.Medium,
-                        color = if (hubTestStatus?.startsWith("✓") == true) QuotaGreen else Color.Red
+                        color = if (hubTestStatus?.contains("Connected") == true) QuotaGreen else Color.Red
                     )
                 }
 
@@ -2184,7 +2184,7 @@ private fun ServersSubScreen(
                         modifier = Modifier
                             .size(8.dp)
                             .clip(CircleShape)
-                            .background(if (isBridgeOnline || bridgeTestStatus?.startsWith("✓") == true) QuotaGreen else Color.Red)
+                            .background(if (isBridgeOnline || bridgeTestStatus?.contains("Connected") == true) QuotaGreen else Color.Red)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
@@ -2201,7 +2201,7 @@ private fun ServersSubScreen(
                         text = bridgeTestStatus ?: "",
                         fontSize = 11.5.sp,
                         fontWeight = FontWeight.Medium,
-                        color = if (bridgeTestStatus?.startsWith("✓") == true) QuotaGreen else Color.Red
+                        color = if (bridgeTestStatus?.contains("Connected") == true) QuotaGreen else Color.Red
                     )
                 }
 
@@ -2227,7 +2227,7 @@ private fun ServersSubScreen(
                                     }
                                 }
                                 isTestingHub = false
-                                hubTestStatus = if (ok) "✓ Hub Connected!" else "✗ Hub unreachable (${hubPort.trim()})"
+                                hubTestStatus = if (ok) "Hub Connected!" else "Hub unreachable (${hubPort.trim()})"
                             }
                         },
                         modifier = Modifier.weight(1f),
@@ -2249,7 +2249,7 @@ private fun ServersSubScreen(
                                 val base = "http://${sharedHost.trim()}:${bridgePort.trim()}"
                                 val ok = com.example.gemini.data.remote.AgyBridgeService.instance.checkServerHealth(base)
                                 isTestingBridge = false
-                                bridgeTestStatus = if (ok) "✓ Bridge Connected!" else "✗ Bridge unreachable (${bridgePort.trim()})"
+                                bridgeTestStatus = if (ok) "Bridge Connected!" else "Bridge unreachable (${bridgePort.trim()})"
                             }
                         },
                         modifier = Modifier.weight(1f),
@@ -2446,13 +2446,24 @@ private fun ServersSubScreen(
                 shape = RoundedCornerShape(8.dp),
                 color = QuotaGreen.copy(alpha = 0.12f)
             ) {
-                Text(
-                    text = saveFeedback ?: "",
-                    fontSize = 12.sp,
-                    color = QuotaGreen,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(10.dp)
-                )
+                Row(
+                    modifier = Modifier.padding(10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = null,
+                        tint = QuotaGreen,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = saveFeedback ?: "",
+                        fontSize = 12.sp,
+                        color = QuotaGreen,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
             }
         }
 
@@ -2471,7 +2482,7 @@ private fun ServersSubScreen(
                     authPrefs.saveAgyBinaryPath(agyBinPath.trim().ifBlank { authPrefs.getDefaultAgyBinaryPath() })
                     authPrefs.saveClaudeBinaryPath(claudeBinPath.trim().ifBlank { authPrefs.getDefaultClaudeBinaryPath() })
                 }
-                saveFeedback = "✓ Server, Binaries and Security settings saved!"
+                saveFeedback = "Server, Binaries and Security settings saved!"
                 showRestartDialog = true
             },
             modifier = Modifier.fillMaxWidth(),
@@ -4105,7 +4116,7 @@ private fun TerminalSubScreen(
                             text = sshTestStatus ?: "",
                             fontSize = 11.5.sp,
                             fontWeight = FontWeight.Medium,
-                            color = if (sshTestStatus?.startsWith("✓") == true) QuotaGreen else Color.Red
+                            color = if (sshTestStatus?.contains("successful") == true) QuotaGreen else Color.Red
                         )
                     }
 
@@ -4123,7 +4134,7 @@ private fun TerminalSubScreen(
                                     pass = passState
                                 )
                                 isTestingSsh = false
-                                sshTestStatus = if (res.isSuccess) "✓ SSH connection successful!" else "✗ Failed: ${res.exceptionOrNull()?.localizedMessage ?: "Connection refused"}"
+                                sshTestStatus = if (res.isSuccess) "SSH connection successful!" else "Failed: ${res.exceptionOrNull()?.localizedMessage ?: "Connection refused"}"
                             }
                         },
                         modifier = Modifier.fillMaxWidth(),
@@ -4144,13 +4155,24 @@ private fun TerminalSubScreen(
                             shape = RoundedCornerShape(8.dp),
                             color = QuotaGreen.copy(alpha = 0.12f)
                         ) {
-                            Text(
-                                text = sshSaveFeedback ?: "",
-                                fontSize = 12.sp,
-                                color = QuotaGreen,
-                                fontWeight = FontWeight.SemiBold,
-                                modifier = Modifier.padding(10.dp)
-                            )
+                            Row(
+                                modifier = Modifier.padding(10.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.CheckCircle,
+                                    contentDescription = null,
+                                    tint = QuotaGreen,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = sshSaveFeedback ?: "",
+                                    fontSize = 12.sp,
+                                    color = QuotaGreen,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
                         }
                     }
 
@@ -4160,7 +4182,7 @@ private fun TerminalSubScreen(
                         onClick = {
                             val p = portState.toIntOrNull() ?: sshPort
                             onSaveSshSettings(hostState.trim(), p, userState.trim(), passState)
-                            sshSaveFeedback = "✓ SSH settings saved successfully!"
+                            sshSaveFeedback = "SSH settings saved successfully!"
                         },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(8.dp),
@@ -4185,13 +4207,24 @@ private fun TerminalSubScreen(
                             shape = RoundedCornerShape(4.dp),
                             color = if (isLocalToolsInstalled) QuotaGreen.copy(alpha = 0.15f) else ClaudeTerracotta.copy(alpha = 0.15f)
                         ) {
-                            Text(
-                                text = if (isLocalToolsInstalled) "Installed ✓" else "Not Installed",
-                                fontSize = 10.5.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = if (isLocalToolsInstalled) QuotaGreen else ClaudeTerracotta,
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                            )
+                            ) {
+                                Icon(
+                                    imageVector = if (isLocalToolsInstalled) Icons.Default.Check else Icons.Default.Close,
+                                    contentDescription = null,
+                                    tint = if (isLocalToolsInstalled) QuotaGreen else ClaudeTerracotta,
+                                    modifier = Modifier.size(11.dp)
+                                )
+                                Spacer(modifier = Modifier.width(3.dp))
+                                Text(
+                                    text = if (isLocalToolsInstalled) "Installed" else "Not Installed",
+                                    fontSize = 10.5.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (isLocalToolsInstalled) QuotaGreen else ClaudeTerracotta
+                                )
+                            }
                         }
                     }
 
@@ -5002,7 +5035,7 @@ private fun BackupsSubScreen(
                     ) {
                         Icon(Icons.Default.Security, contentDescription = null, tint = Color(0xFFEF4444), modifier = Modifier.size(18.dp))
                         Text(
-                            text = "⚠️ Security Warning: This backup includes your authentication credentials and login tokens. Never share this archive with anyone, as anyone with this file can log in to your account.",
+                            text = "Security Warning: This backup includes your authentication credentials and login tokens. Never share this archive with anyone, as anyone with this file can log in to your account.",
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurface,
                             lineHeight = 15.sp
@@ -6280,7 +6313,7 @@ private fun ScriptExecutionDialog(
         executionJob = scope.launch {
             isRunning = true
             logs.clear()
-            logs.add("⚡ Initializing ${info.scriptName}...")
+            logs.add("Initializing ${info.scriptName}...")
             val result = LocalEnvironmentManager.executeScriptLive(
                 context = context,
                 scriptName = info.scriptName,
@@ -6425,7 +6458,7 @@ private fun ScriptExecutionDialog(
                                 executionJob?.cancel()
                                 isRunning = false
                                 exitCode = 130
-                                logs.add("🛑 Execution cancelled by user.")
+                                logs.add("Execution cancelled by user.")
                             },
                             shape = RoundedCornerShape(8.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE11D48))
@@ -6637,15 +6670,23 @@ private fun DataProtectionSubScreen(
                             color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Column(modifier = Modifier.padding(10.dp)) {
-                                Text(
-                                    text = "💡 Sideloaded App Tip (Android 13+): If your phone shows 'Restricted setting', open App Info > tap the 3 dots in the top right > select 'Allow restricted settings'.",
-                                    fontSize = 11.sp,
-                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                                    lineHeight = 15.sp
+                            Row(modifier = Modifier.padding(10.dp)) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Lightbulb,
+                                    contentDescription = null,
+                                    tint = Color(0xFFF59E0B),
+                                    modifier = Modifier.size(16.dp).padding(top = 2.dp)
                                 )
-                                Spacer(modifier = Modifier.height(6.dp))
-                                TextButton(
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Column {
+                                    Text(
+                                        text = "Sideloaded App Tip (Android 13+): If your phone shows 'Restricted setting', open App Info > tap the 3 dots in the top right > select 'Allow restricted settings'.",
+                                        fontSize = 11.sp,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                                        lineHeight = 15.sp
+                                    )
+                                    Spacer(modifier = Modifier.height(6.dp))
+                                    TextButton(
                                     onClick = {
                                         try {
                                             val appInfoIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
@@ -7033,12 +7074,21 @@ private fun CommandsSubScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "⚡ Auto (Turbo)",
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = if (isAutoReview) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Outlined.Bolt,
+                                contentDescription = null,
+                                tint = if (isAutoReview) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "Auto (Turbo)",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (isAutoReview) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface
+                            )
+                        }
                         RadioButton(
                             selected = isAutoReview,
                             onClick = { onSetGlobalArtifactReviewMode("ARTIFACT_REVIEW_MODE_TURBO") },
@@ -7077,12 +7127,21 @@ private fun CommandsSubScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "✋ Always Ask",
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = if (isAlwaysReview) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Outlined.PanTool,
+                                contentDescription = null,
+                                tint = if (isAlwaysReview) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "Always Ask",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (isAlwaysReview) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface
+                            )
+                        }
                         RadioButton(
                             selected = isAlwaysReview,
                             onClick = { onSetGlobalArtifactReviewMode("ARTIFACT_REVIEW_MODE_ALWAYS") },
@@ -7124,22 +7183,22 @@ private fun CommandsSubScreen(
         val presets = listOf(
             Triple(
                 "DEFAULT",
-                "🛡️ Default Mode",
+                "Default Mode",
                 "Terminal commands require confirmation. Files outside workspace require confirmation."
             ) to ("Recommended" to Color(0xFF00ACC1)),
             Triple(
                 "FULL_MACHINE",
-                "💻 Full Machine Mode",
+                "Full Machine Mode",
                 "Terminal commands require confirmation. Full read/write access to all files on device."
             ) to ("Open Files" to Color(0xFFF59E0B)),
             Triple(
                 "TURBO",
-                "⚡ Turbo Mode",
+                "Turbo Mode",
                 "Full auto-run: terminal commands execute immediately and all files can be accessed."
             ) to ("Full Auto" to QuotaGreen),
             Triple(
                 "CUSTOM",
-                "⚙️ Custom Granular Mode",
+                "Custom Granular Mode",
                 "Configure terminal command execution and external filesystem permissions separately."
             ) to ("Custom" to Color(0xFF8B5CF6))
         )
@@ -7216,7 +7275,20 @@ private fun CommandsSubScreen(
                             colors = RadioButtonDefaults.colors(selectedColor = ClaudeTerracotta),
                             modifier = Modifier.size(20.dp)
                         )
-                        Spacer(modifier = Modifier.width(12.dp))
+                        Spacer(modifier = Modifier.width(10.dp))
+                        val pIcon = when (presetKey) {
+                            "DEFAULT" -> Icons.Outlined.Shield
+                            "FULL_MACHINE" -> Icons.Outlined.Computer
+                            "TURBO" -> Icons.Outlined.Bolt
+                            else -> Icons.Outlined.Tune
+                        }
+                        Icon(
+                            imageVector = pIcon,
+                            contentDescription = null,
+                            tint = if (isSelected) ClaudeTerracotta else MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = title,
                             fontSize = 13.5.sp,
@@ -7271,13 +7343,19 @@ private fun CommandsSubScreen(
                             FilterChip(
                                 selected = isTermOff,
                                 onClick = { onSetGlobalCustomTerminalPolicy("CASCADE_COMMANDS_AUTO_EXECUTION_OFF") },
-                                label = { Text("✋ Ask Every Time", fontSize = 11.sp) },
+                                leadingIcon = {
+                                    Icon(Icons.Outlined.PanTool, contentDescription = null, modifier = Modifier.size(14.dp))
+                                },
+                                label = { Text("Ask Every Time", fontSize = 11.sp) },
                                 modifier = Modifier.weight(1f)
                             )
                             FilterChip(
                                 selected = isTermEager,
                                 onClick = { onSetGlobalCustomTerminalPolicy("CASCADE_COMMANDS_AUTO_EXECUTION_EAGER") },
-                                label = { Text("⚡ Auto-Run (Eager)", fontSize = 11.sp) },
+                                leadingIcon = {
+                                    Icon(Icons.Outlined.Bolt, contentDescription = null, modifier = Modifier.size(14.dp))
+                                },
+                                label = { Text("Auto-Run (Eager)", fontSize = 11.sp) },
                                 modifier = Modifier.weight(1f)
                             )
                         }
@@ -7303,19 +7381,28 @@ private fun CommandsSubScreen(
                             FilterChip(
                                 selected = isFileAsk,
                                 onClick = { onSetGlobalCustomFileAccessPolicy("AGENT_SETTING_POLICY_ASK") },
-                                label = { Text("✋ Ask", fontSize = 11.sp) },
+                                leadingIcon = {
+                                    Icon(Icons.Outlined.HelpOutline, contentDescription = null, modifier = Modifier.size(14.dp))
+                                },
+                                label = { Text("Ask", fontSize = 11.sp) },
                                 modifier = Modifier.weight(1f)
                             )
                             FilterChip(
                                 selected = isFileAllow,
                                 onClick = { onSetGlobalCustomFileAccessPolicy("AGENT_SETTING_POLICY_ALLOW") },
-                                label = { Text("✅ Allow", fontSize = 11.sp) },
+                                leadingIcon = {
+                                    Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(14.dp))
+                                },
+                                label = { Text("Allow", fontSize = 11.sp) },
                                 modifier = Modifier.weight(1f)
                             )
                             FilterChip(
                                 selected = isFileDeny,
                                 onClick = { onSetGlobalCustomFileAccessPolicy("AGENT_SETTING_POLICY_DENY") },
-                                label = { Text("🚫 Deny", fontSize = 11.sp) },
+                                leadingIcon = {
+                                    Icon(Icons.Default.Block, contentDescription = null, modifier = Modifier.size(14.dp))
+                                },
+                                label = { Text("Deny", fontSize = 11.sp) },
                                 modifier = Modifier.weight(1f)
                             )
                         }
@@ -7472,10 +7559,10 @@ private fun CommandsSubScreen(
             ) {
                 val filters = listOf(
                     "ALL" to "All (${allRules.size})",
-                    "command" to "⌨️ Command (${allRules.count { it.action.equals("command", ignoreCase = true) }})",
-                    "mcp" to "🔌 MCP (${allRules.count { it.action.equals("mcp", ignoreCase = true) }})",
-                    "read_file" to "📖 Read (${allRules.count { it.action.equals("read_file", ignoreCase = true) }})",
-                    "write_file" to "✏️ Write (${allRules.count { it.action.equals("write_file", ignoreCase = true) }})"
+                    "command" to "Command (${allRules.count { it.action.equals("command", ignoreCase = true) }})",
+                    "mcp" to "MCP (${allRules.count { it.action.equals("mcp", ignoreCase = true) }})",
+                    "read_file" to "Read (${allRules.count { it.action.equals("read_file", ignoreCase = true) }})",
+                    "write_file" to "Write (${allRules.count { it.action.equals("write_file", ignoreCase = true) }})"
                 )
 
                 filters.forEach { (key, label) ->
@@ -7539,13 +7626,24 @@ private fun CommandsSubScreen(
                                         shape = RoundedCornerShape(6.dp),
                                         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
                                     ) {
-                                        Text(
-                                            text = "${rule.actionIcon} ${rule.actionLabel}",
-                                            fontSize = 11.sp,
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = MaterialTheme.colorScheme.onSurface,
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
                                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
-                                        )
+                                        ) {
+                                            Icon(
+                                                imageVector = rule.actionIcon,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.onSurface,
+                                                modifier = Modifier.size(12.dp)
+                                            )
+                                            Spacer(modifier = Modifier.width(4.dp))
+                                            Text(
+                                                text = rule.actionLabel,
+                                                fontSize = 11.sp,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            )
+                                        }
                                     }
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
@@ -7581,12 +7679,13 @@ private fun CommandsSubScreen(
                                 horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
                                 val decisions = listOf(
-                                    Triple("ALLOW", "✅ Allow", QuotaGreen),
-                                    Triple("DENY", "🚫 Deny", MaterialTheme.colorScheme.error),
-                                    Triple("ASK", "❓ Ask", Color(0xFFF59E0B))
+                                    Triple("ALLOW", "Allow" to Icons.Default.Check, QuotaGreen),
+                                    Triple("DENY", "Deny" to Icons.Default.Block, MaterialTheme.colorScheme.error),
+                                    Triple("ASK", "Ask" to Icons.Outlined.HelpOutline, Color(0xFFF59E0B))
                                 )
 
-                                decisions.forEach { (decKey, decLabel, decColor) ->
+                                decisions.forEach { (decKey, pair, decColor) ->
+                                    val (decLabel, decIcon) = pair
                                     val isSelected = rule.decision.equals(decKey, ignoreCase = true)
                                     Surface(
                                         modifier = Modifier
@@ -7604,10 +7703,18 @@ private fun CommandsSubScreen(
                                             if (isSelected) decColor else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
                                         )
                                     ) {
-                                        Box(
+                                        Row(
                                             modifier = Modifier.padding(vertical = 6.dp),
-                                            contentAlignment = Alignment.Center
+                                            horizontalArrangement = Arrangement.Center,
+                                            verticalAlignment = Alignment.CenterVertically
                                         ) {
+                                            Icon(
+                                                imageVector = decIcon,
+                                                contentDescription = null,
+                                                tint = if (isSelected) decColor else MaterialTheme.colorScheme.onSurfaceVariant,
+                                                modifier = Modifier.size(12.dp)
+                                            )
+                                            Spacer(modifier = Modifier.width(4.dp))
                                             Text(
                                                 text = decLabel,
                                                 fontSize = 11.sp,
@@ -7728,13 +7835,24 @@ private fun CommandsSubScreen(
                                     shape = RoundedCornerShape(6.dp),
                                     color = if (project.isInheritingGlobal) QuotaGreen.copy(alpha = 0.15f) else Color(0xFFF59E0B).copy(alpha = 0.15f)
                                 ) {
-                                    Text(
-                                        text = if (project.isInheritingGlobal) "🌐 Inherits Global" else "⚠️ Custom Override",
-                                        fontSize = 10.5.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = if (project.isInheritingGlobal) QuotaGreen else Color(0xFFF59E0B),
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
                                         modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp)
-                                    )
+                                    ) {
+                                        Icon(
+                                            imageVector = if (project.isInheritingGlobal) Icons.Outlined.Public else Icons.Outlined.Warning,
+                                            contentDescription = null,
+                                            tint = if (project.isInheritingGlobal) QuotaGreen else Color(0xFFF59E0B),
+                                            modifier = Modifier.size(12.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text(
+                                            text = if (project.isInheritingGlobal) "Inherits Global" else "Custom Override",
+                                            fontSize = 10.5.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = if (project.isInheritingGlobal) QuotaGreen else Color(0xFFF59E0B)
+                                        )
+                                    }
                                 }
                             }
 
@@ -7754,7 +7872,9 @@ private fun CommandsSubScreen(
                                         shape = RoundedCornerShape(8.dp),
                                         colors = ButtonDefaults.buttonColors(containerColor = QuotaGreen)
                                     ) {
-                                        Text("🌐 Set to Inherit Global Settings", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                        Icon(Icons.Outlined.Public, contentDescription = null, modifier = Modifier.size(16.dp))
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text("Set to Inherit Global Settings", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                                     }
                                     Spacer(modifier = Modifier.height(8.dp))
                                 }
@@ -7780,7 +7900,9 @@ private fun CommandsSubScreen(
                                         shape = RoundedCornerShape(8.dp),
                                         contentPadding = PaddingValues(horizontal = 4.dp, vertical = 6.dp)
                                     ) {
-                                        Text("🛡️ Default", fontSize = 10.5.sp)
+                                        Icon(Icons.Outlined.Shield, contentDescription = null, modifier = Modifier.size(12.dp))
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text("Default", fontSize = 10.5.sp)
                                     }
                                     OutlinedButton(
                                         onClick = {
@@ -7791,7 +7913,9 @@ private fun CommandsSubScreen(
                                         shape = RoundedCornerShape(8.dp),
                                         contentPadding = PaddingValues(horizontal = 4.dp, vertical = 6.dp)
                                     ) {
-                                        Text("💻 Machine", fontSize = 10.5.sp)
+                                        Icon(Icons.Outlined.Computer, contentDescription = null, modifier = Modifier.size(12.dp))
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text("Machine", fontSize = 10.5.sp)
                                     }
                                     OutlinedButton(
                                         onClick = {
@@ -7802,7 +7926,9 @@ private fun CommandsSubScreen(
                                         shape = RoundedCornerShape(8.dp),
                                         contentPadding = PaddingValues(horizontal = 4.dp, vertical = 6.dp)
                                     ) {
-                                        Text("⚡ Turbo", fontSize = 10.5.sp)
+                                        Icon(Icons.Outlined.Bolt, contentDescription = null, modifier = Modifier.size(12.dp))
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text("Turbo", fontSize = 10.5.sp)
                                     }
                                 }
                             }
@@ -7920,13 +8046,13 @@ private data class PermissionGrantRule(
             else -> action
         }
 
-    val actionIcon: String
+    val actionIcon: ImageVector
         get() = when (action.lowercase()) {
-            "command" -> "⌨️"
-            "mcp" -> "🔌"
-            "read_file" -> "📖"
-            "write_file" -> "✏️"
-            else -> "⚙️"
+            "command" -> Icons.Default.Terminal
+            "mcp" -> Icons.Default.Extension
+            "read_file" -> Icons.Outlined.MenuBook
+            "write_file" -> Icons.Outlined.Edit
+            else -> Icons.Default.Settings
         }
 
     companion object {
@@ -7964,10 +8090,10 @@ private fun AddPermissionRuleDialog(
     }
 
     val actionOptions = listOf(
-        Triple("command", "⌨️ Command", "Terminal bash command pattern"),
-        Triple("mcp", "🔌 MCP Tool", "MCP server or tool pattern"),
-        Triple("read_file", "📖 Read File", "Filesystem directory or file read path"),
-        Triple("write_file", "✏️ Write File", "Filesystem directory or file write path")
+        Triple("command", "Command" to Icons.Default.Terminal, "Terminal bash command pattern"),
+        Triple("mcp", "MCP Tool" to Icons.Default.Extension, "MCP server or tool pattern"),
+        Triple("read_file", "Read File" to Icons.Outlined.MenuBook, "Filesystem directory or file read path"),
+        Triple("write_file", "Write File" to Icons.Outlined.Edit, "Filesystem directory or file write path")
     )
 
     AlertDialog(
@@ -7985,7 +8111,8 @@ private fun AddPermissionRuleDialog(
                 // Step 1: Select Action
                 Text("1. Operation Type", fontWeight = FontWeight.SemiBold, fontSize = 12.5.sp)
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    actionOptions.forEach { (key, label, desc) ->
+                    actionOptions.forEach { (key, pair, desc) ->
+                        val (label, icon) = pair
                         val isSel = selectedAction == key
                         Surface(
                             modifier = Modifier
@@ -8015,6 +8142,13 @@ private fun AddPermissionRuleDialog(
                                     modifier = Modifier.size(18.dp)
                                 )
                                 Spacer(modifier = Modifier.width(10.dp))
+                                Icon(
+                                    imageVector = icon,
+                                    contentDescription = null,
+                                    tint = if (isSel) ClaudeTerracotta else MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
                                 Column {
                                     Text(label, fontWeight = FontWeight.Bold, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface)
                                     Text(desc, fontSize = 10.5.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -8069,11 +8203,12 @@ private fun AddPermissionRuleDialog(
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     val decs = listOf(
-                        Triple("ALLOW", "✅ Allow", QuotaGreen),
-                        Triple("DENY", "🚫 Deny", MaterialTheme.colorScheme.error),
-                        Triple("ASK", "❓ Ask", Color(0xFFF59E0B))
+                        Triple("ALLOW", "Allow" to Icons.Default.Check, QuotaGreen),
+                        Triple("DENY", "Deny" to Icons.Default.Block, MaterialTheme.colorScheme.error),
+                        Triple("ASK", "Ask" to Icons.Outlined.HelpOutline, Color(0xFFF59E0B))
                     )
-                    decs.forEach { (key, label, col) ->
+                    decs.forEach { (key, pair, col) ->
+                        val (label, icon) = pair
                         val isSel = selectedDecision == key
                         Surface(
                             modifier = Modifier
@@ -8087,7 +8222,18 @@ private fun AddPermissionRuleDialog(
                                 if (isSel) col else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
                             )
                         ) {
-                            Box(modifier = Modifier.padding(vertical = 8.dp), contentAlignment = Alignment.Center) {
+                            Row(
+                                modifier = Modifier.padding(vertical = 8.dp),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = icon,
+                                    contentDescription = null,
+                                    tint = if (isSel) col else MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(13.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
                                 Text(label, fontSize = 11.5.sp, fontWeight = if (isSel) FontWeight.Bold else FontWeight.Medium, color = if (isSel) col else MaterialTheme.colorScheme.onSurface)
                             }
                         }

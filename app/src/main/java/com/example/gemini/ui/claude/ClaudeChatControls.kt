@@ -26,6 +26,7 @@ import androidx.compose.material.icons.outlined.Lightbulb
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Speed
 import androidx.compose.material.icons.outlined.Timer
+import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -597,7 +598,15 @@ fun ClaudeProviderSwitchDialog(backend: ClaudeChatBackend) {
     val muted = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
     AlertDialog(
         onDismissRequest = { backend.cancelProviderSwitch() },
-        title = { Text("⚠️ Switch provider in this chat?", fontWeight = FontWeight.Bold) },
+        icon = {
+            Icon(
+                imageVector = Icons.Outlined.Warning,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.error,
+                modifier = Modifier.size(24.dp)
+            )
+        },
+        title = { Text("Switch provider in this chat?", fontWeight = FontWeight.Bold) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("This chat runs on ${pending.fromLabel}. Moving it to ${pending.toLabel} is not a good idea:", fontSize = 13.5.sp)

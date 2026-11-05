@@ -13,6 +13,7 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ContentCopy
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Psychology
 import androidx.compose.material.icons.outlined.RestartAlt
 import androidx.compose.material3.*
@@ -207,10 +208,17 @@ Available slash commands: /goal, /schedule, /browser, /plan, /grill-me, /teamwor
                     Tab(
                         selected = selectedTab == 0,
                         onClick = { selectedTab = 0 },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Outlined.Psychology,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        },
                         text = {
                             Text(
-                                text = "🧠 Active Prompt",
-                                fontSize = 12.5.sp,
+                                text = "Active Prompt",
+                                fontSize = 12.sp,
                                 fontWeight = if (selectedTab == 0) FontWeight.Bold else FontWeight.Normal
                             )
                         }
@@ -218,10 +226,17 @@ Available slash commands: /goal, /schedule, /browser, /plan, /grill-me, /teamwor
                     Tab(
                         selected = selectedTab == 1,
                         onClick = { selectedTab = 1 },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Outlined.Edit,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        },
                         text = {
                             Text(
-                                text = "✍️ Custom Override",
-                                fontSize = 12.5.sp,
+                                text = "Custom Override",
+                                fontSize = 12.sp,
                                 fontWeight = if (selectedTab == 1) FontWeight.Bold else FontWeight.Normal
                             )
                         }

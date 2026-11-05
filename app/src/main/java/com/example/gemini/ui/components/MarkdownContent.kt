@@ -2652,7 +2652,7 @@ private fun buildRichAnnotatedString(
                         background = Color(0xFF7C3AED).copy(alpha = 0.12f)
                     )
                 )
-                builder.append(" 💬 $displayLabel ")
+                builder.append(" $displayLabel ")
                 builder.pop()
                 builder.pop()
             } else if (isFile) {
@@ -2728,7 +2728,7 @@ private fun buildRichAnnotatedString(
                         background = Color(0xFF7C3AED).copy(alpha = 0.12f)
                     )
                 )
-                builder.append(" 💬 $displayLabel ")
+                builder.append(" $displayLabel ")
                 builder.pop()
                 builder.pop()
             } else if (isFile) {
@@ -2788,7 +2788,7 @@ private fun buildRichAnnotatedString(
                     background = Color(0xFF7C3AED).copy(alpha = 0.12f)
                 )
             )
-            builder.append(" 💬 $displayLabel ")
+            builder.append(" $displayLabel ")
             builder.pop()
             builder.pop()
         } else if (fullMatch.startsWith("file:///", ignoreCase = true)) {

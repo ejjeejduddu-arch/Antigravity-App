@@ -529,13 +529,24 @@ fun AgentToolCallCard(
                         )
 
                         if (toolCall.durationMs != null && toolCall.durationMs > 0) {
-                            Text(
-                                text = "⏱️ ${formatDuration(toolCall.durationMs)}",
-                                fontSize = 11.sp,
-                                fontFamily = FontFamily.Monospace,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.padding(horizontal = 6.dp)
-                            )
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Schedule,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                    modifier = Modifier.size(11.dp)
+                                )
+                                Spacer(modifier = Modifier.width(3.dp))
+                                Text(
+                                    text = formatDuration(toolCall.durationMs),
+                                    fontSize = 11.sp,
+                                    fontFamily = com.example.gemini.theme.FragmentMonoFontFamily,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                )
+                            }
                         }
 
                         IconButton(

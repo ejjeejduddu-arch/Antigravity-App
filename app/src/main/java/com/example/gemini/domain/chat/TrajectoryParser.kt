@@ -678,9 +678,9 @@ object TrajectoryParser {
                     val name = item.optString("name", "")
                     val isDir = item.optBoolean("isDir", false)
                     val size = item.optString("sizeBytes", "")
-                    val prefix = if (isDir) "📁" else "📄"
+                    val slash = if (isDir) "/" else ""
                     val suffix = if (size.isNotBlank()) " ($size bytes)" else ""
-                    items.add("$prefix $name$suffix")
+                    items.add("$name$slash$suffix")
                 }
                 items.joinToString("\n")
             } else {

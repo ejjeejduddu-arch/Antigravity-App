@@ -23,7 +23,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.Folder
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Mic
 import androidx.compose.material.icons.outlined.NotificationsActive
 import androidx.compose.material.icons.outlined.Shield
@@ -295,12 +297,21 @@ fun AppPermissionsDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 if (!hasNotification) {
-                    Text(
-                        text = "👉 Please enable Notifications above to proceed",
-                        fontSize = 12.5.sp,
-                        color = Color(0xFFEF4444),
-                        fontWeight = FontWeight.Medium
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Outlined.Info,
+                            contentDescription = null,
+                            tint = Color(0xFFEF4444),
+                            modifier = Modifier.size(15.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Please enable Notifications above to proceed",
+                            fontSize = 12.5.sp,
+                            color = Color(0xFFEF4444),
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
                     Spacer(modifier = Modifier.height(10.dp))
                 }
 
@@ -318,11 +329,24 @@ fun AppPermissionsDialog(
                         disabledContentColor = if (isDark) Color(0xFF6B7280) else Color(0xFF9CA3AF)
                     )
                 ) {
-                    Text(
-                        text = if (hasNotification) "Continue to AntiGem 🚀" else "Notifications Required to Proceed",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 15.sp
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = if (hasNotification) "Continue to Antigravity" else "Notifications Required to Proceed",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp
+                        )
+                        if (hasNotification) {
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -414,15 +438,28 @@ private fun PermissionCard(
                             badgeColor.copy(alpha = if (isDark) 0.18f else 0.12f)
                         }
                     ) {
-                        Text(
-                            text = if (isGranted) "Enabled ✓" else badgeText,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 1,
-                            softWrap = false,
-                            color = if (isGranted) Color(0xFF22C55E) else badgeColor,
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                        )
+                        ) {
+                            if (isGranted) {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = null,
+                                    tint = Color(0xFF22C55E),
+                                    modifier = Modifier.size(11.dp)
+                                )
+                                Spacer(modifier = Modifier.width(3.dp))
+                            }
+                            Text(
+                                text = if (isGranted) "Enabled" else badgeText,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                softWrap = false,
+                                color = if (isGranted) Color(0xFF22C55E) else badgeColor
+                            )
+                        }
                     }
                 }
 

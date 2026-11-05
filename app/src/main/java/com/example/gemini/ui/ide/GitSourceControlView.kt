@@ -295,7 +295,14 @@ fun GitSourceControlView(
                             onDismissRequest = { showStashMenu = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("📦 Stash Changes...") },
+                                text = { Text("Stash Changes...") },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Default.Archive,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                },
                                 onClick = {
                                     showStashMenu = false
                                     stashMessage = ""
@@ -304,7 +311,14 @@ fun GitSourceControlView(
                             )
                             if (status?.hasStash == true) {
                                 DropdownMenuItem(
-                                    text = { Text("📤 Pop Stash (Apply & Drop)") },
+                                    text = { Text("Pop Stash (Apply & Drop)") },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Default.Unarchive,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                    },
                                     onClick = {
                                         showStashMenu = false
                                         val projPath = activeProject?.path ?: return@DropdownMenuItem

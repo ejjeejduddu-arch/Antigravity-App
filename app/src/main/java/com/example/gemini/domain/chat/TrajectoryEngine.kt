@@ -962,12 +962,12 @@ class TrajectoryEngine {
                 command = if (dirName.isNotBlank()) dirName else if (meta?.tool_summary?.isNotBlank() == true) meta.tool_summary else "list_dir"
                 output = if (listDir != null && listDir.results.isNotEmpty()) {
                     listDir.results.joinToString("\n") { entry ->
-                        val icon = if (entry.is_dir) "📁" else "📄"
+                        val slash = if (entry.is_dir) "/" else ""
                         val size = if (entry.size_bytes > 0L) " (${entry.size_bytes} B)" else ""
-                        "$icon ${entry.name}$size"
+                        "${entry.name}$slash$size"
                     }
                 } else if (listDir != null && listDir.children.isNotEmpty()) {
-                    listDir.children.joinToString("\n") { "📄 $it" }
+                    listDir.children.joinToString("\n") { it }
                 } else ""
             }
             "grep_search" -> {

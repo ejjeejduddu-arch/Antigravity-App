@@ -229,10 +229,10 @@ class GoogleOAuthManager(private val client: OkHttpClient = OkHttpClient()) {
                                 
                                 <div class="button-group">
                                     <button id="copyUrlBtn" class="btn btn-primary" onclick="copyFullUrl()">
-                                        📋 Copy Callback URL
+                                        Copy Callback URL
                                     </button>
                                     <button id="copyCodeBtn" class="btn btn-secondary" onclick="copyAuthCode()">
-                                        🔑 Copy Auth Code Only
+                                        Copy Auth Code Only
                                     </button>
                                 </div>
                                 <div id="statusToast" class="toast"></div>
@@ -252,10 +252,10 @@ class GoogleOAuthManager(private val client: OkHttpClient = OkHttpClient()) {
 
                                 function copyFullUrl() {
                                     navigator.clipboard.writeText(fullUrl).then(() => {
-                                        document.getElementById('copyUrlBtn').innerText = '✓ URL Copied!';
-                                        showToast('✓ Callback URL copied to clipboard!');
+                                        document.getElementById('copyUrlBtn').innerText = 'URL Copied!';
+                                        showToast('Callback URL copied to clipboard!');
                                         setTimeout(() => {
-                                            document.getElementById('copyUrlBtn').innerText = '📋 Copy Callback URL';
+                                            document.getElementById('copyUrlBtn').innerText = 'Copy Callback URL';
                                         }, 3000);
                                     }).catch(() => {
                                         selectFallback(fullUrl);
@@ -268,10 +268,10 @@ class GoogleOAuthManager(private val client: OkHttpClient = OkHttpClient()) {
                                         return;
                                     }
                                     navigator.clipboard.writeText(authCode).then(() => {
-                                        document.getElementById('copyCodeBtn').innerText = '✓ Code Copied!';
-                                        showToast('✓ Auth Code copied to clipboard!');
+                                        document.getElementById('copyCodeBtn').innerText = 'Code Copied!';
+                                        showToast('Auth Code copied to clipboard!');
                                         setTimeout(() => {
-                                            document.getElementById('copyCodeBtn').innerText = '🔑 Copy Auth Code Only';
+                                            document.getElementById('copyCodeBtn').innerText = 'Copy Auth Code Only';
                                         }, 3000);
                                     }).catch(() => {
                                         selectFallback(authCode);
@@ -285,7 +285,7 @@ class GoogleOAuthManager(private val client: OkHttpClient = OkHttpClient()) {
                                     temp.select();
                                     document.execCommand("copy");
                                     document.body.removeChild(temp);
-                                    showToast('✓ Copied to clipboard!');
+                                    showToast('Copied to clipboard!');
                                 }
 
                                 try {

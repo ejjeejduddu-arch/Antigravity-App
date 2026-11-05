@@ -1,9 +1,11 @@
 {
-  "version_code": 124,
-  "version_name": "1.0.24",
+  "version_code": 125,
+  "version_name": "1.0.25",
   "min_supported_version_code": 1,
   "changelog": [
-    "Integrated Opera Design System: Opera Red (#FF1A1A) interaction color, editorial warm cream canvas (#FEFBF6), and sleek dark mode (#0F0F0E)",
+    "Removed all informal emojis across the application UI and replaced them with premium, crisp Material vector icons",
+    "Enhanced telemetry, permission rules, settings presets, and tool call cards with clean typography and vector badges",
+    "Integrated Opera Design System: Opera Red (#FF1A1A) interaction color, warm cream editorial canvas (#FEFBF6), and sleek dark mode (#0F0F0E)",
     "Added authentic Opera fonts: Petrona (display serif), Figtree (reading sans), and Fragment Mono (UI chrome)",
     "New animated Opera App Opening Splash Screen with glowing aura, spring scale entrance, and smooth wipe reveal",
     "Restyled chat composer with Opera 20dp pill, Opera Red action button, and custom typography",

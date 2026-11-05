@@ -349,11 +349,20 @@ fun LiveSummarizingCard(
 
             if (!pendingQueuedMessage.isNullOrBlank()) {
                 Spacer(modifier = Modifier.height(6.dp))
-                Text(
-                    text = "⏳ Queued: \"${pendingQueuedMessage.take(80)}\"${if (pendingQueuedMessage.length > 80) "..." else ""} (will send immediately after summary)",
-                    fontSize = 11.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Outlined.Schedule,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(13.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "Queued: \"${pendingQueuedMessage.take(80)}\"${if (pendingQueuedMessage.length > 80) "..." else ""} (will send immediately after summary)",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
     }

@@ -189,11 +189,11 @@ object ConversationExportHelper {
         for (msg in messages) {
             when (msg.role) {
                 MessageRole.USER -> {
-                    sb.append("### 👤 User\n\n")
+                    sb.append("### User\n\n")
                     if (msg.attachments.isNotEmpty()) {
                         sb.append("**Attachments:**\n")
                         for (att in msg.attachments) {
-                            sb.append("- 📎 ").append(att.name).append("\n")
+                            sb.append("- ").append(att.name).append("\n")
                         }
                         sb.append("\n")
                     }
@@ -201,11 +201,11 @@ object ConversationExportHelper {
                     sb.append("---\n\n")
                 }
                 MessageRole.ASSISTANT -> {
-                    sb.append("### 🤖 Assistant\n\n")
+                    sb.append("### Assistant\n\n")
 
                     // Thinking
                     if (!msg.thoughtText.isNullOrBlank()) {
-                        sb.append("<details><summary>💭 <i>Thinking Process</i></summary>\n\n")
+                        sb.append("<details><summary><i>Thinking Process</i></summary>\n\n")
                         sb.append(msg.thoughtText.trim()).append("\n\n")
                         sb.append("</details>\n\n")
                     }
@@ -214,7 +214,7 @@ object ConversationExportHelper {
                     if (msg.toolCalls.isNotEmpty()) {
                         for (tc in msg.toolCalls) {
                             val statusBadge = if (tc.exitCode != null) " (exit ${tc.exitCode})" else ""
-                            sb.append("<details><summary>🔧 <b>${tc.name}</b>: <code>${escapeMdInline(tc.command)}</code>$statusBadge</summary>\n\n")
+                            sb.append("<details><summary><b>${tc.name}</b>: <code>${escapeMdInline(tc.command)}</code>$statusBadge</summary>\n\n")
                             if (tc.output.isNotBlank()) {
                                 sb.append("```\n").append(tc.output.trim()).append("\n```\n\n")
                             }
@@ -229,7 +229,7 @@ object ConversationExportHelper {
                     sb.append("---\n\n")
                 }
                 MessageRole.SYSTEM -> {
-                    sb.append("> ⚙️ **System:** ").append(msg.content.trim()).append("\n\n---\n\n")
+                    sb.append("> **System:** ").append(msg.content.trim()).append("\n\n---\n\n")
                 }
                 else -> {
                     if (msg.content.isNotBlank()) {
@@ -507,7 +507,7 @@ object ConversationExportHelper {
     <header>
       <h1>$htmlTitle</h1>
       <div class="meta-bar">
-        <span>📅 Exported: <b>$dateStr</b></span>
+        <span>Exported: <b>$dateStr</b></span>
         <span class="meta-tag">ID: $conversationId</span>
       </div>
     </header>
@@ -519,11 +519,11 @@ object ConversationExportHelper {
             when (msg.role) {
                 MessageRole.USER -> {
                     sb.append("      <div class=\"turn turn-user\">\n")
-                    sb.append("        <div class=\"role-badge user-badge\">👤 User</div>\n")
+                    sb.append("        <div class=\"role-badge user-badge\">User</div>\n")
                     sb.append("        <div class=\"bubble-user\">\n")
                     if (msg.attachments.isNotEmpty()) {
                         for (att in msg.attachments) {
-                            sb.append("          <div class=\"attachment-pill\">📎 ").append(escapeHtml(att.name)).append("</div>\n")
+                            sb.append("          <div class=\"attachment-pill\">").append(escapeHtml(att.name)).append("</div>\n")
                         }
                     }
                     sb.append("          ").append(escapeHtml(msg.content.trim())).append("\n")
@@ -532,13 +532,13 @@ object ConversationExportHelper {
                 }
                 MessageRole.ASSISTANT -> {
                     sb.append("      <div class=\"turn turn-assistant\">\n")
-                    sb.append("        <div class=\"role-badge assistant-badge\">🤖 Assistant</div>\n")
+                    sb.append("        <div class=\"role-badge assistant-badge\">Assistant</div>\n")
                     sb.append("        <div class=\"bubble-assistant\">\n")
 
                     // Thinking
                     if (!msg.thoughtText.isNullOrBlank()) {
                         sb.append("          <details class=\"thinking-box\">\n")
-                        sb.append("            <summary>💭 Model Thinking</summary>\n")
+                        sb.append("            <summary>Model Thinking</summary>\n")
                         sb.append("            <div class=\"thinking-content\">").append(escapeHtml(msg.thoughtText.trim())).append("</div>\n")
                         sb.append("          </details>\n")
                     }
@@ -560,7 +560,7 @@ object ConversationExportHelper {
                 }
                 MessageRole.SYSTEM -> {
                     sb.append("      <div class=\"turn\">\n")
-                    sb.append("        <div class=\"role-badge\">⚙️ System</div>\n")
+                    sb.append("        <div class=\"role-badge\">System</div>\n")
                     sb.append("        <div class=\"bubble-assistant\" style=\"border-left: 3px solid #F59E0B;\">\n")
                     sb.append("          <div class=\"rendered-content\">").append(escapeHtml(msg.content.trim())).append("</div>\n")
                     sb.append("        </div>\n")
@@ -593,7 +593,6 @@ object ConversationExportHelper {
         sb.append("          <details class=\"tool-card\">\n")
         sb.append("            <summary>\n")
         sb.append("              <div class=\"tool-header-left\">\n")
-        sb.append("                <span>🔧</span>\n")
         sb.append("                <span class=\"tool-name\">").append(escapeHtml(tc.name)).append("</span>\n")
         sb.append("                <span class=\"tool-cmd\">").append(escapeHtml(tc.command)).append("</span>\n")
         sb.append("              </div>\n")

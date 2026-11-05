@@ -93,7 +93,7 @@ fun FloatingDiagnosticsOverlay(
                         )
 
                         Text(
-                            text = "🧵 ${snapshot.activeJvmThreads}",
+                            text = "THR:${snapshot.activeJvmThreads}",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFFE0E0E0),
@@ -101,7 +101,7 @@ fun FloatingDiagnosticsOverlay(
                         )
 
                         Text(
-                            text = "⚡${snapshot.agyRunning + snapshot.ideRunning}r",
+                            text = "RUN:${snapshot.agyRunning + snapshot.ideRunning}",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = if (snapshot.agyRunning > 0) Color(0xFF81D4FA) else Color(0xFF9E9E9E),
@@ -110,7 +110,7 @@ fun FloatingDiagnosticsOverlay(
 
                         if (snapshot.agyQueued > 0 || snapshot.ideQueued > 0) {
                             Text(
-                                text = "⏳${snapshot.agyQueued + snapshot.ideQueued}q",
+                                text = "QUE:${snapshot.agyQueued + snapshot.ideQueued}",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFFFF5252),
@@ -119,7 +119,7 @@ fun FloatingDiagnosticsOverlay(
                         }
 
                         Text(
-                            text = "🔌${snapshot.agyConns + snapshot.ideConns}c",
+                            text = "NET:${snapshot.agyConns + snapshot.ideConns}",
                             fontSize = 11.sp,
                             color = Color(0xFFB0BEC5),
                             fontFamily = FontFamily.Monospace

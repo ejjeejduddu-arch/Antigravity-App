@@ -90,7 +90,7 @@ fun GitCloneDialog(
             isRunning = true
             exitCode = null
             logs.clear()
-            logs.add("⚡ Initializing git clone...")
+            logs.add("Initializing git clone...")
             var clonedPath: String? = null
             val args = listOf(trimmedUrl) + listOfNotNull(projectName.trim().takeIf { it.isNotEmpty() })
             val result = LocalEnvironmentManager.executeScriptLive(
@@ -302,7 +302,7 @@ fun GitCloneDialog(
                                     executionJob?.cancel()
                                     isRunning = false
                                     exitCode = 130
-                                    logs.add("🛑 Clone cancelled by user.")
+                                    logs.add("Clone cancelled by user.")
                                 },
                                 shape = RoundedCornerShape(8.dp),
                                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE11D48))

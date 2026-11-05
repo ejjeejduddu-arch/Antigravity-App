@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.Psychology
+import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -170,13 +171,22 @@ fun ThinkingAccordion(
 
                     if (!isStreaming && durationMs != null && durationMs > 0) {
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "⏱️ Thought for ${formatDuration(durationMs)}",
-                            fontSize = 11.5.sp,
-                            fontFamily = FontFamily.Monospace,
-                            fontWeight = FontWeight.Medium,
-                            color = ClaudeTerracotta.copy(alpha = 0.9f)
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Outlined.Timer,
+                                contentDescription = null,
+                                tint = ClaudeTerracotta.copy(alpha = 0.9f),
+                                modifier = Modifier.size(13.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "Thought for ${formatDuration(durationMs)}",
+                                fontSize = 11.5.sp,
+                                fontFamily = com.example.gemini.theme.FragmentMonoFontFamily,
+                                fontWeight = FontWeight.Medium,
+                                color = ClaudeTerracotta.copy(alpha = 0.9f)
+                            )
+                        }
                     }
                 }
             }

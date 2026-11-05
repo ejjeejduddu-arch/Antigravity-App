@@ -27,6 +27,13 @@ import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Layers
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.SelectAll
+import androidx.compose.material.icons.outlined.Bolt
+import androidx.compose.material.icons.outlined.Timer
+import androidx.compose.material.icons.outlined.Psychology
+import androidx.compose.material.icons.automirrored.outlined.Login
+import androidx.compose.material.icons.automirrored.outlined.Logout
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -562,10 +569,17 @@ fun UserMessageBubble(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = if (isTextExpanded) "Show less ▲" else "Show more (${lineCount} lines) ▼",
+                                    text = if (isTextExpanded) "Show less" else "Show more (${lineCount} lines)",
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = ClaudeTerracotta
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Icon(
+                                    imageVector = if (isTextExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                                    contentDescription = null,
+                                    tint = ClaudeTerracotta,
+                                    modifier = Modifier.size(14.dp)
                                 )
                             }
                         }
@@ -895,36 +909,72 @@ fun TokenUsageTelemetryPill(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            Text(
-                text = "📥 ${formatCompactTokens(usage.promptTokens)}",
-                fontSize = 10.5.sp,
-                fontFamily = FontFamily.Monospace,
-                fontWeight = FontWeight.SemiBold,
-                color = inputColor
-            )
-            Text(
-                text = "📤 ${formatCompactTokens(usage.outputTokens)}",
-                fontSize = 10.5.sp,
-                fontFamily = FontFamily.Monospace,
-                fontWeight = FontWeight.SemiBold,
-                color = outputColor
-            )
-            if (usage.cachedTokens > 0) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Outlined.Login,
+                    contentDescription = null,
+                    tint = inputColor,
+                    modifier = Modifier.size(11.dp)
+                )
+                Spacer(modifier = Modifier.width(3.dp))
                 Text(
-                    text = "⚡ ${formatCompactTokens(usage.cachedTokens)} ($cachePct%)",
+                    text = formatCompactTokens(usage.promptTokens),
                     fontSize = 10.5.sp,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Bold,
-                    color = cacheColor
+                    fontFamily = com.example.gemini.theme.FragmentMonoFontFamily,
+                    fontWeight = FontWeight.SemiBold,
+                    color = inputColor
                 )
             }
-            if (usage.durationMs > 0) {
-                Text(
-                    text = "⏱️ ${formatDuration(usage.durationMs)}",
-                    fontSize = 10.5.sp,
-                    fontFamily = FontFamily.Monospace,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Outlined.Logout,
+                    contentDescription = null,
+                    tint = outputColor,
+                    modifier = Modifier.size(11.dp)
                 )
+                Spacer(modifier = Modifier.width(3.dp))
+                Text(
+                    text = formatCompactTokens(usage.outputTokens),
+                    fontSize = 10.5.sp,
+                    fontFamily = com.example.gemini.theme.FragmentMonoFontFamily,
+                    fontWeight = FontWeight.SemiBold,
+                    color = outputColor
+                )
+            }
+            if (usage.cachedTokens > 0) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Outlined.Bolt,
+                        contentDescription = null,
+                        tint = cacheColor,
+                        modifier = Modifier.size(11.dp)
+                    )
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Text(
+                        text = "${formatCompactTokens(usage.cachedTokens)} ($cachePct%)",
+                        fontSize = 10.5.sp,
+                        fontFamily = com.example.gemini.theme.FragmentMonoFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        color = cacheColor
+                    )
+                }
+            }
+            if (usage.durationMs > 0) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Outlined.Timer,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(11.dp)
+                    )
+                    Spacer(modifier = Modifier.width(3.dp))
+                    Text(
+                        text = formatDuration(usage.durationMs),
+                        fontSize = 10.5.sp,
+                        fontFamily = com.example.gemini.theme.FragmentMonoFontFamily,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
             usage.model?.let { model ->
                 Text(
@@ -968,18 +1018,32 @@ fun ContextSummaryCheckpointBanner(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                Icon(
+                    imageVector = Icons.Outlined.Psychology,
+                    contentDescription = null,
+                    tint = ClaudeTerracotta,
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "🧠 Context Compacted (History Summarized)",
+                    text = "Context Compacted (History Summarized)",
                     fontSize = 12.5.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = ClaudeTerracotta,
                     modifier = Modifier.weight(1f)
                 )
                 Text(
-                    text = if (expanded) "Hide ▲" else "Show Details ▼",
+                    text = if (expanded) "Hide" else "Show Details",
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Icon(
+                    imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    modifier = Modifier.size(14.dp)
                 )
             }
 
