@@ -43,10 +43,11 @@ import com.example.gemini.theme.*
 fun OperaTopBar(
     onMenuClick: () -> Unit,
     onNewChatClick: () -> Unit,
-    selectedModelName: String,
-    onModelSelectorClick: () -> Unit,
     onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
+    selectedModelName: String = "",
+    onModelSelectorClick: (() -> Unit)? = null,
+    showModelSelector: Boolean = false,
     isDarkTheme: Boolean = false,
     incognito: Boolean = false,
     onMinimizeWindow: (() -> Unit)? = null,
@@ -121,105 +122,107 @@ fun OperaTopBar(
             }
         }
 
-        Spacer(modifier = Modifier.width(8.dp))
+        // Center / Model Selector Pill: [ 🤖 Model ] (Turned off by default)
+        if (showModelSelector && onModelSelectorClick != null) {
+            Box(
+                modifier = Modifier
+                    .shadow(elevation = 3.dp, shape = shape, ambientColor = OperaShadowInk, spotColor = OperaShadowInk)
+                    .clip(shape)
+                    .background(pillBg)
+                    .border(BorderStroke(1.5.dp, pillBorder), shape)
+                    .height(pillHeight)
+                    .clickable(onClick = onModelSelectorClick)
+                    .padding(horizontal = 14.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.opera_icon_bot),
+                        contentDescription = "AI Model",
+                        colorFilter = ColorFilter.tint(iconTint),
+                        modifier = Modifier.size(18.dp)
+                    )
 
-        // Center / Model Selector Pill: [ 🤖 Model ]
-        Box(
-            modifier = Modifier
-                .shadow(elevation = 3.dp, shape = shape, ambientColor = OperaShadowInk, spotColor = OperaShadowInk)
-                .clip(shape)
-                .background(pillBg)
-                .border(BorderStroke(1.5.dp, pillBorder), shape)
-                .height(pillHeight)
-                .clickable(onClick = onModelSelectorClick)
-                .padding(horizontal = 14.dp),
-            contentAlignment = Alignment.Center
+                    val displayModel = selectedModelName.ifBlank { "Model" }
+                    Text(
+                        text = displayModel,
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = textTint,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+        }
+
+        // Right Controls Cluster (Minimize, Fullscreen, Settings)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            if (onMinimizeWindow != null) {
+                Box(
+                    modifier = Modifier
+                        .shadow(elevation = 3.dp, shape = shape, ambientColor = OperaShadowInk, spotColor = OperaShadowInk)
+                        .clip(shape)
+                        .background(pillBg)
+                        .border(BorderStroke(1.5.dp, pillBorder), shape)
+                        .size(pillHeight)
+                        .clickable(onClick = onMinimizeWindow),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Remove,
+                        contentDescription = "Minimize to Bubble",
+                        tint = iconTint.copy(alpha = 0.75f),
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
+
+            if (onOpenFullScreen != null) {
+                Box(
+                    modifier = Modifier
+                        .shadow(elevation = 3.dp, shape = shape, ambientColor = OperaShadowInk, spotColor = OperaShadowInk)
+                        .clip(shape)
+                        .background(pillBg)
+                        .border(BorderStroke(1.5.dp, pillBorder), shape)
+                        .size(pillHeight)
+                        .clickable(onClick = onOpenFullScreen),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.OpenInNew,
+                        contentDescription = "Open Full Screen",
+                        tint = iconTint.copy(alpha = 0.85f),
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
+
+            // Rightmost Squircle: [ ▦ ] Settings Button
+            Box(
+                modifier = Modifier
+                    .shadow(elevation = 3.dp, shape = shape, ambientColor = OperaShadowInk, spotColor = OperaShadowInk)
+                    .clip(shape)
+                    .background(pillBg)
+                    .border(BorderStroke(1.5.dp, pillBorder), shape)
+                    .size(pillHeight)
+                    .clickable(onClick = onSettingsClick),
+                contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.opera_icon_bot),
-                    contentDescription = "AI Model",
+                    painter = painterResource(id = R.drawable.opera_icon_tiles),
+                    contentDescription = "Settings & Tools",
                     colorFilter = ColorFilter.tint(iconTint),
                     modifier = Modifier.size(18.dp)
                 )
-
-                val displayModel = selectedModelName.ifBlank { "Model" }
-                Text(
-                    text = displayModel,
-                    fontFamily = FontFamily.Monospace,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = textTint,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
             }
-        }
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        if (onMinimizeWindow != null) {
-            Box(
-                modifier = Modifier
-                    .shadow(elevation = 3.dp, shape = shape, ambientColor = OperaShadowInk, spotColor = OperaShadowInk)
-                    .clip(shape)
-                    .background(pillBg)
-                    .border(BorderStroke(1.5.dp, pillBorder), shape)
-                    .size(pillHeight)
-                    .clickable(onClick = onMinimizeWindow),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Remove,
-                    contentDescription = "Minimize to Bubble",
-                    tint = iconTint.copy(alpha = 0.75f),
-                    modifier = Modifier.size(18.dp)
-                )
-            }
-            Spacer(modifier = Modifier.width(6.dp))
-        }
-
-        if (onOpenFullScreen != null) {
-            Box(
-                modifier = Modifier
-                    .shadow(elevation = 3.dp, shape = shape, ambientColor = OperaShadowInk, spotColor = OperaShadowInk)
-                    .clip(shape)
-                    .background(pillBg)
-                    .border(BorderStroke(1.5.dp, pillBorder), shape)
-                    .size(pillHeight)
-                    .clickable(onClick = onOpenFullScreen),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.OpenInNew,
-                    contentDescription = "Open Full Screen",
-                    tint = iconTint.copy(alpha = 0.85f),
-                    modifier = Modifier.size(18.dp)
-                )
-            }
-            Spacer(modifier = Modifier.width(6.dp))
-        }
-
-        // Rightmost Squircle: [ ▦ ] Settings Button
-        Box(
-            modifier = Modifier
-                .shadow(elevation = 3.dp, shape = shape, ambientColor = OperaShadowInk, spotColor = OperaShadowInk)
-                .clip(shape)
-                .background(pillBg)
-                .border(BorderStroke(1.5.dp, pillBorder), shape)
-                .size(pillHeight)
-                .clickable(onClick = onSettingsClick),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.opera_icon_tiles),
-                contentDescription = "Settings & Tools",
-                colorFilter = ColorFilter.tint(iconTint),
-                modifier = Modifier.size(18.dp)
-            )
         }
     }
 }

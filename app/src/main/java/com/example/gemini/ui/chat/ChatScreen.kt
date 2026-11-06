@@ -1125,13 +1125,10 @@ fun ChatScreen(
                     onNewChatClick = {
                         viewModel.startNewChat()
                     },
-                    selectedModelName = currentModel.displayName.ifBlank { "Model" },
-                    onModelSelectorClick = {
-                        showModelSelector = true
-                    },
                     onSettingsClick = {
                         showSettingsDialog = true
                     },
+                    showModelSelector = false,
                     isDarkTheme = isDarkTheme,
                     onMinimizeWindow = if (isInFloatingWindow) onMinimizeWindow else null,
                     onOpenFullScreen = if (isInFloatingWindow) onOpenFullScreen else null

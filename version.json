@@ -1,12 +1,11 @@
 {
-  "version_code": 138,
-  "version_name": "1.0.38",
+  "version_code": 139,
+  "version_name": "1.0.39",
   "min_supported_version_code": 1,
   "changelog": [
-    "Integrated official Google Antigravity transparent brand logo pack into app opening splash and launcher icon",
-    "Crystal-clear white Antigravity arch on authentic Opera Red (#FF1A1A) splash screen with zero background artifacts",
-    "Added official Antigravity brand drawables (full-color, white, one-color, wordmark, and lockups)",
-    "Optimized adaptive launcher icon safe zone inset (16dp) for seamless rendering across all Android launchers"
+    "Turned off AI model selector option in top floating navbar for a cleaner edge-to-edge workspace",
+    "Streamlined navbar layout with Left menu/new chat pill and Right settings controls",
+    "Model selection remains accessible via Settings and message options"
   ],
   "is_critical": false
 }
