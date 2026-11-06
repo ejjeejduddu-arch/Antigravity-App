@@ -1,11 +1,11 @@
 {
-  "version_code": 142,
-  "version_name": "1.0.42",
+  "version_code": 143,
+  "version_name": "1.0.43",
   "min_supported_version_code": 1,
   "changelog": [
-    "Full Opera Red theme across Side Drawer, Bottom Sheets, Settings, and Assistant Message Cards",
-    "Crisp white typography, icons, and translucent white action pills for high contrast",
-    "Redesigned Model Selector, Attachment Picker, and Chat History Drawer in signature Opera Red"
+    "Replaced cluttered wireframe spheres and checkerboard texture with authentic Manus AI 3D particle wave dot grid",
+    "Silky-smooth 60/120fps fluid wave mathematics with interactive gyroscope sensor parallax",
+    "Clean, pristine canvas background with dynamic dot sizing, ambient crest illumination, and edge vignette"
   ],
   "is_critical": false
 }
