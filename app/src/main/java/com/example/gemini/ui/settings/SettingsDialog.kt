@@ -333,18 +333,7 @@ fun SettingsDialog(
                     }
                 },
                 actions = {
-                    if (currentSection == SettingsSection.MAIN) {
-                        Spacer(modifier = Modifier.width(48.dp))
-                    } else {
-                        TextButton(onClick = onDismiss) {
-                            Text(
-                                text = "Done",
-                                color = OperaRed,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp
-                            )
-                        }
-                    }
+                    Spacer(modifier = Modifier.width(48.dp))
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background

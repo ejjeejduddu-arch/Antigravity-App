@@ -481,16 +481,17 @@ fun AgentToolCallCard(
                 }
             }
 
-        // Expanded Terminal / Tool Output
+        // Expanded Terminal / Tool Output (Opera Red Card)
         AnimatedVisibility(
             visible = isExpanded,
             enter = fadeIn() + expandVertically(),
             exit = fadeOut() + shrinkVertically()
         ) {
             Surface(
-                shape = RoundedCornerShape(8.dp),
-                color = Color(0xFF0D0E15),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)),
+                shape = RoundedCornerShape(14.dp),
+                color = com.example.gemini.theme.OperaRed,
+                border = BorderStroke(1.5.dp, com.example.gemini.theme.OperaBorderOnPrimary),
+                shadowElevation = 2.dp,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 12.dp, top = 4.dp, bottom = 4.dp)
@@ -498,7 +499,7 @@ fun AgentToolCallCard(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(10.dp)
+                        .padding(12.dp)
                 ) {
                     // Command Bar with copy
                     Row(
@@ -524,7 +525,7 @@ fun AgentToolCallCard(
                             fontFamily = if (isBash || isMcp) FontFamily.Monospace else FontFamily.Default,
                             fontWeight = FontWeight.Bold,
                             fontSize = 11.5.sp,
-                            color = ClaudeTerracotta,
+                            color = Color.White,
                             modifier = Modifier.weight(1f)
                         )
 
@@ -536,7 +537,7 @@ fun AgentToolCallCard(
                                 Icon(
                                     imageVector = Icons.Outlined.Schedule,
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                    tint = Color.White.copy(alpha = 0.85f),
                                     modifier = Modifier.size(11.dp)
                                 )
                                 Spacer(modifier = Modifier.width(3.dp))
@@ -544,7 +545,7 @@ fun AgentToolCallCard(
                                     text = formatDuration(toolCall.durationMs),
                                     fontSize = 11.sp,
                                     fontFamily = com.example.gemini.theme.FragmentMonoFontFamily,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                    color = Color.White.copy(alpha = 0.85f)
                                 )
                             }
                         }
@@ -561,50 +562,59 @@ fun AgentToolCallCard(
                             Icon(
                                 imageVector = Icons.Outlined.ContentCopy,
                                 contentDescription = "Copy Output",
-                                tint = Color.Gray,
+                                tint = Color.White,
                                 modifier = Modifier.size(13.dp)
                             )
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(6.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                    if (toolCall.output.isEmpty()) {
-                        val emptyMessage = when {
-                            isRunning && isViewFile -> "Reading file contents..."
-                            isRunning && isEditFile -> "Applying file modifications..."
-                            isRunning && isListDir -> "Scanning directory..."
-                            isRunning && (isFind || isGrep) -> "Searching..."
-                            isRunning && isGenImg -> "Generating image..."
-                            isRunning && isMcp -> "Executing MCP tool..."
-                            isRunning && isBash -> "Running in Termux..."
-                            isRunning -> "Processing..."
-                            isPendingApproval -> "(Waiting for approval)"
-                            isViewFile -> "(File inspected by model)"
-                            isEditFile -> "(File modification completed)"
-                            isListDir -> "(Directory contents scanned)"
-                            isFind || isGrep -> "(Search completed - no output)"
-                            isGenImg -> "(Image generation completed)"
-                            isMcp -> "(MCP tool executed - no output)"
-                            else -> "(No output returned)"
+                    Surface(
+                        shape = RoundedCornerShape(10.dp),
+                        color = Color.Black.copy(alpha = 0.22f),
+                        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.18f)),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Box(modifier = Modifier.padding(10.dp)) {
+                            if (toolCall.output.isEmpty()) {
+                                val emptyMessage = when {
+                                    isRunning && isViewFile -> "Reading file contents..."
+                                    isRunning && isEditFile -> "Applying file modifications..."
+                                    isRunning && isListDir -> "Scanning directory..."
+                                    isRunning && (isFind || isGrep) -> "Searching..."
+                                    isRunning && isGenImg -> "Generating image..."
+                                    isRunning && isMcp -> "Executing MCP tool..."
+                                    isRunning && isBash -> "Running in Termux..."
+                                    isRunning -> "Processing..."
+                                    isPendingApproval -> "(Waiting for approval)"
+                                    isViewFile -> "(File inspected by model)"
+                                    isEditFile -> "(File modification completed)"
+                                    isListDir -> "(Directory contents scanned)"
+                                    isFind || isGrep -> "(Search completed - no output)"
+                                    isGenImg -> "(Image generation completed)"
+                                    isMcp -> "(MCP tool executed - no output)"
+                                    else -> "(No output returned)"
+                                }
+                                Text(
+                                    text = emptyMessage,
+                                    fontFamily = FontFamily.Monospace,
+                                    fontSize = 11.sp,
+                                    color = Color.White.copy(alpha = 0.85f)
+                                )
+                            } else {
+                                Text(
+                                    text = toolCall.output,
+                                    fontFamily = FontFamily.Monospace,
+                                    fontSize = 11.sp,
+                                    lineHeight = 16.sp,
+                                    color = Color.White,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .horizontalScroll(rememberScrollState())
+                                )
+                            }
                         }
-                        Text(
-                            text = emptyMessage,
-                            fontFamily = FontFamily.Monospace,
-                            fontSize = 11.sp,
-                            color = Color.Gray
-                        )
-                    } else {
-                        Text(
-                            text = toolCall.output,
-                            fontFamily = FontFamily.Monospace,
-                            fontSize = 11.sp,
-                            lineHeight = 16.sp,
-                            color = Color(0xFFE2E8F0),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .horizontalScroll(rememberScrollState())
-                        )
                     }
                 }
             }

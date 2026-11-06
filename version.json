@@ -1,12 +1,11 @@
 {
-  "version_code": 134,
-  "version_name": "1.0.34",
+  "version_code": 135,
+  "version_name": "1.0.35",
   "min_supported_version_code": 1,
   "changelog": [
-    "Styled User Sent Message cards in authentic solid Opera Red (#FF1A1A) with sticker drop shadow, 16dp rounded corners, and crisp white typography",
-    "Completely removed and hid all open source GitHub URLs, repository links, and release links from the app UI, Settings, and About screen",
-    "Removed GitHub button and external repository links from the App Update dialog",
-    "Enhanced contrast and styling for document and attachment cards inside sent message bubbles"
+    "Converted terminal tool execution black boxes into authentic Opera Red cards with 14dp rounded corners, red border, and high-contrast white output text",
+    "Removed 'Done' button from Settings top navbar across all sub-screens for a cleaner and symmetrical header",
+    "Implemented living 3D continuous playing background animation with 3D shaded orbiting spheres, flowing sinusoidal waves, and interactive accelerometer gyroscope parallax"
   ],
   "is_critical": false
 }

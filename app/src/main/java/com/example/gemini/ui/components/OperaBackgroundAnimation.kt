@@ -23,6 +23,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -55,42 +56,71 @@ fun OperaAmbientBackground(
     showEdgeGradients: Boolean = true,
     content: @Composable BoxScope.() -> Unit = {}
 ) {
+    val context = LocalContext.current
     val canvasBg = if (isDarkTheme) OperaDarkBackground else OperaCream
-    val textureAlpha = if (isDarkTheme) 0.035f else 0.025f
+    val textureAlpha = if (isDarkTheme) 0.04f else 0.03f
 
-    // Ambient Breathing Animation Clock (continuous smooth periodic motion)
-    val infiniteTransition = rememberInfiniteTransition(label = "opera_ambient_clock")
-    val ambientPhase by infiniteTransition.animateFloat(
+    // 1. Accelerometer Sensor Parallax for interactive 3D depth
+    var sensorTiltX by remember { mutableFloatStateOf(0f) }
+    var sensorTiltY by remember { mutableFloatStateOf(0f) }
+
+    DisposableEffect(context) {
+        val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as? SensorManager
+        val sensor = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        val listener = object : SensorEventListener {
+            private var lastX = 0f
+            private var lastY = 0f
+            private val decay = 0.90f
+            override fun onSensorChanged(event: SensorEvent?) {
+                if (event == null) return
+                val rawX = -event.values[0]
+                val rawY = event.values[1]
+                lastX = lastX * decay + rawX * (1f - decay)
+                lastY = lastY * decay + rawY * (1f - decay)
+                sensorTiltX = (lastX * 1.5f).coerceIn(-6f, 6f)
+                sensorTiltY = (lastY * 1.2f).coerceIn(-8f, 8f)
+            }
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+        }
+        sensor?.let { sensorManager.registerListener(listener, it, SensorManager.SENSOR_DELAY_GAME) }
+        onDispose { sensorManager?.unregisterListener(listener) }
+    }
+
+    // 2. 3D Continuous Infinite Animation Clock (Smooth 60fps Play Engine)
+    val infiniteTransition = rememberInfiniteTransition(label = "opera_3d_play_engine")
+
+    // Primary 3D orbit phase (9 seconds loop)
+    val phaseOrbit by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = (2f * PI).toFloat(),
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 8000, easing = LinearEasing),
+            animation = tween(durationMillis = 9000, easing = LinearEasing),
             repeatMode = RepeatMode.Restart
         ),
-        label = "opera_ambient_phase"
+        label = "phase_orbit"
     )
 
-    val glowAlphaPulse by infiniteTransition.animateFloat(
-        initialValue = 0.85f,
-        targetValue = 1.25f,
+    // Flowing 3D wave phase (6.5 seconds loop)
+    val phaseWave by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = (2f * PI).toFloat(),
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 5000, easing = FastOutSlowInEasing),
+            animation = tween(durationMillis = 6500, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "phase_wave"
+    )
+
+    // 3D Breathing & Specular Pulse (3.8 seconds ping-pong)
+    val pulse3D by infiniteTransition.animateFloat(
+        initialValue = 0.92f,
+        targetValue = 1.15f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 3800, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         ),
-        label = "opera_glow_pulse"
+        label = "pulse_3d"
     )
-
-    val auraPrimary = if (isDarkTheme) {
-        OperaRed.copy(alpha = 0.08f * glowAlphaPulse)
-    } else {
-        OperaRed.copy(alpha = 0.045f * glowAlphaPulse)
-    }
-
-    val auraSecondary = if (isDarkTheme) {
-        Color(0xFFFF8A65).copy(alpha = 0.05f * glowAlphaPulse)
-    } else {
-        Color(0xFFFFAB91).copy(alpha = 0.035f * glowAlphaPulse)
-    }
 
     Box(
         modifier = modifier
@@ -100,34 +130,167 @@ fun OperaAmbientBackground(
                 val w = size.width
                 val h = size.height
 
-                // Orb 1: Upper-left / center warm Opera Red glow drifting harmonically
-                val orb1X = w * 0.38f + cos(ambientPhase) * (w * 0.08f)
-                val orb1Y = h * 0.28f + sin(ambientPhase * 1.1f) * (h * 0.05f)
-                val orb1Radius = (w * 0.75f).coerceAtLeast(320.dp.toPx())
+                // ==========================================
+                // LAYER 1: 3D FLOWING HARMONIC WAVES (PLAY ENGINE)
+                // ==========================================
+                val wavePath1 = Path()
+                val wavePath2 = Path()
+                val segments = 24
+                val stepX = w / segments
 
+                // Wave 1: Flowing across upper-mid canvas
+                val baseWave1Y = h * 0.28f + (sensorTiltY * 6f)
+                wavePath1.moveTo(0f, baseWave1Y)
+                for (i in 0..segments) {
+                    val px = i * stepX
+                    val py = baseWave1Y +
+                            sin((px / w) * 2f * PI.toFloat() + phaseWave) * (h * 0.055f) * pulse3D +
+                            cos((px / w) * 1.5f * PI.toFloat() + phaseOrbit * 0.7f) * (h * 0.025f)
+                    if (i == 0) wavePath1.moveTo(px, py) else wavePath1.lineTo(px, py)
+                }
+                wavePath1.lineTo(w, h * 0.42f)
+                wavePath1.lineTo(0f, h * 0.42f)
+                wavePath1.close()
+
+                val wave1Alpha = if (isDarkTheme) 0.16f else 0.10f
+                drawPath(
+                    path = wavePath1,
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            OperaRed.copy(alpha = wave1Alpha),
+                            Color(0xFFFF5722).copy(alpha = wave1Alpha * 0.6f),
+                            Color.Transparent
+                        ),
+                        start = Offset(0f, h * 0.2f),
+                        end = Offset(w, h * 0.42f)
+                    )
+                )
+
+                // Wave 2: Sweeping diagonally across lower canvas
+                val baseWave2Y = h * 0.68f + (sensorTiltY * 10f)
+                wavePath2.moveTo(0f, baseWave2Y)
+                for (i in 0..segments) {
+                    val px = i * stepX
+                    val py = baseWave2Y +
+                            sin((px / w) * 2.5f * PI.toFloat() - phaseWave * 1.2f) * (h * 0.06f) +
+                            sin(phaseOrbit + (px / w)) * (h * 0.03f)
+                    if (i == 0) wavePath2.moveTo(px, py) else wavePath2.lineTo(px, py)
+                }
+                wavePath2.lineTo(w, h * 0.85f)
+                wavePath2.lineTo(0f, h * 0.85f)
+                wavePath2.close()
+
+                val wave2Alpha = if (isDarkTheme) 0.14f else 0.08f
+                drawPath(
+                    path = wavePath2,
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            Color.Transparent,
+                            Color(0xFFFF8A65).copy(alpha = wave2Alpha * 0.7f),
+                            OperaRed.copy(alpha = wave2Alpha)
+                        ),
+                        start = Offset(0f, h * 0.65f),
+                        end = Offset(w, h * 0.85f)
+                    )
+                )
+
+                // ==========================================
+                // LAYER 2: 3D SHADED ORBITING SPHERES
+                // ==========================================
+                // Sphere 1: Foreground 3D Opera Red Orb (with 3D highlight & depth)
+                val z1 = sin(phaseOrbit)
+                val scale1 = (1f + z1 * 0.18f) * pulse3D
+                val orb1X = w * 0.36f + cos(phaseOrbit) * (w * 0.14f) + (sensorTiltX * 18f)
+                val orb1Y = h * 0.32f + sin(phaseOrbit * 1.15f) * (h * 0.09f) + (sensorTiltY * 18f)
+                val orb1Radius = ((w * 0.38f) * scale1).coerceAtLeast(140.dp.toPx())
+                val orb1LightX = orb1X - orb1Radius * 0.32f
+                val orb1LightY = orb1Y - orb1Radius * 0.32f
+
+                // Outer ambient glow
                 drawCircle(
                     brush = Brush.radialGradient(
-                        colors = listOf(auraPrimary, Color.Transparent),
+                        colors = listOf(
+                            OperaRed.copy(alpha = if (isDarkTheme) 0.22f else 0.15f),
+                            Color.Transparent
+                        ),
                         center = Offset(orb1X, orb1Y),
+                        radius = orb1Radius * 1.6f
+                    ),
+                    center = Offset(orb1X, orb1Y),
+                    radius = orb1Radius * 1.6f
+                )
+
+                // 3D Sphere Body with Specular Highlight
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        colorStops = arrayOf(
+                            0.00f to Color.White.copy(alpha = if (isDarkTheme) 0.50f else 0.40f),
+                            0.25f to Color(0xFFFF6B6B).copy(alpha = if (isDarkTheme) 0.35f else 0.28f),
+                            0.65f to OperaRed.copy(alpha = if (isDarkTheme) 0.25f else 0.18f),
+                            0.90f to Color(0xFF8B0000).copy(alpha = if (isDarkTheme) 0.18f else 0.10f),
+                            1.00f to Color.Transparent
+                        ),
+                        center = Offset(orb1LightX, orb1LightY),
                         radius = orb1Radius
                     ),
                     center = Offset(orb1X, orb1Y),
                     radius = orb1Radius
                 )
 
-                // Orb 2: Lower-right subtle warm peach/amber aura drifting in counter-phase
-                val orb2X = w * 0.65f + sin(ambientPhase * 0.9f) * (w * 0.09f)
-                val orb2Y = h * 0.68f + cos(ambientPhase * 1.2f) * (h * 0.06f)
-                val orb2Radius = (w * 0.65f).coerceAtLeast(280.dp.toPx())
+                // Sphere 2: Mid-ground Coral/Peach 3D Orb (counter-orbiting)
+                val z2 = cos(phaseOrbit * 0.9f)
+                val scale2 = (1f + z2 * 0.15f)
+                val orb2X = w * 0.70f + sin(phaseOrbit * 0.85f + 1.2f) * (w * 0.16f) + (sensorTiltX * 12f)
+                val orb2Y = h * 0.65f + cos(phaseOrbit * 1.1f) * (h * 0.11f) + (sensorTiltY * 12f)
+                val orb2Radius = ((w * 0.32f) * scale2).coerceAtLeast(110.dp.toPx())
+                val orb2LightX = orb2X - orb2Radius * 0.30f
+                val orb2LightY = orb2Y - orb2Radius * 0.30f
 
+                // Outer ambient glow
                 drawCircle(
                     brush = Brush.radialGradient(
-                        colors = listOf(auraSecondary, Color.Transparent),
+                        colors = listOf(
+                            Color(0xFFFF8A65).copy(alpha = if (isDarkTheme) 0.18f else 0.12f),
+                            Color.Transparent
+                        ),
                         center = Offset(orb2X, orb2Y),
+                        radius = orb2Radius * 1.5f
+                    ),
+                    center = Offset(orb2X, orb2Y),
+                    radius = orb2Radius * 1.5f
+                )
+
+                // 3D Sphere Body
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        colorStops = arrayOf(
+                            0.00f to Color(0xFFFFF3E0).copy(alpha = if (isDarkTheme) 0.45f else 0.35f),
+                            0.30f to Color(0xFFFFAB91).copy(alpha = if (isDarkTheme) 0.30f else 0.22f),
+                            0.70f to Color(0xFFFF5722).copy(alpha = if (isDarkTheme) 0.20f else 0.14f),
+                            1.00f to Color.Transparent
+                        ),
+                        center = Offset(orb2LightX, orb2LightY),
                         radius = orb2Radius
                     ),
                     center = Offset(orb2X, orb2Y),
                     radius = orb2Radius
+                )
+
+                // Sphere 3: Background Deep Crimson Orb
+                val orb3X = w * 0.18f + sin(phaseOrbit * 1.4f) * (w * 0.08f) + (sensorTiltX * 8f)
+                val orb3Y = h * 0.82f + cos(phaseOrbit * 0.9f) * (h * 0.06f) + (sensorTiltY * 8f)
+                val orb3Radius = (w * 0.24f).coerceAtLeast(80.dp.toPx())
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        colors = listOf(
+                            OperaRed.copy(alpha = if (isDarkTheme) 0.14f else 0.08f),
+                            Color.Transparent
+                        ),
+                        center = Offset(orb3X, orb3Y),
+                        radius = orb3Radius
+                    ),
+                    center = Offset(orb3X, orb3Y),
+                    radius = orb3Radius
                 )
             }
     ) {
@@ -141,20 +304,17 @@ fun OperaAmbientBackground(
                 .alpha(textureAlpha)
         )
 
-        // Authentic multi-stop vertical gradient wash from Opera index.tsx
+        // Subtle soft ambient wash (preserves 3D visibility while maintaining contrast)
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
                         colorStops = arrayOf(
-                            0.00f to canvasBg.copy(alpha = 0.90f),
-                            0.15f to canvasBg.copy(alpha = 0.70f),
-                            0.40f to canvasBg.copy(alpha = 0.40f),
-                            0.65f to Color.Transparent,
-                            0.82f to canvasBg.copy(alpha = 0.35f),
-                            0.93f to canvasBg.copy(alpha = 0.75f),
-                            1.00f to canvasBg
+                            0.00f to canvasBg.copy(alpha = 0.45f),
+                            0.30f to Color.Transparent,
+                            0.70f to Color.Transparent,
+                            1.00f to canvasBg.copy(alpha = 0.50f)
                         )
                     )
                 )
@@ -163,7 +323,7 @@ fun OperaAmbientBackground(
         // Main screen content layer
         content()
 
-        // Top & Bottom Edge Gradient Fades (matching Opera ChatView gradientTop & gradientBottom)
+        // Top & Bottom Edge Gradient Fades
         if (showEdgeGradients) {
             Box(
                 modifier = Modifier
@@ -172,7 +332,7 @@ fun OperaAmbientBackground(
                     .align(Alignment.TopCenter)
                     .background(
                         Brush.verticalGradient(
-                            colors = listOf(canvasBg, canvasBg.copy(alpha = 0.7f), Color.Transparent)
+                            colors = listOf(canvasBg, canvasBg.copy(alpha = 0.6f), Color.Transparent)
                         )
                     )
             )
@@ -183,7 +343,7 @@ fun OperaAmbientBackground(
                     .align(Alignment.BottomCenter)
                     .background(
                         Brush.verticalGradient(
-                            colors = listOf(Color.Transparent, canvasBg.copy(alpha = 0.75f), canvasBg)
+                            colors = listOf(Color.Transparent, canvasBg.copy(alpha = 0.6f), canvasBg)
                         )
                     )
             )

@@ -2383,16 +2383,17 @@ fun ChatScreen(
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Surface(
-                        shape = RoundedCornerShape(8.dp),
-                        color = Color(0xFF0D0E15),
+                        shape = RoundedCornerShape(10.dp),
+                        color = com.example.gemini.theme.OperaRed,
+                        border = BorderStroke(1.5.dp, com.example.gemini.theme.OperaBorderOnPrimary),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
                             text = "$ ${toolCall.command}",
                             fontFamily = FontFamily.Monospace,
                             fontSize = 12.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = ClaudeTerracotta,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
                             modifier = Modifier.padding(10.dp)
                         )
                     }
