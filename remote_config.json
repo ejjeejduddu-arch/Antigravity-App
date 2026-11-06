@@ -1,6 +1,6 @@
 {
   "maintenance": {
-    "enabled": false,
+    "enabled": true,
     "title": "System Under Maintenance",
     "message": "We are currently optimizing server infrastructure. Antigravity will be back online shortly!"
   },
@@ -28,5 +28,5 @@
     "guest_chat_enabled": true,
     "audio_enabled": true
   },
-  "updated_at": "2026-11-06T13:30:00Z"
+  "updated_at": "2026-11-06T13:48:12.831Z"
 }
