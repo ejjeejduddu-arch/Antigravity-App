@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -122,42 +123,31 @@ fun OperaTopBar(
             }
         }
 
-        // Center / Model Selector Pill: [ 🤖 Model ] (Turned off by default)
-        if (showModelSelector && onModelSelectorClick != null) {
-            Box(
-                modifier = Modifier
-                    .shadow(elevation = 3.dp, shape = shape, ambientColor = OperaShadowInk, spotColor = OperaShadowInk)
-                    .clip(shape)
-                    .background(pillBg)
-                    .border(BorderStroke(1.5.dp, pillBorder), shape)
-                    .height(pillHeight)
-                    .clickable(onClick = onModelSelectorClick)
-                    .padding(horizontal = 14.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.opera_icon_bot),
-                        contentDescription = "AI Model",
-                        colorFilter = ColorFilter.tint(iconTint),
-                        modifier = Modifier.size(18.dp)
-                    )
+        // Center Banner Logo: [ Antigravity Brand Lockup ]
+        val bannerLogoRes = if (isDarkTheme) {
+            R.drawable.antigravity_lockup_white
+        } else {
+            R.drawable.antigravity_lockup_full_color
+        }
 
-                    val displayModel = selectedModelName.ifBlank { "Model" }
-                    Text(
-                        text = displayModel,
-                        fontFamily = FontFamily.Monospace,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = textTint,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
+        Box(
+            modifier = Modifier
+                .shadow(elevation = 3.dp, shape = shape, ambientColor = OperaShadowInk, spotColor = OperaShadowInk)
+                .clip(shape)
+                .background(pillBg)
+                .border(BorderStroke(1.5.dp, pillBorder), shape)
+                .height(pillHeight)
+                .padding(horizontal = 14.dp, vertical = 6.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(id = bannerLogoRes),
+                contentDescription = "Antigravity",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .height(20.dp)
+                    .wrapContentWidth()
+            )
         }
 
         // Right Controls Cluster (Minimize, Fullscreen, Settings)

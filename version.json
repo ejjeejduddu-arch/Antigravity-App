@@ -1,11 +1,10 @@
 {
-  "version_code": 139,
-  "version_name": "1.0.39",
+  "version_code": 140,
+  "version_name": "1.0.40",
   "min_supported_version_code": 1,
   "changelog": [
-    "Turned off AI model selector option in top floating navbar for a cleaner edge-to-edge workspace",
-    "Streamlined navbar layout with Left menu/new chat pill and Right settings controls",
-    "Model selection remains accessible via Settings and message options"
+    "Added official Antigravity banner logo in center of top navbar with adaptive dark/light theme lockups",
+    "Optimized 3D background animation with zero-recomposition sensor polling and batched GPU path draws for silky smooth 60/120fps performance"
   ],
   "is_critical": false
 }

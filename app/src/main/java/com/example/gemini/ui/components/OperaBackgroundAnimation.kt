@@ -73,9 +73,8 @@ fun OperaAmbientBackground(
     val canvasBg = if (isDarkTheme) OperaDarkBackground else OperaCream
     val textureAlpha = if (isDarkTheme) 0.04f else 0.03f
 
-    // 1. Accelerometer Sensor Parallax for interactive 3D depth
-    var sensorTiltX by remember { mutableFloatStateOf(0f) }
-    var sensorTiltY by remember { mutableFloatStateOf(0f) }
+    // 1. Accelerometer Sensor Parallax for interactive 3D depth (zero-recomposition smoothed array)
+    val sensorTilt = remember { FloatArray(2) { 0f } }
 
     DisposableEffect(context) {
         val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as? SensorManager
@@ -83,33 +82,29 @@ fun OperaAmbientBackground(
         val listener = object : SensorEventListener {
             private var lastX = 0f
             private var lastY = 0f
-            private val decay = 0.90f
+            private val decay = 0.94f // ultra-smooth exponential dampening
             override fun onSensorChanged(event: SensorEvent?) {
                 if (event == null) return
                 val rawX = -event.values[0]
                 val rawY = event.values[1]
                 lastX = lastX * decay + rawX * (1f - decay)
                 lastY = lastY * decay + rawY * (1f - decay)
-                sensorTiltX = (lastX * 1.5f).coerceIn(-6f, 6f)
-                sensorTiltY = (lastY * 1.2f).coerceIn(-8f, 8f)
+                sensorTilt[0] = (lastX * 1.2f).coerceIn(-5f, 5f)
+                sensorTilt[1] = (lastY * 1.0f).coerceIn(-6f, 6f)
             }
             override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
         }
-        sensor?.let { sensorManager.registerListener(listener, it, SensorManager.SENSOR_DELAY_GAME) }
+        sensor?.let { sensorManager.registerListener(listener, it, SensorManager.SENSOR_DELAY_UI) }
         onDispose { sensorManager?.unregisterListener(listener) }
     }
 
-    // 2. Normalized Tilt Factors for 3D Parallax Perspective
-    val tiltX = (sensorTiltX / 5f).coerceIn(-1.2f, 1.2f)
-    val tiltY = (sensorTiltY / 5f).coerceIn(-1.2f, 1.2f)
-
-    // 3. 3D Particle Starfield (65 particles matching web index app.js)
+    // 2. 3D Particle Starfield (48 particles for lightweight, silky-smooth 60fps)
     val particles = remember {
         val random = kotlin.random.Random(1337)
-        List(65) {
+        List(48) {
             OperaParticle3D(
-                x = (random.nextFloat() - 0.5f) * 2000f,
-                y = (random.nextFloat() - 0.5f) * 2000f,
+                x = (random.nextFloat() - 0.5f) * 1800f,
+                y = (random.nextFloat() - 0.5f) * 1800f,
                 initialZ = random.nextFloat() * 950f + 50f,
                 size = random.nextFloat() * 2f + 1f,
                 alpha = random.nextFloat() * 0.7f + 0.2f,
@@ -118,7 +113,7 @@ fun OperaAmbientBackground(
         }
     }
 
-    // 4. 3D Continuous Infinite Animation Clock (Smooth 60fps Play Engine)
+    // 3. 3D Continuous Infinite Animation Clock (Smooth 60fps Play Engine)
     val infiniteTransition = rememberInfiniteTransition(label = "opera_3d_canvas_engine")
     val time by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -144,6 +139,11 @@ fun OperaAmbientBackground(
                 val cx = w / 2f
                 val cy = h / 2f
                 val fov = 400f
+
+                val rawTiltX = sensorTilt[0]
+                val rawTiltY = sensorTilt[1]
+                val tiltX = (rawTiltX / 5f).coerceIn(-1.0f, 1.0f)
+                val tiltY = (rawTiltY / 5f).coerceIn(-1.0f, 1.0f)
 
                 // ==========================================
                 // LAYER 1: 3D FLOATING PARTICLES (PROJECTED 3D DEPTH)
@@ -293,7 +293,8 @@ private fun DrawScope.drawWireframeSphere(
         radius = radius * 1.5f
     )
 
-    val rings = 8
+    val rings = 6
+    val steps = 24
     val rotX = t * 0.5f + tiltY * 0.5f
     val rotY = t * 0.8f + tiltX * 0.8f
     val cosRotX = cos(rotX)
@@ -308,15 +309,15 @@ private fun DrawScope.drawWireframeSphere(
     }
     val strokeWidth = 1.2.dp.toPx()
 
-    // 2. 3D Latitude rings
+    // 2. 3D Latitude rings (batched into a single path for 60fps hardware acceleration)
+    path.reset()
     for (i in 0 until rings) {
         val angle = (i.toFloat() / rings.toFloat()) * PI.toFloat()
         val r = radius * sin(angle)
         val y = radius * cos(angle)
 
-        path.reset()
-        for (j in 0..36) {
-            val phi = (j.toFloat() / 36f) * (2f * PI.toFloat())
+        for (j in 0..steps) {
+            val phi = (j.toFloat() / steps.toFloat()) * (2f * PI.toFloat())
             val px = r * cos(phi)
             val py = y
             val pz = r * sin(phi)
@@ -337,24 +338,23 @@ private fun DrawScope.drawWireframeSphere(
                 path.lineTo(scrX, scrY)
             }
         }
-        path.close()
-        drawPath(
-            path = path,
-            color = strokeColor,
-            style = Stroke(width = strokeWidth)
-        )
     }
+    drawPath(
+        path = path,
+        color = strokeColor,
+        style = Stroke(width = strokeWidth)
+    )
 
-    // 3. 3D Longitudinal meridian rings (adds authentic 3D wireframe depth)
-    val meridianCount = 4
+    // 3. 3D Longitudinal meridian rings (batched into a single path)
+    path.reset()
+    val meridianCount = 3
     for (m in 0 until meridianCount) {
         val mAngle = (m.toFloat() / meridianCount.toFloat()) * PI.toFloat()
         val cosMAngle = cos(mAngle)
         val sinMAngle = sin(mAngle)
 
-        path.reset()
-        for (j in 0..36) {
-            val theta = (j.toFloat() / 36f) * (2f * PI.toFloat())
+        for (j in 0..steps) {
+            val theta = (j.toFloat() / steps.toFloat()) * (2f * PI.toFloat())
             val px = radius * sin(theta) * cosMAngle
             val py = radius * cos(theta)
             val pz = radius * sin(theta) * sinMAngle
@@ -375,13 +375,12 @@ private fun DrawScope.drawWireframeSphere(
                 path.lineTo(scrX, scrY)
             }
         }
-        path.close()
-        drawPath(
-            path = path,
-            color = strokeColor.copy(alpha = strokeColor.alpha * 0.85f),
-            style = Stroke(width = strokeWidth * 0.9f)
-        )
     }
+    drawPath(
+        path = path,
+        color = strokeColor.copy(alpha = strokeColor.alpha * 0.85f),
+        style = Stroke(width = strokeWidth * 0.9f)
+    )
 }
 
 /**
@@ -396,7 +395,7 @@ private fun DrawScope.drawEnergyWaves(
     path: Path
 ) {
     val waveCount = 3
-    val step = (w / 32f).coerceAtLeast(18.dp.toPx())
+    val step = (w / 26f).coerceAtLeast(20.dp.toPx())
     for (i in 0 until waveCount) {
         val waveOffset = (i.toFloat() * PI.toFloat()) / 3f
         val baseY = h * 0.72f + i * 28.dp.toPx()
