@@ -5,7 +5,7 @@
     "message": "We are currently optimizing server infrastructure. Antigravity will be back online shortly!"
   },
   "announcement": {
-    "active": true,
+    "active": false,
     "id": "ann-v1045",
     "title": "New in Antigravity v1.0.45",
     "message": "Silky-smooth Manus AI 3D Particle Wave background & authentic theme restored!",
@@ -28,5 +28,5 @@
     "guest_chat_enabled": false,
     "audio_enabled": true
   },
-  "updated_at": "2026-11-06T14:04:58.980Z"
+  "updated_at": "2026-11-06T14:05:21.177Z"
 }
