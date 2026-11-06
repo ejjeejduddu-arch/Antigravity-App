@@ -1395,8 +1395,8 @@ fun ChatScreen(
                                         }
                                         is ChatFeedItem.AssistantBlock -> {
                                             val isTool = feedItem.block is MarkdownBlock.AgentTool
-                                            val aiCardBg = com.example.gemini.theme.OperaRed
-                                            val aiCardBorder = com.example.gemini.theme.OperaBorderOnPrimary
+                                            val aiCardBg = if (isDarkTheme) com.example.gemini.theme.OperaDarkSurface else com.example.gemini.theme.OperaSurface
+                                            val aiCardBorder = if (isDarkTheme) com.example.gemini.theme.OperaDarkBorder else com.example.gemini.theme.OperaBorder
                                             val aiCardShape = RoundedCornerShape(14.dp)
 
                                             Box(
@@ -1407,7 +1407,7 @@ fun ChatScreen(
                                                 val contentModifier = if (!isTool) {
                                                     Modifier
                                                         .fillMaxWidth()
-                                                        .shadow(elevation = 2.dp, shape = aiCardShape, ambientColor = com.example.gemini.theme.OperaShadowInk, spotColor = com.example.gemini.theme.OperaShadowInk)
+                                                        .shadow(elevation = 1.dp, shape = aiCardShape, ambientColor = com.example.gemini.theme.OperaShadowInk, spotColor = com.example.gemini.theme.OperaShadowInk)
                                                         .clip(aiCardShape)
                                                         .background(aiCardBg)
                                                         .border(BorderStroke(1.dp, aiCardBorder), aiCardShape)
@@ -1418,29 +1418,14 @@ fun ChatScreen(
 
                                                 Box(modifier = contentModifier) {
                                                     val blockView: @Composable () -> Unit = {
-                                                        CompositionLocalProvider(
-                                                            LocalContentColor provides Color.White
-                                                        ) {
-                                                            MaterialTheme(
-                                                                colorScheme = MaterialTheme.colorScheme.copy(
-                                                                    primary = Color.White,
-                                                                    onPrimary = com.example.gemini.theme.OperaRed,
-                                                                    surface = com.example.gemini.theme.OperaRed,
-                                                                    onSurface = Color.White,
-                                                                    surfaceVariant = Color.White.copy(alpha = 0.2f),
-                                                                    onSurfaceVariant = Color.White.copy(alpha = 0.9f)
-                                                                )
-                                                            ) {
-                                                                MarkdownBlockView(
-                                                                    block = feedItem.block,
-                                                                    onApproveTool = if (isTool) { { toolCall -> viewModel.approveAndExecuteTerminalTool(toolCall, feedItem.messageId) } } else null,
-                                                                    onRejectTool = if (isTool) { { toolCall -> if (toolCall.toolType == ToolType.ASK_CHOICE) viewModel.cancelUserChoices(toolCall, feedItem.messageId) else viewModel.rejectTerminalTool(toolCall, feedItem.messageId) } } else null,
-                                                                    onTerminateTool = if (isTool) { { toolCall -> viewModel.terminateRunningTerminalTool(toolCall, feedItem.messageId) } } else null,
-                                                                    onSubmitChoices = if (isTool) { { toolCall, responses, summaryPayload -> viewModel.submitUserChoices(toolCall, feedItem.messageId, responses, summaryPayload) } } else null,
-                                                                    onSkipChoices = if (isTool) { { toolCall, responses -> viewModel.skipUserChoices(toolCall, feedItem.messageId, responses) } } else null
-                                                                )
-                                                            }
-                                                        }
+                                                        MarkdownBlockView(
+                                                            block = feedItem.block,
+                                                            onApproveTool = if (isTool) { { toolCall -> viewModel.approveAndExecuteTerminalTool(toolCall, feedItem.messageId) } } else null,
+                                                            onRejectTool = if (isTool) { { toolCall -> if (toolCall.toolType == ToolType.ASK_CHOICE) viewModel.cancelUserChoices(toolCall, feedItem.messageId) else viewModel.rejectTerminalTool(toolCall, feedItem.messageId) } } else null,
+                                                            onTerminateTool = if (isTool) { { toolCall -> viewModel.terminateRunningTerminalTool(toolCall, feedItem.messageId) } } else null,
+                                                            onSubmitChoices = if (isTool) { { toolCall, responses, summaryPayload -> viewModel.submitUserChoices(toolCall, feedItem.messageId, responses, summaryPayload) } } else null,
+                                                            onSkipChoices = if (isTool) { { toolCall, responses -> viewModel.skipUserChoices(toolCall, feedItem.messageId, responses) } } else null
+                                                        )
                                                     }
                                                     val selectable = when (feedItem.block) {
                                                         is MarkdownBlock.Paragraph, is MarkdownBlock.Header, is MarkdownBlock.Bullet,

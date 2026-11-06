@@ -1,11 +1,10 @@
 {
-  "version_code": 143,
-  "version_name": "1.0.43",
+  "version_code": 144,
+  "version_name": "1.0.44",
   "min_supported_version_code": 1,
   "changelog": [
-    "Replaced cluttered wireframe spheres and checkerboard texture with authentic Manus AI 3D particle wave dot grid",
-    "Silky-smooth 60/120fps fluid wave mathematics with interactive gyroscope sensor parallax",
-    "Clean, pristine canvas background with dynamic dot sizing, ambient crest illumination, and edge vignette"
+    "Restored message bubble and card colors back to authentic v1.0.41 style (OperaSurface/OperaDarkSurface)",
+    "Maintained smooth Manus AI 3D particle wave dot grid canvas background"
   ],
   "is_critical": false
 }

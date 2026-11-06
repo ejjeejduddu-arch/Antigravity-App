@@ -97,7 +97,6 @@ import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import com.example.gemini.data.remote.HubMediaResolver
 import com.example.gemini.theme.ClaudeTerracotta
-import com.example.gemini.theme.OperaRed
 import com.example.gemini.theme.GeminiBlue
 import com.example.gemini.theme.QuotaGreen
 import kotlinx.coroutines.flow.map
@@ -256,7 +255,7 @@ fun MarkdownBlockView(
                 Text(
                     text = if (block.indent == 0) "• " else "◦ ",
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = ClaudeTerracotta,
                     fontSize = 14.sp,
                     lineHeight = 21.sp,
                     style = TextStyle(
@@ -283,7 +282,7 @@ fun MarkdownBlockView(
                 Text(
                     text = "${block.number} ",
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = ClaudeTerracotta,
                     fontSize = 13.5.sp,
                     lineHeight = 21.sp,
                     style = TextStyle(
@@ -2546,9 +2545,7 @@ fun FormattedInlineText(
     ),
     isStrikethrough: Boolean = false
 ) {
-    val onSurf = MaterialTheme.colorScheme.onSurface
-    val isRedOrWhite = onSurf == Color.White || MaterialTheme.colorScheme.surface == OperaRed
-    val isDark = isAppInDarkTheme() || isRedOrWhite
+    val isDark = isAppInDarkTheme()
     val density = LocalDensity.current
     val fileLinkHandler = LocalFileLinkHandler.current
 
@@ -2678,10 +2675,10 @@ private fun buildRichAnnotatedString(
                 )
                 builder.pushStyle(
                     SpanStyle(
-                        color = if (isDark) Color.White else ClaudeTerracotta,
+                        color = ClaudeTerracotta,
                         fontWeight = FontWeight.SemiBold,
                         fontFamily = FontFamily.Monospace,
-                        background = if (isDark) Color.White.copy(alpha = 0.22f) else ClaudeTerracotta.copy(alpha = 0.12f)
+                        background = ClaudeTerracotta.copy(alpha = 0.12f)
                     )
                 )
                 builder.append(" $displayLabel ")
@@ -2691,7 +2688,7 @@ private fun buildRichAnnotatedString(
                 builder.pushLink(LinkAnnotation.Url(url = linkUrl))
                 builder.pushStyle(
                     SpanStyle(
-                        color = if (isDark) Color.White else GeminiBlue,
+                        color = GeminiBlue,
                         fontWeight = FontWeight.SemiBold,
                         textDecoration = TextDecoration.Underline
                     )
@@ -2749,10 +2746,10 @@ private fun buildRichAnnotatedString(
                 )
                 builder.pushStyle(
                     SpanStyle(
-                        color = if (isDark) Color.White else ClaudeTerracotta,
+                        color = ClaudeTerracotta,
                         fontWeight = FontWeight.SemiBold,
                         fontFamily = FontFamily.Monospace,
-                        background = if (isDark) Color.White.copy(alpha = 0.22f) else ClaudeTerracotta.copy(alpha = 0.12f)
+                        background = ClaudeTerracotta.copy(alpha = 0.12f)
                     )
                 )
                 builder.append(" $displayLabel ")
@@ -2762,7 +2759,7 @@ private fun buildRichAnnotatedString(
                 builder.pushLink(LinkAnnotation.Url(url = linkUrl))
                 builder.pushStyle(
                     SpanStyle(
-                        color = if (isDark) Color.White else GeminiBlue,
+                        color = GeminiBlue,
                         fontWeight = FontWeight.SemiBold,
                         textDecoration = TextDecoration.Underline
                     )
@@ -2809,10 +2806,10 @@ private fun buildRichAnnotatedString(
             )
             builder.pushStyle(
                 SpanStyle(
-                    color = if (isDark) Color.White else ClaudeTerracotta,
+                    color = ClaudeTerracotta,
                     fontWeight = FontWeight.SemiBold,
                     fontFamily = FontFamily.Monospace,
-                    background = if (isDark) Color.White.copy(alpha = 0.22f) else ClaudeTerracotta.copy(alpha = 0.12f)
+                    background = ClaudeTerracotta.copy(alpha = 0.12f)
                 )
             )
             builder.append(" $fileName ")
