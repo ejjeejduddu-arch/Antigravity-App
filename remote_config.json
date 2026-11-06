@@ -25,8 +25,8 @@
   },
   "features": {
     "default_model": "Gemini 3.8 Flash (High)",
-    "guest_chat_enabled": true,
+    "guest_chat_enabled": false,
     "audio_enabled": true
   },
-  "updated_at": "2026-11-06T13:48:12.831Z"
+  "updated_at": "2026-11-06T13:49:14.663Z"
 }
