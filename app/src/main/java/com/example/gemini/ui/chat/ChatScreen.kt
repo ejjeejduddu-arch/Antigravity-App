@@ -1145,6 +1145,30 @@ fun ChatScreen(
                     .navigationBarsPadding()
                     .windowInsetsPadding(WindowInsets.imeAnimationTarget)
             ) {
+                // In-App Broadcast Announcement from Admin Panel
+                val remoteConfig by com.example.gemini.data.remote.RemoteConfigManager.config.collectAsState()
+                var isAnnouncementDismissedLocal by remember(remoteConfig.announcement.id) {
+                    mutableStateOf(
+                        com.example.gemini.data.remote.RemoteConfigManager.isAnnouncementDismissed(
+                            context,
+                            remoteConfig.announcement.id
+                        )
+                    )
+                }
+
+                if (remoteConfig.announcement.active && !isAnnouncementDismissedLocal) {
+                    com.example.gemini.ui.components.AnnouncementBanner(
+                        announcement = remoteConfig.announcement,
+                        onDismiss = {
+                            com.example.gemini.data.remote.RemoteConfigManager.dismissAnnouncement(
+                                context,
+                                remoteConfig.announcement.id
+                            )
+                            isAnnouncementDismissedLocal = true
+                        }
+                    )
+                }
+
                 Box(
                     modifier = Modifier
                         .weight(1f)

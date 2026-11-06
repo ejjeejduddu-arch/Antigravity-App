@@ -1,0 +1,32 @@
+{
+  "maintenance": {
+    "enabled": false,
+    "title": "System Under Maintenance",
+    "message": "We are currently optimizing server infrastructure. Antigravity will be back online shortly!"
+  },
+  "announcement": {
+    "active": true,
+    "id": "ann-v1045",
+    "title": "New in Antigravity v1.0.45",
+    "message": "Silky-smooth Manus AI 3D Particle Wave background & authentic theme restored!",
+    "type": "info",
+    "dismissible": true
+  },
+  "version": {
+    "latest_version_name": "1.0.45",
+    "latest_version_code": 145,
+    "min_supported_version_code": 1,
+    "download_url": "https://antigravity-app-tawny.vercel.app/download/release-apk",
+    "changelog": [
+      "Authentic Manus AI 3D Particle Wave Dot Grid background",
+      "Restored v1.0.41 message bubble and card styling",
+      "Live Admin Remote Config & Broadcast Announcement system"
+    ]
+  },
+  "features": {
+    "default_model": "Gemini 3.8 Flash (High)",
+    "guest_chat_enabled": true,
+    "audio_enabled": true
+  },
+  "updated_at": "2026-11-06T13:30:00Z"
+}

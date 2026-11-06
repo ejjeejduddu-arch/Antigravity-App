@@ -1,10 +1,12 @@
 {
-  "version_code": 144,
-  "version_name": "1.0.44",
+  "version_code": 145,
+  "version_name": "1.0.45",
   "min_supported_version_code": 1,
   "changelog": [
-    "Restored message bubble and card colors back to authentic v1.0.41 style (OperaSurface/OperaDarkSurface)",
-    "Maintained smooth Manus AI 3D particle wave dot grid canvas background"
+    "Live Web Admin Command Center (/admin) with instant remote config sync",
+    "In-app broadcast announcements, kill-switch maintenance mode & force update system",
+    "Smooth Manus AI 3D particle wave dot grid canvas background",
+    "Authentic v1.0.41 message bubble and card styling"
   ],
   "is_critical": false
 }

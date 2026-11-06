@@ -146,6 +146,7 @@ class MainActivity : ComponentActivity() {
             val updateManager = remember { com.example.gemini.data.updater.AppUpdateManager(this@MainActivity) }
 
             LaunchedEffect(Unit) {
+                com.example.gemini.data.remote.RemoteConfigManager.init(this@MainActivity)
                 updateManager.checkForUpdates().onSuccess { info ->
                     pendingUpdateInfo = info
                 }
@@ -450,6 +451,27 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
 
+                                // Remote Admin Configuration Overlays (Maintenance & Force Update)
+                                val remoteConfig by com.example.gemini.data.remote.RemoteConfigManager.config.collectAsState()
+                                val isFetchingConfig by com.example.gemini.data.remote.RemoteConfigManager.isFetching.collectAsState()
+                                val coroutineScope = rememberCoroutineScope()
+
+                                if (remoteConfig.maintenance.enabled) {
+                                    com.example.gemini.ui.components.MaintenanceScreen(
+                                        maintenance = remoteConfig.maintenance,
+                                        onRefresh = {
+                                            coroutineScope.launch {
+                                                com.example.gemini.data.remote.RemoteConfigManager.fetchConfig(context)
+                                            }
+                                        },
+                                        isRefreshing = isFetchingConfig
+                                    )
+                                } else if (remoteConfig.version.min_supported_version_code > com.example.gemini.BuildConfig.VERSION_CODE) {
+                                    com.example.gemini.ui.components.ForceUpdateDialog(
+                                        versionConfig = remoteConfig.version
+                                    )
+                                }
+
                                 // Opera-inspired Animated Opening Splash Screen with spring reveal
                                 if (showOperaOpeningSplash) {
                                     com.example.gemini.ui.components.OperaAppOpeningSplash(
@@ -469,6 +491,7 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         instanceRef = java.lang.ref.WeakReference(this)
+        com.example.gemini.data.remote.RemoteConfigManager.init(this)
         if (com.example.gemini.ui.components.PermissionUtils.hasNotificationPermission(this)) {
             com.example.gemini.data.service.TermuxService.start(this)
             com.example.gemini.data.local.LocalServerManager.autoStartOnAppLaunch(this)
