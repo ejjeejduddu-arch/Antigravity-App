@@ -42,6 +42,7 @@ import com.example.gemini.ui.components.AppToastHelper
 import com.example.gemini.ui.components.ChatToastType
 import android.widget.Toast
 import androidx.compose.material.icons.outlined.AutoAwesome
+import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material.icons.outlined.Settings
 import com.example.gemini.theme.OperaRed
 import androidx.compose.material3.*
