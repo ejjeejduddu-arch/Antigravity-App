@@ -24,6 +24,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -45,10 +48,20 @@ import kotlin.math.sin
  * Implements the signature Opera multi-layer ambient background:
  * 1. Warm cream (#FEFBF6) or deep dark (#0F0F0E) canvas tone.
  * 2. High-fidelity paper/canvas texture overlay (opera_bg_texture).
- * 3. Living, breathing ambient radiant glow aura orbs that slowly oscillate and drift.
- * 4. Multi-stop vertical fade gradient matching Opera design specifications.
- * 5. Optional top and bottom edge fade overlays for seamless message scroll clearance.
+ * 3. 3D Floating Particle Starfield with perspective projection (matching web index).
+ * 4. 3D Rotating Geodesic Wireframe Spheres with interactive gyroscope parallax.
+ * 5. Multi-layer undulating harmonic energy wave ribbons.
+ * 6. Optional top and bottom edge fade overlays for seamless message scroll clearance.
  */
+private data class OperaParticle3D(
+    val x: Float,
+    val y: Float,
+    val initialZ: Float,
+    val size: Float,
+    val alpha: Float,
+    val speed: Float
+)
+
 @Composable
 fun OperaAmbientBackground(
     modifier: Modifier = Modifier,
@@ -86,41 +99,40 @@ fun OperaAmbientBackground(
         onDispose { sensorManager?.unregisterListener(listener) }
     }
 
-    // 2. 3D Continuous Infinite Animation Clock (Smooth 60fps Play Engine)
-    val infiniteTransition = rememberInfiniteTransition(label = "opera_3d_play_engine")
+    // 2. Normalized Tilt Factors for 3D Parallax Perspective
+    val tiltX = (sensorTiltX / 5f).coerceIn(-1.2f, 1.2f)
+    val tiltY = (sensorTiltY / 5f).coerceIn(-1.2f, 1.2f)
 
-    // Primary 3D orbit phase (9 seconds loop)
-    val phaseOrbit by infiniteTransition.animateFloat(
+    // 3. 3D Particle Starfield (65 particles matching web index app.js)
+    val particles = remember {
+        val random = kotlin.random.Random(1337)
+        List(65) {
+            OperaParticle3D(
+                x = (random.nextFloat() - 0.5f) * 2000f,
+                y = (random.nextFloat() - 0.5f) * 2000f,
+                initialZ = random.nextFloat() * 950f + 50f,
+                size = random.nextFloat() * 2f + 1f,
+                alpha = random.nextFloat() * 0.7f + 0.2f,
+                speed = random.nextFloat() * 0.4f + 0.8f
+            )
+        }
+    }
+
+    // 4. 3D Continuous Infinite Animation Clock (Smooth 60fps Play Engine)
+    val infiniteTransition = rememberInfiniteTransition(label = "opera_3d_canvas_engine")
+    val time by infiniteTransition.animateFloat(
         initialValue = 0f,
-        targetValue = (2f * PI).toFloat(),
+        targetValue = (20f * PI * 2f).toFloat(),
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 9000, easing = LinearEasing),
+            animation = tween(durationMillis = 140000, easing = LinearEasing),
             repeatMode = RepeatMode.Restart
         ),
-        label = "phase_orbit"
+        label = "canvas_time"
     )
 
-    // Flowing 3D wave phase (6.5 seconds loop)
-    val phaseWave by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = (2f * PI).toFloat(),
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 6500, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "phase_wave"
-    )
-
-    // 3D Breathing & Specular Pulse (3.8 seconds ping-pong)
-    val pulse3D by infiniteTransition.animateFloat(
-        initialValue = 0.92f,
-        targetValue = 1.15f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 3800, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "pulse_3d"
-    )
+    // Reusable Path instances for zero-allocation rendering per frame
+    val spherePath = remember { Path() }
+    val wavePath = remember { Path() }
 
     Box(
         modifier = modifier
@@ -129,168 +141,70 @@ fun OperaAmbientBackground(
             .drawBehind {
                 val w = size.width
                 val h = size.height
+                val cx = w / 2f
+                val cy = h / 2f
+                val fov = 400f
 
                 // ==========================================
-                // LAYER 1: 3D FLOWING HARMONIC WAVES (PLAY ENGINE)
+                // LAYER 1: 3D FLOATING PARTICLES (PROJECTED 3D DEPTH)
                 // ==========================================
-                val wavePath1 = Path()
-                val wavePath2 = Path()
-                val segments = 24
-                val stepX = w / segments
+                val particleColor = OperaRed
+                val alphaMultiplier = if (isDarkTheme) 0.60f else 0.45f
 
-                // Wave 1: Flowing across upper-mid canvas
-                val baseWave1Y = h * 0.28f + (sensorTiltY * 6f)
-                wavePath1.moveTo(0f, baseWave1Y)
-                for (i in 0..segments) {
-                    val px = i * stepX
-                    val py = baseWave1Y +
-                            sin((px / w) * 2f * PI.toFloat() + phaseWave) * (h * 0.055f) * pulse3D +
-                            cos((px / w) * 1.5f * PI.toFloat() + phaseOrbit * 0.7f) * (h * 0.025f)
-                    if (i == 0) wavePath1.moveTo(px, py) else wavePath1.lineTo(px, py)
+                for (p in particles) {
+                    val z = 1000f - ((p.initialZ + time * 72f * p.speed) % 990f)
+                    val scale = fov / z
+                    val px = (p.x + tiltX * 200f) * scale + cx
+                    val py = (p.y + tiltY * 200f) * scale + cy
+
+                    if (px in 0f..w && py in 0f..h) {
+                        val radius = (p.size * scale).coerceIn(0.75f, 6.dp.toPx())
+                        drawCircle(
+                            color = particleColor.copy(alpha = (p.alpha * alphaMultiplier).coerceIn(0.04f, 1f)),
+                            radius = radius,
+                            center = Offset(px, py)
+                        )
+                    }
                 }
-                wavePath1.lineTo(w, h * 0.42f)
-                wavePath1.lineTo(0f, h * 0.42f)
-                wavePath1.close()
 
-                val wave1Alpha = if (isDarkTheme) 0.16f else 0.10f
-                drawPath(
-                    path = wavePath1,
-                    brush = Brush.linearGradient(
-                        colors = listOf(
-                            OperaRed.copy(alpha = wave1Alpha),
-                            Color(0xFFFF5722).copy(alpha = wave1Alpha * 0.6f),
-                            Color.Transparent
-                        ),
-                        start = Offset(0f, h * 0.2f),
-                        end = Offset(w, h * 0.42f)
-                    )
+                // ==========================================
+                // LAYER 2: 3D ROTATING GEODESIC WIREFRAME SPHERES
+                // ==========================================
+                // Primary Geodesic Sphere (Upper-Right)
+                val sphere1Radius = (w * 0.32f).coerceIn(120.dp.toPx(), 220.dp.toPx())
+                drawWireframeSphere(
+                    centerX = cx + w * 0.28f + (sensorTiltX * 4f),
+                    centerY = cy - h * 0.05f + (sensorTiltY * 4f),
+                    radius = sphere1Radius,
+                    t = time,
+                    tiltX = tiltX,
+                    tiltY = tiltY,
+                    isDark = isDarkTheme,
+                    path = spherePath
                 )
 
-                // Wave 2: Sweeping diagonally across lower canvas
-                val baseWave2Y = h * 0.68f + (sensorTiltY * 10f)
-                wavePath2.moveTo(0f, baseWave2Y)
-                for (i in 0..segments) {
-                    val px = i * stepX
-                    val py = baseWave2Y +
-                            sin((px / w) * 2.5f * PI.toFloat() - phaseWave * 1.2f) * (h * 0.06f) +
-                            sin(phaseOrbit + (px / w)) * (h * 0.03f)
-                    if (i == 0) wavePath2.moveTo(px, py) else wavePath2.lineTo(px, py)
-                }
-                wavePath2.lineTo(w, h * 0.85f)
-                wavePath2.lineTo(0f, h * 0.85f)
-                wavePath2.close()
-
-                val wave2Alpha = if (isDarkTheme) 0.14f else 0.08f
-                drawPath(
-                    path = wavePath2,
-                    brush = Brush.linearGradient(
-                        colors = listOf(
-                            Color.Transparent,
-                            Color(0xFFFF8A65).copy(alpha = wave2Alpha * 0.7f),
-                            OperaRed.copy(alpha = wave2Alpha)
-                        ),
-                        start = Offset(0f, h * 0.65f),
-                        end = Offset(w, h * 0.85f)
-                    )
+                // Secondary Counter-Orbiting Sphere (Lower-Left)
+                val sphere2Radius = (w * 0.22f).coerceIn(85.dp.toPx(), 160.dp.toPx())
+                drawWireframeSphere(
+                    centerX = cx - w * 0.32f - (sensorTiltX * 4f),
+                    centerY = cy + h * 0.22f - (sensorTiltY * 4f),
+                    radius = sphere2Radius,
+                    t = time * 1.3f,
+                    tiltX = -tiltX,
+                    tiltY = -tiltY,
+                    isDark = isDarkTheme,
+                    path = spherePath
                 )
 
                 // ==========================================
-                // LAYER 2: 3D SHADED ORBITING SPHERES
+                // LAYER 3: 3D UNDULATING HARMONIC ENERGY WAVES
                 // ==========================================
-                // Sphere 1: Foreground 3D Opera Red Orb (with 3D highlight & depth)
-                val z1 = sin(phaseOrbit)
-                val scale1 = (1f + z1 * 0.18f) * pulse3D
-                val orb1X = w * 0.36f + cos(phaseOrbit) * (w * 0.14f) + (sensorTiltX * 18f)
-                val orb1Y = h * 0.32f + sin(phaseOrbit * 1.15f) * (h * 0.09f) + (sensorTiltY * 18f)
-                val orb1Radius = ((w * 0.38f) * scale1).coerceAtLeast(140.dp.toPx())
-                val orb1LightX = orb1X - orb1Radius * 0.32f
-                val orb1LightY = orb1Y - orb1Radius * 0.32f
-
-                // Outer ambient glow
-                drawCircle(
-                    brush = Brush.radialGradient(
-                        colors = listOf(
-                            OperaRed.copy(alpha = if (isDarkTheme) 0.22f else 0.15f),
-                            Color.Transparent
-                        ),
-                        center = Offset(orb1X, orb1Y),
-                        radius = orb1Radius * 1.6f
-                    ),
-                    center = Offset(orb1X, orb1Y),
-                    radius = orb1Radius * 1.6f
-                )
-
-                // 3D Sphere Body with Specular Highlight
-                drawCircle(
-                    brush = Brush.radialGradient(
-                        colorStops = arrayOf(
-                            0.00f to Color.White.copy(alpha = if (isDarkTheme) 0.50f else 0.40f),
-                            0.25f to Color(0xFFFF6B6B).copy(alpha = if (isDarkTheme) 0.35f else 0.28f),
-                            0.65f to OperaRed.copy(alpha = if (isDarkTheme) 0.25f else 0.18f),
-                            0.90f to Color(0xFF8B0000).copy(alpha = if (isDarkTheme) 0.18f else 0.10f),
-                            1.00f to Color.Transparent
-                        ),
-                        center = Offset(orb1LightX, orb1LightY),
-                        radius = orb1Radius
-                    ),
-                    center = Offset(orb1X, orb1Y),
-                    radius = orb1Radius
-                )
-
-                // Sphere 2: Mid-ground Coral/Peach 3D Orb (counter-orbiting)
-                val z2 = cos(phaseOrbit * 0.9f)
-                val scale2 = (1f + z2 * 0.15f)
-                val orb2X = w * 0.70f + sin(phaseOrbit * 0.85f + 1.2f) * (w * 0.16f) + (sensorTiltX * 12f)
-                val orb2Y = h * 0.65f + cos(phaseOrbit * 1.1f) * (h * 0.11f) + (sensorTiltY * 12f)
-                val orb2Radius = ((w * 0.32f) * scale2).coerceAtLeast(110.dp.toPx())
-                val orb2LightX = orb2X - orb2Radius * 0.30f
-                val orb2LightY = orb2Y - orb2Radius * 0.30f
-
-                // Outer ambient glow
-                drawCircle(
-                    brush = Brush.radialGradient(
-                        colors = listOf(
-                            Color(0xFFFF8A65).copy(alpha = if (isDarkTheme) 0.18f else 0.12f),
-                            Color.Transparent
-                        ),
-                        center = Offset(orb2X, orb2Y),
-                        radius = orb2Radius * 1.5f
-                    ),
-                    center = Offset(orb2X, orb2Y),
-                    radius = orb2Radius * 1.5f
-                )
-
-                // 3D Sphere Body
-                drawCircle(
-                    brush = Brush.radialGradient(
-                        colorStops = arrayOf(
-                            0.00f to Color(0xFFFFF3E0).copy(alpha = if (isDarkTheme) 0.45f else 0.35f),
-                            0.30f to Color(0xFFFFAB91).copy(alpha = if (isDarkTheme) 0.30f else 0.22f),
-                            0.70f to Color(0xFFFF5722).copy(alpha = if (isDarkTheme) 0.20f else 0.14f),
-                            1.00f to Color.Transparent
-                        ),
-                        center = Offset(orb2LightX, orb2LightY),
-                        radius = orb2Radius
-                    ),
-                    center = Offset(orb2X, orb2Y),
-                    radius = orb2Radius
-                )
-
-                // Sphere 3: Background Deep Crimson Orb
-                val orb3X = w * 0.18f + sin(phaseOrbit * 1.4f) * (w * 0.08f) + (sensorTiltX * 8f)
-                val orb3Y = h * 0.82f + cos(phaseOrbit * 0.9f) * (h * 0.06f) + (sensorTiltY * 8f)
-                val orb3Radius = (w * 0.24f).coerceAtLeast(80.dp.toPx())
-                drawCircle(
-                    brush = Brush.radialGradient(
-                        colors = listOf(
-                            OperaRed.copy(alpha = if (isDarkTheme) 0.14f else 0.08f),
-                            Color.Transparent
-                        ),
-                        center = Offset(orb3X, orb3Y),
-                        radius = orb3Radius
-                    ),
-                    center = Offset(orb3X, orb3Y),
-                    radius = orb3Radius
+                drawEnergyWaves(
+                    w = w,
+                    h = h,
+                    t = time,
+                    isDark = isDarkTheme,
+                    path = wavePath
                 )
             }
     ) {
@@ -348,6 +262,175 @@ fun OperaAmbientBackground(
                     )
             )
         }
+    }
+}
+
+/**
+ * Draws a 3D rotating geodesic wireframe sphere with latitude & longitude rings,
+ * projected and rotated in 3D space with subtle ambient atmospheric backlighting.
+ */
+private fun DrawScope.drawWireframeSphere(
+    centerX: Float,
+    centerY: Float,
+    radius: Float,
+    t: Float,
+    tiltX: Float,
+    tiltY: Float,
+    isDark: Boolean,
+    path: Path
+) {
+    // 1. Soft atmospheric luminescence glow behind the wireframe sphere
+    drawCircle(
+        brush = Brush.radialGradient(
+            colors = listOf(
+                OperaRed.copy(alpha = if (isDark) 0.16f else 0.10f),
+                Color.Transparent
+            ),
+            center = Offset(centerX, centerY),
+            radius = radius * 1.5f
+        ),
+        center = Offset(centerX, centerY),
+        radius = radius * 1.5f
+    )
+
+    val rings = 8
+    val rotX = t * 0.5f + tiltY * 0.5f
+    val rotY = t * 0.8f + tiltX * 0.8f
+    val cosRotX = cos(rotX)
+    val sinRotX = sin(rotX)
+    val cosRotY = cos(rotY)
+    val sinRotY = sin(rotY)
+
+    val strokeColor = if (isDark) {
+        OperaRed.copy(alpha = 0.24f)
+    } else {
+        OperaRed.copy(alpha = 0.18f)
+    }
+    val strokeWidth = 1.2.dp.toPx()
+
+    // 2. 3D Latitude rings
+    for (i in 0 until rings) {
+        val angle = (i.toFloat() / rings.toFloat()) * PI.toFloat()
+        val r = radius * sin(angle)
+        val y = radius * cos(angle)
+
+        path.reset()
+        for (j in 0..36) {
+            val phi = (j.toFloat() / 36f) * (2f * PI.toFloat())
+            val px = r * cos(phi)
+            val py = y
+            val pz = r * sin(phi)
+
+            // Rotate X
+            val y1 = py * cosRotX - pz * sinRotX
+            val z1 = py * sinRotX + pz * cosRotX
+
+            // Rotate Y
+            val x2 = px * cosRotY + z1 * sinRotY
+
+            val scrX = centerX + x2
+            val scrY = centerY + y1
+
+            if (j == 0) {
+                path.moveTo(scrX, scrY)
+            } else {
+                path.lineTo(scrX, scrY)
+            }
+        }
+        path.close()
+        drawPath(
+            path = path,
+            color = strokeColor,
+            style = Stroke(width = strokeWidth)
+        )
+    }
+
+    // 3. 3D Longitudinal meridian rings (adds authentic 3D wireframe depth)
+    val meridianCount = 4
+    for (m in 0 until meridianCount) {
+        val mAngle = (m.toFloat() / meridianCount.toFloat()) * PI.toFloat()
+        val cosMAngle = cos(mAngle)
+        val sinMAngle = sin(mAngle)
+
+        path.reset()
+        for (j in 0..36) {
+            val theta = (j.toFloat() / 36f) * (2f * PI.toFloat())
+            val px = radius * sin(theta) * cosMAngle
+            val py = radius * cos(theta)
+            val pz = radius * sin(theta) * sinMAngle
+
+            // Rotate X
+            val y1 = py * cosRotX - pz * sinRotX
+            val z1 = py * sinRotX + pz * cosRotX
+
+            // Rotate Y
+            val x2 = px * cosRotY + z1 * sinRotY
+
+            val scrX = centerX + x2
+            val scrY = centerY + y1
+
+            if (j == 0) {
+                path.moveTo(scrX, scrY)
+            } else {
+                path.lineTo(scrX, scrY)
+            }
+        }
+        path.close()
+        drawPath(
+            path = path,
+            color = strokeColor.copy(alpha = strokeColor.alpha * 0.85f),
+            style = Stroke(width = strokeWidth * 0.9f)
+        )
+    }
+}
+
+/**
+ * Draws 3 undulating harmonic wave ribbons across the lower canvas,
+ * matching web app.js drawEnergyWaves.
+ */
+private fun DrawScope.drawEnergyWaves(
+    w: Float,
+    h: Float,
+    t: Float,
+    isDark: Boolean,
+    path: Path
+) {
+    val waveCount = 3
+    val step = (w / 32f).coerceAtLeast(18.dp.toPx())
+    for (i in 0 until waveCount) {
+        val waveOffset = (i.toFloat() * PI.toFloat()) / 3f
+        val baseY = h * 0.72f + i * 28.dp.toPx()
+
+        path.reset()
+        var x = 0f
+        var first = true
+        while (x <= w + step) {
+            val y = baseY +
+                    sin(x * 0.003f + t * 1.2f + waveOffset) * 36.dp.toPx() +
+                    cos(x * 0.006f - t * 0.8f) * 20.dp.toPx()
+            if (first) {
+                path.moveTo(x, y)
+                first = false
+            } else {
+                path.lineTo(x, y)
+            }
+            x += step
+        }
+
+        val alpha = if (isDark) {
+            (0.20f - i * 0.04f).coerceAtLeast(0.06f)
+        } else {
+            (0.14f - i * 0.03f).coerceAtLeast(0.04f)
+        }
+
+        drawPath(
+            path = path,
+            color = OperaRed.copy(alpha = alpha),
+            style = Stroke(
+                width = 2.4.dp.toPx(),
+                cap = StrokeCap.Round
+            )
+        )
     }
 }
 

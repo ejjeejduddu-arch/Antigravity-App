@@ -1,11 +1,12 @@
 {
-  "version_code": 135,
-  "version_name": "1.0.35",
+  "version_code": 136,
+  "version_name": "1.0.36",
   "min_supported_version_code": 1,
   "changelog": [
-    "Converted terminal tool execution black boxes into authentic Opera Red cards with 14dp rounded corners, red border, and high-contrast white output text",
-    "Removed 'Done' button from Settings top navbar across all sub-screens for a cleaner and symmetrical header",
-    "Implemented living 3D continuous playing background animation with 3D shaded orbiting spheres, flowing sinusoidal waves, and interactive accelerometer gyroscope parallax"
+    "Ported exact 3D background canvas animation from web landing page into Jetpack Compose",
+    "Added 3D floating particle starfield with 400 fov depth projection and Opera Red glow",
+    "Added 3D rotating geodesic wireframe spheres with latitude and longitude rings and interactive gyroscope tilt",
+    "Added 3-tier undulating harmonic energy wave ribbons matching web index algorithm"
   ],
   "is_critical": false
 }
