@@ -5,7 +5,8 @@
   "changelog": [
     "Added full Membership & Subscription Plan upgrade system (Free, Go, Plus ₹0 Promo, Pro ₹10,699)",
     "Added interactive ChatGPT-style plan comparison with real-time tier switching in drawer & profile",
-    "Integrated plan persistence across Antigravity App and Web"
+    "Integrated plan persistence across Antigravity App and Web",
+    "Fixed coroutine launch imports in ProfileDetailDialog"
   ],
   "is_critical": false
 }
