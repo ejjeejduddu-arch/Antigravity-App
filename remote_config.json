@@ -6,22 +6,22 @@
   },
   "announcement": {
     "active": true,
-    "id": "ann-v1046",
-    "title": "Antigravity v1.0.46 Released",
-    "message": "New 3D official iridescent app icon, Google Gemini sparkle icon, Opera Red navigation & fixed in-app updater!",
+    "id": "ann-v1047",
+    "title": "Antigravity v1.0.47 Released",
+    "message": "Classic Opera app logo restored & official Lobehub icons added for Gemini, Claude, and DeepSeek!",
     "type": "info",
     "dismissible": true
   },
   "version": {
-    "latest_version_name": "1.0.46",
-    "latest_version_code": 146,
+    "latest_version_name": "1.0.47",
+    "latest_version_code": 147,
     "min_supported_version_code": 1,
     "download_url": "https://antigravity-app-tawny.vercel.app/download/release-apk",
     "changelog": [
-      "New official 3D iridescent Antigravity app launcher & splash icon",
-      "Fixed in-app APK automatic updater download detection",
-      "Official Google Gemini sparkle model selector icon",
-      "Opera Red centered top navigation bar"
+      "Restored classic authentic Opera Antigravity app launcher & splash logo",
+      "Added official Lobehub icons for Google Gemini, Anthropic Claude, and DeepSeek",
+      "Added DeepSeek AI category and dynamic model branding across chat & selector",
+      "Fixed in-app APK automatic updater download detection"
     ]
   },
   "features": {
@@ -29,5 +29,5 @@
     "guest_chat_enabled": false,
     "audio_enabled": true
   },
-  "updated_at": "2026-11-06T15:55:00.000Z"
+  "updated_at": "2026-11-06T17:40:00.000Z"
 }

@@ -170,6 +170,11 @@ class AgyModelService {
                         ignoreCase = true
                     ) -> ModelFamily.CLAUDE
 
+                    displayName.contains("deepseek", ignoreCase = true) || key.contains(
+                        "deepseek",
+                        ignoreCase = true
+                    ) -> ModelFamily.DEEPSEEK
+
                     else -> ModelFamily.GEMINI
                 }
 

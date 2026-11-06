@@ -45,7 +45,8 @@ import kotlinx.coroutines.launch
 
 enum class CategoryType {
     GEMINI,
-    CLAUDE
+    CLAUDE,
+    DEEPSEEK
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,12 +61,15 @@ fun ModelSelectorBottomSheet(
     onSelectModel: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
-    // Group models into two groups: Claude and Gemini (with GPT-OSS and others under Gemini)
+    // Group models into groups: Claude, DeepSeek, and Gemini
     val claudeModels = availableModels.filter {
         (it.family == ModelFamily.CLAUDE || it.id.contains("claude", ignoreCase = true) || it.displayName.contains("claude", ignoreCase = true)) &&
                 !it.id.contains("gpt", ignoreCase = true) && !it.displayName.contains("gpt", ignoreCase = true)
     }
-    val geminiModels = availableModels.filter { it !in claudeModels }
+    val deepseekModels = availableModels.filter {
+        it.family == ModelFamily.DEEPSEEK || it.id.contains("deepseek", ignoreCase = true) || it.displayName.contains("deepseek", ignoreCase = true)
+    }
+    val geminiModels = availableModels.filter { it !in claudeModels && it !in deepseekModels }
 
     val activeModel = availableModels.find { it.id == selectedModelId }
 
@@ -130,6 +134,7 @@ fun ModelSelectorBottomSheet(
                         availableModels = availableModels,
                         claudeModelsCount = claudeModels.size,
                         geminiModelsCount = geminiModels.size,
+                        deepseekModelsCount = deepseekModels.size,
                         availableModelsCount = availableModels.size,
                         quotas = quotas,
                         quotaSummary = quotaSummary,
@@ -143,6 +148,7 @@ fun ModelSelectorBottomSheet(
                     val (categoryTitle, brandColor, categoryModels) = when (currentCategory) {
                         CategoryType.GEMINI -> Triple("Google Gemini", GeminiBlue, geminiModels)
                         CategoryType.CLAUDE -> Triple("Anthropic Claude", ClaudeTerracotta, claudeModels)
+                        CategoryType.DEEPSEEK -> Triple("DeepSeek AI", OperaRed, deepseekModels)
                     }
 
                     CategoryModelsSubView(
@@ -270,6 +276,7 @@ private fun MainCategoryListView(
     availableModels: List<AiModel>,
     claudeModelsCount: Int,
     geminiModelsCount: Int,
+    deepseekModelsCount: Int = 0,
     availableModelsCount: Int,
     quotas: List<ModelQuota>,
     quotaSummary: com.example.gemini.domain.model.QuotaSummaryResponse? = null,
@@ -359,7 +366,12 @@ private fun MainCategoryListView(
                 activeModel.id.contains("claude", ignoreCase = true) ||
                 activeModel.displayName.contains("claude", ignoreCase = true)
             ) && !activeModel.id.contains("gpt", ignoreCase = true) && !activeModel.displayName.contains("gpt", ignoreCase = true)
-            val isGeminiActive = activeModel != null && !isClaudeActive
+            val isDeepseekActive = activeModel != null && (
+                activeModel.family == ModelFamily.DEEPSEEK ||
+                activeModel.id.contains("deepseek", ignoreCase = true) ||
+                activeModel.displayName.contains("deepseek", ignoreCase = true)
+            )
+            val isGeminiActive = activeModel != null && !isClaudeActive && !isDeepseekActive
 
             val cleanActiveModelName = activeModel?.displayName
                 ?.replace(Regex("\\s*\\(?Thinking\\)?", RegexOption.IGNORE_CASE), "")
@@ -436,6 +448,22 @@ private fun MainCategoryListView(
                     count = claudeModelsCount,
                     brandColor = ClaudeTerracotta,
                     onClick = { onSelectCategory(CategoryType.CLAUDE) }
+                )
+            }
+
+            // 3. DeepSeek AI (Third)
+            if (deepseekModelsCount > 0) {
+                Spacer(modifier = Modifier.height(10.dp))
+                CategoryNavigationTile(
+                    title = "DeepSeek AI",
+                    activeModelName = if (isDeepseekActive) cleanActiveModelName else null,
+                    line1 = null,
+                    fraction1 = null,
+                    line2 = null,
+                    fraction2 = null,
+                    count = deepseekModelsCount,
+                    brandColor = OperaRed,
+                    onClick = { onSelectCategory(CategoryType.DEEPSEEK) }
                 )
             }
         }
@@ -546,13 +574,31 @@ private fun CategoryModelsSubView(
                 )
             }
             Spacer(modifier = Modifier.width(6.dp))
-            if (title.contains("Gemini", ignoreCase = true)) {
-                Image(
-                    painter = painterResource(id = R.drawable.gemini_model_icon),
-                    contentDescription = "Gemini",
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
+            when {
+                title.contains("Gemini", ignoreCase = true) -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.gemini_model_icon),
+                        contentDescription = "Gemini",
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                }
+                title.contains("Claude", ignoreCase = true) -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.claude_model_icon),
+                        contentDescription = "Claude",
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                }
+                title.contains("DeepSeek", ignoreCase = true) -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.deepseek_model_icon),
+                        contentDescription = "DeepSeek",
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                }
             }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
@@ -625,14 +671,35 @@ private fun TieredModelGroupCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if (group.family == ModelFamily.GEMINI || group.baseName.contains("gemini", ignoreCase = true) || group.baseId.contains("gemini", ignoreCase = true)) {
-                    Image(
-                        painter = painterResource(id = R.drawable.gemini_model_icon),
-                        contentDescription = "Gemini",
-                        modifier = Modifier
-                            .size(18.dp)
-                            .padding(end = 6.dp)
-                    )
+                val groupLower = (group.baseName + " " + group.baseId).lowercase()
+                when {
+                    group.family == ModelFamily.CLAUDE || groupLower.contains("claude") -> {
+                        Image(
+                            painter = painterResource(id = R.drawable.claude_model_icon),
+                            contentDescription = "Claude",
+                            modifier = Modifier
+                                .size(18.dp)
+                                .padding(end = 6.dp)
+                        )
+                    }
+                    group.family == ModelFamily.DEEPSEEK || groupLower.contains("deepseek") -> {
+                        Image(
+                            painter = painterResource(id = R.drawable.deepseek_model_icon),
+                            contentDescription = "DeepSeek",
+                            modifier = Modifier
+                                .size(18.dp)
+                                .padding(end = 6.dp)
+                        )
+                    }
+                    group.family == ModelFamily.GEMINI || groupLower.contains("gemini") -> {
+                        Image(
+                            painter = painterResource(id = R.drawable.gemini_model_icon),
+                            contentDescription = "Gemini",
+                            modifier = Modifier
+                                .size(18.dp)
+                                .padding(end = 6.dp)
+                        )
+                    }
                 }
                 Text(
                     text = group.baseName,
@@ -736,14 +803,34 @@ private fun CategoryNavigationTile(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (title.contains("Gemini", ignoreCase = true)) {
-                        Image(
-                            painter = painterResource(id = R.drawable.gemini_model_icon),
-                            contentDescription = "Gemini",
-                            modifier = Modifier
-                                .size(20.dp)
-                                .padding(end = 6.dp)
-                        )
+                    when {
+                        title.contains("Gemini", ignoreCase = true) -> {
+                            Image(
+                                painter = painterResource(id = R.drawable.gemini_model_icon),
+                                contentDescription = "Gemini",
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .padding(end = 6.dp)
+                            )
+                        }
+                        title.contains("Claude", ignoreCase = true) -> {
+                            Image(
+                                painter = painterResource(id = R.drawable.claude_model_icon),
+                                contentDescription = "Claude",
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .padding(end = 6.dp)
+                            )
+                        }
+                        title.contains("DeepSeek", ignoreCase = true) -> {
+                            Image(
+                                painter = painterResource(id = R.drawable.deepseek_model_icon),
+                                contentDescription = "DeepSeek",
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .padding(end = 6.dp)
+                            )
+                        }
                     }
                     Text(
                         text = title,
@@ -851,14 +938,35 @@ private fun ModelRowItem(
                 .padding(horizontal = 14.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (model.family == ModelFamily.GEMINI || model.displayName.contains("Gemini", ignoreCase = true) || model.id.contains("gemini", ignoreCase = true)) {
-                Image(
-                    painter = painterResource(id = R.drawable.gemini_model_icon),
-                    contentDescription = "Gemini",
-                    modifier = Modifier
-                        .size(18.dp)
-                        .padding(end = 6.dp)
-                )
+            val modelLower = (model.displayName + " " + model.id).lowercase()
+            when {
+                model.family == ModelFamily.CLAUDE || modelLower.contains("claude") -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.claude_model_icon),
+                        contentDescription = "Claude",
+                        modifier = Modifier
+                            .size(18.dp)
+                            .padding(end = 6.dp)
+                    )
+                }
+                model.family == ModelFamily.DEEPSEEK || modelLower.contains("deepseek") -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.deepseek_model_icon),
+                        contentDescription = "DeepSeek",
+                        modifier = Modifier
+                            .size(18.dp)
+                            .padding(end = 6.dp)
+                    )
+                }
+                model.family == ModelFamily.GEMINI || modelLower.contains("gemini") -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.gemini_model_icon),
+                        contentDescription = "Gemini",
+                        modifier = Modifier
+                            .size(18.dp)
+                            .padding(end = 6.dp)
+                    )
+                }
             }
             Text(
                 text = model.displayName.replace(Regex("\\s*\\(?Thinking\\)?", RegexOption.IGNORE_CASE), "").trim(),

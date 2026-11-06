@@ -1,12 +1,12 @@
 {
-  "version_code": 146,
-  "version_name": "1.0.46",
+  "version_code": 147,
+  "version_name": "1.0.47",
   "min_supported_version_code": 1,
   "changelog": [
-    "New official 3D iridescent Antigravity app launcher & splash icon",
-    "Fixed in-app APK automatic updater download detection",
-    "Official Google Gemini sparkle model selector icon",
-    "Opera Red centered top navigation bar"
+    "Restored classic authentic Opera Antigravity app launcher & splash logo",
+    "Added official Lobehub icons for Google Gemini, Anthropic Claude, and DeepSeek",
+    "Added DeepSeek AI category and dynamic model branding across chat & selector",
+    "Fixed in-app APK automatic updater download detection"
   ],
   "is_critical": false
 }

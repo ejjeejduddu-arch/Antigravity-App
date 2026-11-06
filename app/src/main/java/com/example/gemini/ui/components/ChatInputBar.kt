@@ -1125,19 +1125,37 @@ fun ChatInputBar(
                                     modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    if (selectedModel.displayName.contains("Gemini", ignoreCase = true) || selectedModel.id.contains("gemini", ignoreCase = true)) {
-                                        Image(
-                                            painter = painterResource(id = R.drawable.gemini_model_icon),
-                                            contentDescription = "Gemini",
-                                            modifier = Modifier.size(14.dp)
-                                        )
-                                    } else {
-                                        Icon(
-                                            imageVector = Icons.Outlined.AutoAwesome,
-                                            contentDescription = null,
-                                            tint = Color.White,
-                                            modifier = Modifier.size(13.dp)
-                                        )
+                                    val modelNameLower = (selectedModel.displayName + " " + selectedModel.id).lowercase()
+                                    when {
+                                        selectedModel.family == ModelFamily.CLAUDE || modelNameLower.contains("claude") -> {
+                                            Image(
+                                                painter = painterResource(id = R.drawable.claude_model_icon),
+                                                contentDescription = "Claude",
+                                                modifier = Modifier.size(14.dp)
+                                            )
+                                        }
+                                        selectedModel.family == ModelFamily.DEEPSEEK || modelNameLower.contains("deepseek") -> {
+                                            Image(
+                                                painter = painterResource(id = R.drawable.deepseek_model_icon),
+                                                contentDescription = "DeepSeek",
+                                                modifier = Modifier.size(14.dp)
+                                            )
+                                        }
+                                        selectedModel.family == ModelFamily.GEMINI || modelNameLower.contains("gemini") -> {
+                                            Image(
+                                                painter = painterResource(id = R.drawable.gemini_model_icon),
+                                                contentDescription = "Gemini",
+                                                modifier = Modifier.size(14.dp)
+                                            )
+                                        }
+                                        else -> {
+                                            Icon(
+                                                imageVector = Icons.Outlined.AutoAwesome,
+                                                contentDescription = null,
+                                                tint = Color.White,
+                                                modifier = Modifier.size(13.dp)
+                                            )
+                                        }
                                     }
                                     Spacer(modifier = Modifier.width(5.dp))
                                     Text(

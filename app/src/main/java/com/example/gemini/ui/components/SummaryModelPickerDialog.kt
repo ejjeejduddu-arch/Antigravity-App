@@ -1,6 +1,7 @@
 package com.example.gemini.ui.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,11 +15,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.example.gemini.R
 import com.example.gemini.domain.model.AiModel
+import com.example.gemini.domain.model.ModelFamily
 import com.example.gemini.theme.ClaudeTerracotta
 
 @Composable
@@ -142,6 +146,33 @@ fun SummaryModelPickerDialog(
                                     colors = RadioButtonDefaults.colors(selectedColor = ClaudeTerracotta)
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
+                                val modelLower = (model.displayName + " " + model.id).lowercase()
+                                when {
+                                    model.family == ModelFamily.CLAUDE || modelLower.contains("claude") -> {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.claude_model_icon),
+                                            contentDescription = "Claude",
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                    }
+                                    model.family == ModelFamily.DEEPSEEK || modelLower.contains("deepseek") -> {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.deepseek_model_icon),
+                                            contentDescription = "DeepSeek",
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                    }
+                                    model.family == ModelFamily.GEMINI || modelLower.contains("gemini") -> {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.gemini_model_icon),
+                                            contentDescription = "Gemini",
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                    }
+                                }
                                 Text(
                                     text = model.displayName,
                                     fontSize = 13.5.sp,
