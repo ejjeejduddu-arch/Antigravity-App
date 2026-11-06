@@ -175,14 +175,20 @@ fun MessageBubble(
                             translationX = userOffsetX
                         }
                         .widthIn(max = maxBubbleWidth)
-                        .clip(RoundedCornerShape(15.dp))
-                        .background(MaterialTheme.colorScheme.primary)
+                        .shadow(
+                            elevation = 2.dp,
+                            shape = RoundedCornerShape(16.dp),
+                            ambientColor = com.example.gemini.theme.OperaShadowInk,
+                            spotColor = com.example.gemini.theme.OperaShadowInk
+                        )
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(com.example.gemini.theme.OperaRed)
                         .border(
                             BorderStroke(
                                 1.5.dp,
                                 com.example.gemini.theme.OperaBorderOnPrimary
                             ),
-                            RoundedCornerShape(15.dp)
+                            RoundedCornerShape(16.dp)
                         )
                         .clickable { showUserActions = !showUserActions }
                         .padding(horizontal = 16.dp, vertical = 12.dp)
@@ -489,6 +495,12 @@ fun UserMessageBubble(
                 }
                 .widthIn(max = maxBubbleWidth)
                 .bringIntoViewRequester(bubbleBringIntoView)
+                .shadow(
+                    elevation = 2.dp,
+                    shape = RoundedCornerShape(16.dp),
+                    ambientColor = com.example.gemini.theme.OperaShadowInk,
+                    spotColor = com.example.gemini.theme.OperaShadowInk
+                )
                 .clip(RoundedCornerShape(16.dp))
                 .background(com.example.gemini.theme.OperaRed)
                 .border(
@@ -1257,7 +1269,8 @@ private fun UserMessageDocumentItem(
 
     Surface(
         shape = RoundedCornerShape(10.dp),
-        color = MaterialTheme.colorScheme.background.copy(alpha = 0.55f),
+        color = Color.Black.copy(alpha = 0.22f),
+        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.2f)),
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(10.dp))
@@ -1329,7 +1342,7 @@ private fun UserMessageDocumentItem(
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.InsertDriveFile,
                 contentDescription = null,
-                tint = ClaudeTerracotta,
+                tint = Color.White,
                 modifier = Modifier.size(24.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -1338,7 +1351,7 @@ private fun UserMessageDocumentItem(
                     text = attachment.name,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = Color.White,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -1348,7 +1361,7 @@ private fun UserMessageDocumentItem(
                     Text(
                         text = sizeStr,
                         fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        color = Color.White.copy(alpha = 0.75f)
                     )
                 }
             }

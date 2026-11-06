@@ -90,7 +90,7 @@ object PluginRepositories {
         val text = input.trim().removeSuffix("/").removeSuffix(".git").replace(Regex("^(https?://)?(www\\.)?github\\.com/"), "")
         val tree = Regex("^($NAME)/($NAME)/tree/(.+)$").find(text)
         val plain = Regex("^($NAME)/($NAME)(?:@(.+))?$").find(text)
-        val match = tree ?: plain ?: throw IllegalArgumentException("Use owner/repo, owner/repo@branch or a github.com repository URL")
+        val match = tree ?: plain ?: throw IllegalArgumentException("Use owner/repo, owner/repo@branch or a repository URL")
         val ref = match.groupValues[3]
         require(ref.none { it.isWhitespace() } && ref.split('/').none { it.isEmpty() || it == ".." } || ref.isEmpty()) { "Invalid branch or tag: $ref" }
         return PluginRepo(match.groupValues[1], match.groupValues[2], ref)

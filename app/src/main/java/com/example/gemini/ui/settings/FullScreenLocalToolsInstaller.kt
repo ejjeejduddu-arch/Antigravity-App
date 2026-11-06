@@ -638,7 +638,7 @@ fun FullScreenLocalToolsInstaller(
                                         Column(modifier = Modifier.weight(1f)) {
                                             Row(verticalAlignment = Alignment.CenterVertically) {
                                                 Text(
-                                                    text = if (isTermux) "Auto Download from GitHub" else "Ubuntu ARM64 Base (Light)",
+                                                    text = if (isTermux) "Auto Download (Recommended)" else "Ubuntu ARM64 Base (Light)",
                                                     fontSize = if (isCompact) 13.sp else 14.sp,
                                                     fontWeight = FontWeight.Bold,
                                                     color = MaterialTheme.colorScheme.onSurface

@@ -212,7 +212,7 @@ fun GitCloneDialog(
                         value = repoUrl,
                         onValueChange = { repoUrl = it },
                         label = { Text("Repository URL") },
-                        placeholder = { Text("https://github.com/owner/repo") },
+                        placeholder = { Text("https://example.com/repo.git") },
                         singleLine = true,
                         isError = trimmedUrl.isNotEmpty() && !urlValid,
                         supportingText = if (trimmedUrl.isNotEmpty() && !urlValid) {

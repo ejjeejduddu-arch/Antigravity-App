@@ -907,7 +907,7 @@ fun GitSourceControlView(
                         OutlinedTextField(
                             value = configRemoteUrl,
                             onValueChange = { configRemoteUrl = it },
-                            placeholder = { Text("https://github.com/user/repo.git", fontSize = 12.5.sp) },
+                            placeholder = { Text("https://example.com/user/repo.git", fontSize = 12.5.sp) },
                             singleLine = true,
                             textStyle = androidx.compose.ui.text.TextStyle(fontSize = 13.sp),
                             modifier = Modifier.fillMaxWidth()

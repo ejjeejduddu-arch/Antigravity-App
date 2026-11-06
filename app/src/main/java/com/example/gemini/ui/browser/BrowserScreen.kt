@@ -1197,7 +1197,7 @@ private fun SpeedDialHomeView(
                         value = newTitle,
                         onValueChange = { newTitle = it },
                         label = { Text("Name") },
-                        placeholder = { Text("e.g. GitHub") },
+                        placeholder = { Text("e.g. Docs") },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -1205,7 +1205,7 @@ private fun SpeedDialHomeView(
                         value = newUrl,
                         onValueChange = { newUrl = it },
                         label = { Text("URL") },
-                        placeholder = { Text("https://github.com") },
+                        placeholder = { Text("https://example.com") },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
                         modifier = Modifier.fillMaxWidth()

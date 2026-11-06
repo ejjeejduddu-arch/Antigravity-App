@@ -3758,7 +3758,7 @@ private fun AddEditMcpServerDialog(
                         validationError = null
                     },
                     label = { Text("Server Name *") },
-                    placeholder = { Text("e.g. stitch, filesystem, github") },
+                    placeholder = { Text("e.g. stitch, filesystem, tools") },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -8976,7 +8976,7 @@ private fun AboutSubScreen(
                 }
 
                 Text(
-                    text = "Checks GitHub releases for new versions and downloads the matching APK directly.",
+                    text = "Checks for new versions and downloads the matching update directly.",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     lineHeight = 16.sp
@@ -9030,7 +9030,7 @@ private fun AboutSubScreen(
                                     }
                                 }.onFailure { err ->
                                     isUpdateCheckError = true
-                                    val msg = err.localizedMessage ?: "Could not connect to GitHub"
+                                    val msg = err.localizedMessage ?: "Could not connect to update server"
                                     updateCheckResultText = msg
                                     Toast.makeText(context, "Update check failed: $msg", Toast.LENGTH_LONG).show()
                                 }
@@ -9049,7 +9049,7 @@ private fun AboutSubScreen(
                             strokeWidth = 2.dp
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Checking GitHub...")
+                        Text("Checking for updates...")
                     } else {
                         Icon(
                             imageVector = Icons.Default.Refresh,
@@ -9206,119 +9206,6 @@ private fun AboutSubScreen(
                             Spacer(modifier = Modifier.width(4.dp))
                             Text("View File", fontSize = 12.5.sp, color = Color(0xFF00ACC1))
                         }
-                    }
-                }
-            }
-        }
-
-        // 5. GitHub & External Links
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(14.dp),
-            colors = CardDefaults.cardColors(containerColor = cardBg),
-            border = cardBorder
-        ) {
-            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(
-                    text = "Resources & Repository",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-
-                Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ejjeejduddu-arch/Antigravity-App"))
-                            context.startActivity(intent)
-                        }
-                ) {
-                    Row(
-                        modifier = Modifier.padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Code,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Column {
-                                Text(
-                                    text = "GitHub Repository",
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                                Text(
-                                    text = "github.com/ejjeejduddu-arch/Antigravity-App",
-                                    fontSize = 11.sp,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-                        Icon(
-                            imageVector = Icons.Default.ChevronRight,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
-                }
-
-                Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ejjeejduddu-arch/Antigravity-App/releases"))
-                            context.startActivity(intent)
-                        }
-                ) {
-                    Row(
-                        modifier = Modifier.padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.History,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Column {
-                                Text(
-                                    text = "Release Changelogs",
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                                Text(
-                                    text = "View tag notes & APK downloads",
-                                    fontSize = 11.sp,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-                        Icon(
-                            imageVector = Icons.Default.ChevronRight,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(16.dp)
-                        )
                     }
                 }
             }

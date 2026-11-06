@@ -1,14 +1,12 @@
 {
-  "version_code": 133,
-  "version_name": "1.0.33",
+  "version_code": 134,
+  "version_name": "1.0.34",
   "min_supported_version_code": 1,
   "changelog": [
-    "Added authentic Opera Top Floating Action Bar (OperaTopBar) matching Screenshot 3: [ ☰ + ] menu/new chat pill, [ 🤖 Model ] selector pill, and [ ▦ ] settings squircle button with sticker drop shadow",
-    "Added authentic Opera Toggle Switch (OperaToggle) with red pill track and spring-animated white circular thumb, replacing all switches across the app",
-    "Styled User Sent Message Bubbles in solid Opera Red (#FF1A1A) with white typography, Figtree font, and red border stroke",
-    "Enclosed AI Assistant responses in dedicated Opera Card containers (OperaSurface/OperaDarkSurface) with 16dp rounded corners and soft drop shadow",
-    "Upgraded Settings screen with 40x40dp solid Opera Red squircles, authentic white icons, monospace titles, Figtree subtitles, and centered Petrona header with X close button",
-    "Floating chatting input box in authentic Opera Red (#FF1A1A) enclosing input and all action buttons"
+    "Styled User Sent Message cards in authentic solid Opera Red (#FF1A1A) with sticker drop shadow, 16dp rounded corners, and crisp white typography",
+    "Completely removed and hid all open source GitHub URLs, repository links, and release links from the app UI, Settings, and About screen",
+    "Removed GitHub button and external repository links from the App Update dialog",
+    "Enhanced contrast and styling for document and attachment cards inside sent message bubbles"
   ],
   "is_critical": false
 }

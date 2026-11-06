@@ -55,7 +55,7 @@ fun PluginRepositoriesTab(busy: Boolean, runOperation: (suspend () -> String?) -
             Row(Modifier.padding(start = 14.dp, end = 4.dp, top = 6.dp, bottom = 6.dp), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
                     Text("Host your own repository", style = MaterialTheme.typography.titleSmall)
-                    Text("How to lay out a GitHub repo and its ${PluginRepositories.INDEX}", style = MaterialTheme.typography.bodySmall)
+                    Text("How to lay out a plugin repo and its ${PluginRepositories.INDEX}", style = MaterialTheme.typography.bodySmall)
                 }
                 IconButton(onClick = { guide = runCatching { readBundledGuide(context) }.getOrElse { "Guide not found: ${it.message}" } }) { Icon(Icons.Outlined.Visibility, "View guide") }
                 IconButton(onClick = { scope.launch { saveToDownloads(context, "antigem-plugin-repository.md", readBundledGuide(context)) } }) { Icon(Icons.Outlined.Download, "Download guide") }
@@ -70,7 +70,7 @@ fun PluginRepositoriesTab(busy: Boolean, runOperation: (suspend () -> String?) -
                 IconButton(onClick = { scope.launch { saveToDownloads(context, "antigem-plugin-sdk.zip", bundledSdkZip(context), "application/zip") } }) { Icon(Icons.Outlined.FolderZip, "Download plugin SDK ZIP") }
             }
         }
-        OutlinedTextField(value = input, onValueChange = { input = it; addError = null }, label = { Text("GitHub repository") },
+        OutlinedTextField(value = input, onValueChange = { input = it; addError = null }, label = { Text("Plugin repository") },
             placeholder = { Text("owner/repo, owner/repo@branch or URL") }, singleLine = true, modifier = Modifier.fillMaxWidth(),
             isError = addError != null, supportingText = { Text(addError ?: "Only add repositories you trust: plugins run code on your device.") })
         Button(enabled = input.isNotBlank(), onClick = {

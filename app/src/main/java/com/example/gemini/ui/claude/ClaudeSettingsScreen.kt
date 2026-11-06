@@ -480,7 +480,7 @@ private fun PermissionsPage(deps: ClaudeSettingsDeps) {
         }
     }
 
-    Hint("Rules use the CLI syntax: Bash(npm test), Bash(git log *), Read(./src/**), Edit(docs/**), WebFetch(domain:github.com), mcp__server__tool. Deny wins over ask, ask wins over allow.")
+    Hint("Rules use the CLI syntax: Bash(npm test), Bash(git log *), Read(./src/**), Edit(docs/**), WebFetch(domain:api.example.com), mcp__server__tool. Deny wins over ask, ask wins over allow.")
     ClaudeCard {
         SectionTitle("Add a rule")
         Spacer(Modifier.height(6.dp))
@@ -961,7 +961,7 @@ private fun PluginsPage(deps: ClaudeSettingsDeps) {
                     item(key = "add") {
                         ClaudeCard {
                             SectionTitle("Add a marketplace")
-                            Hint("GitHub owner/repo, a git URL, or a URL to marketplace.json")
+                            Hint("Repository owner/repo, a git URL, or a URL to marketplace.json")
                             Spacer(Modifier.height(6.dp))
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 OutlinedTextField(marketSource, { marketSource = it.trim() }, singleLine = true, placeholder = { Text("owner/repo") }, modifier = Modifier.weight(1f))
