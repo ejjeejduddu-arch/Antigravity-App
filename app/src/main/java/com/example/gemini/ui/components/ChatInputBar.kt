@@ -15,8 +15,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.res.painterResource
+import com.example.gemini.R
 import androidx.compose.foundation.horizontalScroll
 import com.example.gemini.theme.isAppInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -1122,12 +1125,20 @@ fun ChatInputBar(
                                     modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.AutoAwesome,
-                                        contentDescription = null,
-                                        tint = Color.White,
-                                        modifier = Modifier.size(13.dp)
-                                    )
+                                    if (selectedModel.displayName.contains("Gemini", ignoreCase = true) || selectedModel.id.contains("gemini", ignoreCase = true)) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.gemini_model_icon),
+                                            contentDescription = "Gemini",
+                                            modifier = Modifier.size(14.dp)
+                                        )
+                                    } else {
+                                        Icon(
+                                            imageVector = Icons.Outlined.AutoAwesome,
+                                            contentDescription = null,
+                                            tint = Color.White,
+                                            modifier = Modifier.size(13.dp)
+                                        )
+                                    }
                                     Spacer(modifier = Modifier.width(5.dp))
                                     Text(
                                         text = selectedModel.displayName,

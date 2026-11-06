@@ -1,12 +1,12 @@
 {
-  "version_code": 145,
-  "version_name": "1.0.45",
+  "version_code": 146,
+  "version_name": "1.0.46",
   "min_supported_version_code": 1,
   "changelog": [
-    "Live Web Admin Command Center (/admin) with instant remote config sync",
-    "In-app broadcast announcements, kill-switch maintenance mode & force update system",
-    "Smooth Manus AI 3D particle wave dot grid canvas background",
-    "Authentic v1.0.41 message bubble and card styling"
+    "New official 3D iridescent Antigravity app launcher & splash icon",
+    "Fixed in-app APK automatic updater download detection",
+    "Official Google Gemini sparkle model selector icon",
+    "Opera Red centered top navigation bar"
   ],
   "is_critical": false
 }

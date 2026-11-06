@@ -5,22 +5,23 @@
     "message": "We are currently optimizing server infrastructure. Antigravity will be back online shortly!"
   },
   "announcement": {
-    "active": false,
-    "id": "ann-v1045",
-    "title": "New in Antigravity v1.0.45",
-    "message": "Silky-smooth Manus AI 3D Particle Wave background & authentic theme restored!",
+    "active": true,
+    "id": "ann-v1046",
+    "title": "Antigravity v1.0.46 Released",
+    "message": "New 3D official iridescent app icon, Google Gemini sparkle icon, Opera Red navigation & fixed in-app updater!",
     "type": "info",
     "dismissible": true
   },
   "version": {
-    "latest_version_name": "1.0.45",
-    "latest_version_code": 145,
+    "latest_version_name": "1.0.46",
+    "latest_version_code": 146,
     "min_supported_version_code": 1,
     "download_url": "https://antigravity-app-tawny.vercel.app/download/release-apk",
     "changelog": [
-      "Authentic Manus AI 3D Particle Wave Dot Grid background",
-      "Restored v1.0.41 message bubble and card styling",
-      "Live Admin Remote Config & Broadcast Announcement system"
+      "New official 3D iridescent Antigravity app launcher & splash icon",
+      "Fixed in-app APK automatic updater download detection",
+      "Official Google Gemini sparkle model selector icon",
+      "Opera Red centered top navigation bar"
     ]
   },
   "features": {
@@ -28,5 +29,5 @@
     "guest_chat_enabled": false,
     "audio_enabled": true
   },
-  "updated_at": "2026-11-06T14:05:21.177Z"
+  "updated_at": "2026-11-06T15:55:00.000Z"
 }

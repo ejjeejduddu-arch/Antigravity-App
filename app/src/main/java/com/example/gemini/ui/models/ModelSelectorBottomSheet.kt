@@ -4,8 +4,11 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.res.painterResource
+import com.example.gemini.R
 import com.example.gemini.theme.isAppInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -543,6 +546,14 @@ private fun CategoryModelsSubView(
                 )
             }
             Spacer(modifier = Modifier.width(6.dp))
+            if (title.contains("Gemini", ignoreCase = true)) {
+                Image(
+                    painter = painterResource(id = R.drawable.gemini_model_icon),
+                    contentDescription = "Gemini",
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+            }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
@@ -614,6 +625,15 @@ private fun TieredModelGroupCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                if (group.family == ModelFamily.GEMINI || group.baseName.contains("gemini", ignoreCase = true) || group.baseId.contains("gemini", ignoreCase = true)) {
+                    Image(
+                        painter = painterResource(id = R.drawable.gemini_model_icon),
+                        contentDescription = "Gemini",
+                        modifier = Modifier
+                            .size(18.dp)
+                            .padding(end = 6.dp)
+                    )
+                }
                 Text(
                     text = group.baseName,
                     fontSize = 14.sp,
@@ -716,6 +736,15 @@ private fun CategoryNavigationTile(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (title.contains("Gemini", ignoreCase = true)) {
+                        Image(
+                            painter = painterResource(id = R.drawable.gemini_model_icon),
+                            contentDescription = "Gemini",
+                            modifier = Modifier
+                                .size(20.dp)
+                                .padding(end = 6.dp)
+                        )
+                    }
                     Text(
                         text = title,
                         fontSize = 15.5.sp,
@@ -822,6 +851,15 @@ private fun ModelRowItem(
                 .padding(horizontal = 14.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            if (model.family == ModelFamily.GEMINI || model.displayName.contains("Gemini", ignoreCase = true) || model.id.contains("gemini", ignoreCase = true)) {
+                Image(
+                    painter = painterResource(id = R.drawable.gemini_model_icon),
+                    contentDescription = "Gemini",
+                    modifier = Modifier
+                        .size(18.dp)
+                        .padding(end = 6.dp)
+                )
+            }
             Text(
                 text = model.displayName.replace(Regex("\\s*\\(?Thinking\\)?", RegexOption.IGNORE_CASE), "").trim(),
                 fontSize = 14.sp,

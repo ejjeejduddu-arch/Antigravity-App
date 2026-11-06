@@ -82,30 +82,40 @@ class AppUpdateManager(private val context: Context) {
             }
             val isCritical = json.optBoolean("is_critical", false) || (BuildConfig.VERSION_CODE < minSupportedCode)
 
-            // Auto-generate package-specific download URL based on remote version name and flavor
+            // Auto-generate package-specific download URLs based on remote version name and flavor
             val currentPkg = context.packageName
             val flavorType = if (currentPkg == "com.termux") "termux" else "standard"
-            val downloadUrl = "https://github.com/ejjeejduddu-arch/Antigravity-App/releases/download/v$remoteVersionName/antiGem-$flavorType-v$remoteVersionName-release.apk"
+            val candidateUrls = listOf(
+                "https://github.com/ejjeejduddu-arch/Antigravity-App/releases/download/v$remoteVersionName/Antigravity-App-v$remoteVersionName-release.apk",
+                "https://github.com/ejjeejduddu-arch/Antigravity-App/releases/download/v$remoteVersionName/antiGem-$flavorType-v$remoteVersionName-release.apk",
+                "https://github.com/ejjeejduddu-arch/Antigravity-App/releases/download/v$remoteVersionName/antiGem-termux-v$remoteVersionName-release.apk"
+            )
 
-            if (remoteVersionCode > BuildConfig.VERSION_CODE && downloadUrl.isNotBlank()) {
-                // Verify that the APK asset is actually published and downloadable on GitHub
-                val probeRequest = Request.Builder()
-                    .url(downloadUrl)
-                    .head()
-                    .header("User-Agent", "antiGem-Updater/${BuildConfig.VERSION_NAME}")
-                    .build()
-
-                val isAvailable = try {
-                    httpClient.newCall(probeRequest).execute().use { probeResponse ->
-                        probeResponse.isSuccessful || probeResponse.isRedirect
+            if (remoteVersionCode > BuildConfig.VERSION_CODE) {
+                // Verify which APK asset is actually published and downloadable on GitHub
+                var verifiedDownloadUrl: String? = null
+                for (url in candidateUrls) {
+                    try {
+                        val probeRequest = Request.Builder()
+                            .url(url)
+                            .head()
+                            .header("User-Agent", "antiGem-Updater/${BuildConfig.VERSION_NAME}")
+                            .build()
+                        val isAvailable = httpClient.newCall(probeRequest).execute().use { probeResponse ->
+                            probeResponse.isSuccessful || probeResponse.isRedirect
+                        }
+                        if (isAvailable) {
+                            verifiedDownloadUrl = url
+                            break
+                        }
+                    } catch (_: Exception) {
+                        // try next
                     }
-                } catch (_: Exception) {
-                    false
                 }
 
-                if (!isAvailable) {
-                    // Release is not yet fully published or APK is still building on CI
-                    return@withContext Result.success(null)
+                if (verifiedDownloadUrl == null) {
+                    // Fallback to primary release url if CI is completing or network head check failed
+                    verifiedDownloadUrl = candidateUrls.first()
                 }
 
                 Result.success(
@@ -115,7 +125,7 @@ class AppUpdateManager(private val context: Context) {
                         currentVersionCode = BuildConfig.VERSION_CODE,
                         currentVersionName = BuildConfig.VERSION_NAME,
                         packageName = currentPkg,
-                        downloadUrl = downloadUrl,
+                        downloadUrl = verifiedDownloadUrl,
                         changelog = changelog,
                         isCritical = isCritical
                     )
