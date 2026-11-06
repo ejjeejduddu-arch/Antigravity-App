@@ -173,8 +173,8 @@ fun OperaAmbientBackground(
                 // Primary Geodesic Sphere (Upper-Right)
                 val sphere1Radius = (w * 0.32f).coerceIn(120.dp.toPx(), 220.dp.toPx())
                 drawWireframeSphere(
-                    centerX = cx + w * 0.28f + (sensorTiltX * 4f),
-                    centerY = cy - h * 0.05f + (sensorTiltY * 4f),
+                    centerX = cx + w * 0.28f + (rawTiltX * 4f),
+                    centerY = cy - h * 0.05f + (rawTiltY * 4f),
                     radius = sphere1Radius,
                     t = time,
                     tiltX = tiltX,
@@ -186,8 +186,8 @@ fun OperaAmbientBackground(
                 // Secondary Counter-Orbiting Sphere (Lower-Left)
                 val sphere2Radius = (w * 0.22f).coerceIn(85.dp.toPx(), 160.dp.toPx())
                 drawWireframeSphere(
-                    centerX = cx - w * 0.32f - (sensorTiltX * 4f),
-                    centerY = cy + h * 0.22f - (sensorTiltY * 4f),
+                    centerX = cx - w * 0.32f - (rawTiltX * 4f),
+                    centerY = cy + h * 0.22f - (rawTiltY * 4f),
                     radius = sphere2Radius,
                     t = time * 1.3f,
                     tiltX = -tiltX,
