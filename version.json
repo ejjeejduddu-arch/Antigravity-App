@@ -1,12 +1,12 @@
 {
-  "version_code": 137,
-  "version_name": "1.0.37",
+  "version_code": 138,
+  "version_name": "1.0.38",
   "min_supported_version_code": 1,
   "changelog": [
-    "Restored authentic Opera Red (#FF1A1A) system window splash screen and Compose opening animation",
-    "Replaced black squircle opening screen with crisp white Opera butterfly mascot on vivid Opera Red background",
-    "Updated app adaptive launcher icon background to Opera Red (#FF1A1A) with centered white butterfly",
-    "Seamless zero-flicker transition from Android OS splash into full Opera chat workspace"
+    "Integrated official Google Antigravity transparent brand logo pack into app opening splash and launcher icon",
+    "Crystal-clear white Antigravity arch on authentic Opera Red (#FF1A1A) splash screen with zero background artifacts",
+    "Added official Antigravity brand drawables (full-color, white, one-color, wordmark, and lockups)",
+    "Optimized adaptive launcher icon safe zone inset (16dp) for seamless rendering across all Android launchers"
   ],
   "is_critical": false
 }
