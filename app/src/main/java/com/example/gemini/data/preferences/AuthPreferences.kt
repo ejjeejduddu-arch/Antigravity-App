@@ -435,6 +435,12 @@ class AuthPreferences(private val context: Context) {
         }
     }
 
+    suspend fun setSubscriptionTier(tier: String) {
+        context.dataStore.edit { prefs ->
+            prefs[SUBSCRIPTION_TIER] = tier
+        }
+    }
+
     suspend fun saveEnabledModelIds(ids: Set<String>) {
         context.dataStore.edit { prefs ->
             prefs[ENABLED_MODELS] = ids

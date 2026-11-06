@@ -1,12 +1,11 @@
 {
-  "version_code": 147,
-  "version_name": "1.0.47",
+  "version_code": 148,
+  "version_name": "1.0.48",
   "min_supported_version_code": 1,
   "changelog": [
-    "Restored classic authentic Opera Antigravity app launcher & splash logo",
-    "Added official Lobehub icons for Google Gemini, Anthropic Claude, and DeepSeek",
-    "Added DeepSeek AI category and dynamic model branding across chat & selector",
-    "Fixed in-app APK automatic updater download detection"
+    "Added full Membership & Subscription Plan upgrade system (Free, Go, Plus ₹0 Promo, Pro ₹10,699)",
+    "Added interactive ChatGPT-style plan comparison with real-time tier switching in drawer & profile",
+    "Integrated plan persistence across Antigravity App and Web"
   ],
   "is_critical": false
 }

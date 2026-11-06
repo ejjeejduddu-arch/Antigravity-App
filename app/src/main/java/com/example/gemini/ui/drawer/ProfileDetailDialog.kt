@@ -350,44 +350,55 @@ fun ProfileDetailDialog(
                     }
                 }
 
-                // Details: Upgrade URI if available
-                if (authInfo.upgradeSubscriptionUri.isNotBlank()) {
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(10.dp))
-                            .clickable {
-                                try {
-                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(authInfo.upgradeSubscriptionUri))
-                                    context.startActivity(intent)
-                                } catch (_: Exception) {}
-                            }
-                            .padding(vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.OpenInNew,
-                            contentDescription = "Upgrade",
-                            tint = ClaudeTerracotta,
-                            modifier = Modifier.size(18.dp)
+                // Details: Subscription / Upgrade Plan
+                var showMembershipDialog by remember { mutableStateOf(false) }
+                val authPrefs = remember { com.example.gemini.data.preferences.AuthPreferences(context) }
+                val currentPlan by authPrefs.subscriptionTier.collectAsState(initial = "free")
+                val scope = rememberCoroutineScope()
+
+                Spacer(modifier = Modifier.height(6.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(10.dp))
+                        .clickable { showMembershipDialog = true }
+                        .padding(vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.WorkspacePremium,
+                        contentDescription = "Upgrade Plan",
+                        tint = ClaudeTerracotta,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Subscription Tier",
+                            fontSize = 11.sp,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                         )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = "Subscription",
-                                fontSize = 11.sp,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                            )
-                            Text(
-                                text = if (authInfo.upgradeSubscriptionText.isNotBlank()) authInfo.upgradeSubscriptionText else "Manage / Upgrade Plan",
-                                fontSize = 12.sp,
-                                color = ClaudeTerracotta,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
+                        Text(
+                            text = "${(currentPlan ?: "Free").replaceFirstChar { it.uppercase() }} (Tap to Upgrade / Manage)",
+                            fontSize = 12.sp,
+                            color = ClaudeTerracotta,
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
+                }
+
+                if (showMembershipDialog) {
+                    com.example.gemini.ui.membership.MembershipPlansDialog(
+                        currentPlan = currentPlan ?: "free",
+                        onDismiss = { showMembershipDialog = false },
+                        onPlanUpdated = { newTier ->
+                            scope.launch {
+                                authPrefs.setSubscriptionTier(newTier)
+                            }
+                        }
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(18.dp))

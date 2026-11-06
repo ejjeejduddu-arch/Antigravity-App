@@ -41,7 +41,7 @@ import androidx.compose.material.icons.outlined.Public
 import com.example.gemini.ui.components.AppToastHelper
 import com.example.gemini.ui.components.ChatToastType
 import android.widget.Toast
-import androidx.compose.material.icons.outlined.ContentCopy
+import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Settings
 import com.example.gemini.theme.OperaRed
 import androidx.compose.material3.*
@@ -122,6 +122,7 @@ fun ChatHistoryDrawer(
         )
     }
     var showProfileDialog by remember { mutableStateOf(false) }
+    var showMembershipDialog by remember { mutableStateOf(false) }
     var showSigningInProgressDialog by remember { mutableStateOf(false) }
     var showExitConfirmDialog by remember { mutableStateOf(false) }
     var conversationToDelete by remember { mutableStateOf<Conversation?>(null) }
@@ -1115,6 +1116,55 @@ fun ChatHistoryDrawer(
                 color = Color.White.copy(alpha = 0.2f)
             )
 
+            // Upgrade Plan Banner Row
+            Surface(
+                onClick = { showMembershipDialog = true },
+                shape = RoundedCornerShape(12.dp),
+                color = Color.White.copy(alpha = 0.12f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 4.dp, vertical = 6.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.AutoAwesome,
+                        contentDescription = "Upgrade Plan",
+                        tint = Color(0xFFFFD700),
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Upgrade plan",
+                            fontSize = 13.5.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
+                        )
+                        Text(
+                            text = "Get Plus (Free Claim) or Frontier Pro",
+                            fontSize = 11.sp,
+                            color = Color.White.copy(alpha = 0.75f)
+                        )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(99.dp))
+                            .background(Color(0xFF2563EB))
+                            .padding(horizontal = 8.dp, vertical = 3.dp)
+                    ) {
+                        Text(
+                            text = "OFFER",
+                            fontSize = 9.5.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+                }
+            }
+
             // Bottom Bar: Settings (Left) & Profile/Login (Right)
             Row(
                 modifier = Modifier
@@ -1322,6 +1372,23 @@ fun ChatHistoryDrawer(
                     authInfo = authInfo,
                     onDismiss = { showProfileDialog = false },
                     onLogout = onLogout
+                )
+            }
+
+            if (showMembershipDialog) {
+                val currentCtx = LocalContext.current
+                val authPrefs = remember { com.example.gemini.data.preferences.AuthPreferences(currentCtx) }
+                val currentPlan by authPrefs.subscriptionTier.collectAsState(initial = "free")
+                val scope = rememberCoroutineScope()
+
+                com.example.gemini.ui.membership.MembershipPlansDialog(
+                    currentPlan = currentPlan ?: "free",
+                    onDismiss = { showMembershipDialog = false },
+                    onPlanUpdated = { newTier ->
+                        scope.launch {
+                            authPrefs.setSubscriptionTier(newTier)
+                        }
+                    }
                 )
             }
 
