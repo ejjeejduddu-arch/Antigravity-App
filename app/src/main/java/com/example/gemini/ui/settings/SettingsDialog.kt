@@ -292,7 +292,7 @@ fun SettingsDialog(
                                 fontFamily = PetronaFontFamily,
                                 fontSize = 22.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface,
+                                color = Color.White,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
@@ -303,14 +303,14 @@ fun SettingsDialog(
                                 text = if (isClaudePage) "Claude Code · ${claudePage.title}" else currentSection.title,
                                 fontSize = 17.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface,
+                                color = Color.White,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
                             Text(
                                 text = if (isClaudePage) claudePage.subtitle else currentSection.subtitle,
                                 fontSize = 11.5.sp,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f),
+                                color = Color.White.copy(alpha = 0.85f),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
@@ -328,7 +328,7 @@ fun SettingsDialog(
                         Icon(
                             imageVector = if (currentSection == SettingsSection.MAIN) Icons.Outlined.Close else Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = if (currentSection == SettingsSection.MAIN) "Close Settings" else "Back",
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint = Color.White
                         )
                     }
                 },
@@ -336,13 +336,13 @@ fun SettingsDialog(
                     Spacer(modifier = Modifier.width(48.dp))
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
+                    containerColor = OperaRed
                 )
             )
 
             HorizontalDivider(
                 thickness = 0.8.dp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
+                color = OperaBorderOnPrimary
             )
 
             // Animated Screen Content

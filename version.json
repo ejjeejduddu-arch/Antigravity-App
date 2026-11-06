@@ -1,11 +1,11 @@
 {
-  "version_code": 141,
-  "version_name": "1.0.41",
+  "version_code": 142,
+  "version_name": "1.0.42",
   "min_supported_version_code": 1,
   "changelog": [
-    "Updated top navbar to authentic Opera Red with subtle floating elevation shadow",
-    "Centered official Antigravity logo in middle of top navbar",
-    "Removed + icon from top bar for a cleaner single-menu navigation experience"
+    "Full Opera Red theme across Side Drawer, Bottom Sheets, Settings, and Assistant Message Cards",
+    "Crisp white typography, icons, and translucent white action pills for high contrast",
+    "Redesigned Model Selector, Attachment Picker, and Chat History Drawer in signature Opera Red"
   ],
   "is_critical": false
 }

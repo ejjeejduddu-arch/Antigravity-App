@@ -79,10 +79,18 @@ fun ModelSelectorBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = OperaRed,
         tonalElevation = 0.dp,
         shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-        dragHandle = { BottomSheetDefaults.DragHandle() }
+        dragHandle = {
+            Box(
+                modifier = Modifier
+                    .padding(top = 10.dp, bottom = 6.dp)
+                    .size(width = 38.dp, height = 4.dp)
+                    .clip(CircleShape)
+                    .background(Color.White.copy(alpha = 0.45f))
+            )
+        }
     ) {
         // Intercept back press when inside a subcategory inside the sheet window
         BackHandler(enabled = activeCategory != null) {
@@ -226,7 +234,7 @@ fun QuotaBadgeChip(
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(6.dp),
-        color = MaterialTheme.colorScheme.background
+        color = Color.White.copy(alpha = 0.22f)
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
@@ -243,7 +251,7 @@ fun QuotaBadgeChip(
                 text = text,
                 fontSize = 11.5.sp,
                 fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                color = Color.White,
                 letterSpacing = 0.1.sp
             )
         }
@@ -272,14 +280,51 @@ private fun MainCategoryListView(
             .verticalScroll(rememberScrollState())
             .padding(bottom = 20.dp)
     ) {
-        // Agent header (same as the Claude Code picker)
-        com.example.gemini.ui.agents.AgentSheetHeader(
-            agent = com.example.gemini.domain.model.AgentKind.AGY,
-            title = "Select model",
-            detail = if (availableModelsCount > 0) "$availableModelsCount models" else "no models loaded",
-            refreshing = isRefreshing,
-            onRefresh = onRefresh
-        )
+        // Antigravity Sheet Header in pure white
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(38.dp)
+                    .clip(CircleShape)
+                    .background(Color.White.copy(alpha = 0.22f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.AutoAwesome,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Select model",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+                Text(
+                    text = if (availableModelsCount > 0) "Antigravity · $availableModelsCount models" else "Antigravity · no models loaded",
+                    fontSize = 12.sp,
+                    color = Color.White.copy(alpha = 0.85f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+            val angle = if (isRefreshing) {
+                rememberInfiniteTransition(label = "sheet_refresh")
+                    .animateFloat(0f, 360f, infiniteRepeatable(tween(800, easing = LinearEasing), RepeatMode.Restart), label = "sheet_refresh_angle").value
+            } else 0f
+            IconButton(onClick = onRefresh, enabled = !isRefreshing, modifier = Modifier.size(38.dp)) {
+                Icon(Icons.Outlined.Refresh, "Refresh", tint = Color.White, modifier = Modifier.size(20.dp).rotate(angle))
+            }
+        }
 
         Spacer(modifier = Modifier.height(14.dp))
 
@@ -294,13 +339,13 @@ private fun MainCategoryListView(
                     text = "No Models Loaded",
                     fontWeight = FontWeight.Bold,
                     fontSize = 15.sp,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = Color.White
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "Connect your Google account in Settings or tap refresh to load your active models.",
                     fontSize = 12.5.sp,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    color = Color.White.copy(alpha = 0.82f),
                     textAlign = TextAlign.Center
                 )
             }
@@ -493,7 +538,7 @@ private fun CategoryModelsSubView(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back to categories",
-                    tint = MaterialTheme.colorScheme.onSurface,
+                    tint = Color.White,
                     modifier = Modifier.size(18.dp)
                 )
             }
@@ -503,12 +548,12 @@ private fun CategoryModelsSubView(
                     text = title,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = Color.White
                 )
                 Text(
                     text = "${groupedModels.size} base models • ${models.size} variants",
                     fontSize = 11.sp,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                    color = Color.White.copy(alpha = 0.82f)
                 )
             }
         }
@@ -552,26 +597,15 @@ private fun TieredModelGroupCard(
     onSelectModel: (String) -> Unit
 ) {
     val isAnyVariantSelected = group.variants.any { it.model.id == selectedModelId }
-    val brandColor = when (group.family) {
-        ModelFamily.CLAUDE -> ClaudeTerracotta
-        ModelFamily.GEMINI -> GeminiBlue
-        ModelFamily.OTHER -> MaterialTheme.colorScheme.primary
-    }
-
-    val isDark = isAppInDarkTheme()
-    val cardBg = if (isAnyVariantSelected) {
-        if (isDark) ClaudeDarkSurface else Color.White
-    } else {
-        if (isDark) ClaudeDarkSurface.copy(alpha = 0.65f) else Color.White.copy(alpha = 0.85f)
-    }
 
     Surface(
         modifier = Modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = 60.dp)
-            .clip(RoundedCornerShape(12.dp)),
-        color = cardBg,
-        shape = RoundedCornerShape(12.dp)
+            .clip(RoundedCornerShape(14.dp)),
+        color = Color.White.copy(alpha = 0.16f),
+        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.28f)),
+        shape = RoundedCornerShape(14.dp)
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 11.dp)
@@ -584,7 +618,7 @@ private fun TieredModelGroupCard(
                     text = group.baseName,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = Color.White,
                     modifier = Modifier.weight(1f)
                 )
 
@@ -592,14 +626,14 @@ private fun TieredModelGroupCard(
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(6.dp))
-                            .background(brandColor.copy(alpha = 0.15f))
+                            .background(Color.White)
                             .padding(horizontal = 6.dp, vertical = 2.dp)
                     ) {
                         Text(
                             text = "Active",
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
-                            color = brandColor
+                            color = OperaRed
                         )
                     }
                 }
@@ -620,7 +654,8 @@ private fun TieredModelGroupCard(
                             .clip(RoundedCornerShape(8.dp))
                             .clickable { onSelectModel(variant.model.id) },
                         shape = RoundedCornerShape(8.dp),
-                        color = if (isSelected) brandColor else brandColor.copy(alpha = 0.12f)
+                        color = if (isSelected) Color.White else Color.White.copy(alpha = 0.16f),
+                        border = if (isSelected) null else BorderStroke(1.dp, Color.White.copy(alpha = 0.35f))
                     ) {
                         Row(
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
@@ -630,7 +665,7 @@ private fun TieredModelGroupCard(
                                 Icon(
                                     imageVector = Icons.Default.Check,
                                     contentDescription = null,
-                                    tint = Color.White,
+                                    tint = OperaRed,
                                     modifier = Modifier.size(11.dp)
                                 )
                                 Spacer(modifier = Modifier.width(3.dp))
@@ -639,7 +674,7 @@ private fun TieredModelGroupCard(
                                 text = variant.tierLabel.ifBlank { variant.model.displayName },
                                 fontSize = 11.sp,
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
+                                color = if (isSelected) OperaRed else Color.White
                             )
                         }
                     }
@@ -665,15 +700,14 @@ private fun CategoryNavigationTile(
     brandColor: Color,
     onClick: () -> Unit
 ) {
-    val isDark = isAppInDarkTheme()
-
     Surface(
         modifier = Modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = 88.dp)
             .clip(RoundedCornerShape(14.dp))
             .clickable { onClick() },
-        color = if (isDark) ClaudeDarkSurface else Color.White,
+        color = Color.White.copy(alpha = 0.16f),
+        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.28f)),
         shape = RoundedCornerShape(14.dp)
     ) {
         Row(
@@ -686,20 +720,20 @@ private fun CategoryNavigationTile(
                         text = title,
                         fontSize = 15.5.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = Color.White
                     )
                     Spacer(modifier = Modifier.width(7.dp))
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(6.dp))
-                            .background(brandColor.copy(alpha = 0.12f))
+                            .background(Color.White.copy(alpha = 0.22f))
                             .padding(horizontal = 6.dp, vertical = 1.5.dp)
                     ) {
                         Text(
                             text = "$count",
                             fontSize = 10.5.sp,
                             fontWeight = FontWeight.Bold,
-                            color = brandColor
+                            color = Color.White
                         )
                     }
                 }
@@ -713,7 +747,7 @@ private fun CategoryNavigationTile(
                         Icon(
                             imageVector = Icons.Default.Check,
                             contentDescription = "Active",
-                            tint = brandColor,
+                            tint = Color.White,
                             modifier = Modifier.size(13.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
@@ -721,7 +755,7 @@ private fun CategoryNavigationTile(
                             text = activeModelName,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = brandColor,
+                            color = Color.White,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -730,7 +764,7 @@ private fun CategoryNavigationTile(
                     Text(
                         text = "Tap to choose model",
                         fontSize = 12.5.sp,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.45f)
+                        color = Color.White.copy(alpha = 0.72f)
                     )
                 }
 
@@ -756,7 +790,7 @@ private fun CategoryNavigationTile(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                 contentDescription = "Open $title",
-                tint = if (activeModelName != null) brandColor else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.35f),
+                tint = Color.White,
                 modifier = Modifier.size(14.dp)
             )
         }
@@ -772,23 +806,15 @@ private fun ModelRowItem(
     isSelected: Boolean,
     onSelect: () -> Unit
 ) {
-    val brandColor = if (model.family == ModelFamily.CLAUDE) ClaudeTerracotta else GeminiBlue
-
-    val isDark = isAppInDarkTheme()
-    val cardBg = if (isSelected) {
-        if (isDark) ClaudeDarkSurface else Color.White
-    } else {
-        if (isDark) ClaudeDarkSurface.copy(alpha = 0.65f) else Color.White.copy(alpha = 0.85f)
-    }
-
     Surface(
         modifier = Modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = 60.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(14.dp))
             .clickable { onSelect() },
-        color = cardBg,
-        shape = RoundedCornerShape(12.dp)
+        color = Color.White.copy(alpha = 0.16f),
+        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.28f)),
+        shape = RoundedCornerShape(14.dp)
     ) {
         Row(
             modifier = Modifier
@@ -800,7 +826,7 @@ private fun ModelRowItem(
                 text = model.displayName.replace(Regex("\\s*\\(?Thinking\\)?", RegexOption.IGNORE_CASE), "").trim(),
                 fontSize = 14.sp,
                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = Color.White,
                 modifier = Modifier.weight(1f)
             )
 
@@ -808,14 +834,14 @@ private fun ModelRowItem(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
-                        .background(brandColor.copy(alpha = 0.15f))
+                        .background(Color.White)
                         .padding(horizontal = 7.dp, vertical = 3.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Default.Check,
                             contentDescription = "Selected",
-                            tint = brandColor,
+                            tint = OperaRed,
                             modifier = Modifier.size(12.dp)
                         )
                         Spacer(modifier = Modifier.width(3.dp))
@@ -823,7 +849,7 @@ private fun ModelRowItem(
                             text = "Active",
                             fontSize = 10.5.sp,
                             fontWeight = FontWeight.Bold,
-                            color = brandColor
+                            color = OperaRed
                         )
                     }
                 }

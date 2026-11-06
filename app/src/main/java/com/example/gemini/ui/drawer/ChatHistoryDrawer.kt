@@ -43,6 +43,7 @@ import com.example.gemini.ui.components.ChatToastType
 import android.widget.Toast
 import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material.icons.outlined.Settings
+import com.example.gemini.theme.OperaRed
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -567,7 +568,7 @@ fun ChatHistoryDrawer(
 
     ModalDrawerSheet(
         modifier = modifier.fillMaxWidth(0.82f),
-        drawerContainerColor = MaterialTheme.colorScheme.surface,
+        drawerContainerColor = OperaRed,
         drawerTonalElevation = 0.dp
     ) {
         Column(
@@ -599,8 +600,8 @@ fun ChatHistoryDrawer(
                         .height(36.dp),
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = ClaudeTerracotta,
-                        contentColor = Color.White
+                        containerColor = Color.White,
+                        contentColor = OperaRed
                     ),
                     elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp)
@@ -608,14 +609,14 @@ fun ChatHistoryDrawer(
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "New Chat",
-                        tint = Color.White,
+                        tint = OperaRed,
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(5.dp))
                     Text(
                         text = "New Chat",
                         fontWeight = FontWeight.SemiBold,
-                        color = Color.White,
+                        color = OperaRed,
                         fontSize = 13.5.sp
                     )
                 }
@@ -625,17 +626,17 @@ fun ChatHistoryDrawer(
                     onClick = { showExitConfirmDialog = true },
                     modifier = Modifier.size(36.dp),
                     shape = RoundedCornerShape(10.dp),
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                    color = Color.White.copy(alpha = 0.18f),
                     border = BorderStroke(
                         1.dp,
-                        MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
+                        Color.White.copy(alpha = 0.35f)
                     )
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Icon(
                             imageVector = Icons.Default.PowerSettingsNew,
                             contentDescription = "Exit App",
-                            tint = MaterialTheme.colorScheme.error.copy(alpha = 0.85f),
+                            tint = Color.White,
                             modifier = Modifier.size(17.dp)
                         )
                     }
@@ -646,22 +647,17 @@ fun ChatHistoryDrawer(
                     onClick = { onToggleGroupByWorkspace(!groupByWorkspace) },
                     modifier = Modifier.size(36.dp),
                     shape = RoundedCornerShape(10.dp),
-                    color = if (groupByWorkspace) ClaudeTerracotta.copy(alpha = 0.14f) else MaterialTheme.colorScheme.surfaceVariant.copy(
-                        alpha = 0.5f
-                    ),
+                    color = if (groupByWorkspace) Color.White else Color.White.copy(alpha = 0.18f),
                     border = BorderStroke(
                         1.dp,
-                        if (groupByWorkspace) ClaudeTerracotta.copy(alpha = 0.45f)
-                        else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
+                        if (groupByWorkspace) Color.White else Color.White.copy(alpha = 0.35f)
                     )
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Icon(
                             imageVector = Icons.Default.Folder,
                             contentDescription = if (groupByWorkspace) "Disable Workspace Grouping" else "Group by Workspace",
-                            tint = if (groupByWorkspace) ClaudeTerracotta else MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                                alpha = 0.8f
-                            ),
+                            tint = if (groupByWorkspace) OperaRed else Color.White,
                             modifier = Modifier.size(17.dp)
                         )
                     }
@@ -678,22 +674,17 @@ fun ChatHistoryDrawer(
                     },
                     modifier = Modifier.size(36.dp),
                     shape = RoundedCornerShape(10.dp),
-                    color = if (isSearchActive || searchQuery.isNotBlank()) ClaudeTerracotta.copy(alpha = 0.14f) else MaterialTheme.colorScheme.surfaceVariant.copy(
-                        alpha = 0.5f
-                    ),
+                    color = if (isSearchActive || searchQuery.isNotBlank()) Color.White else Color.White.copy(alpha = 0.18f),
                     border = BorderStroke(
                         1.dp,
-                        if (isSearchActive || searchQuery.isNotBlank()) ClaudeTerracotta.copy(alpha = 0.45f)
-                        else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
+                        if (isSearchActive || searchQuery.isNotBlank()) Color.White else Color.White.copy(alpha = 0.35f)
                     )
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = "Search",
-                            tint = if (isSearchActive || searchQuery.isNotBlank()) ClaudeTerracotta else MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                                alpha = 0.8f
-                            ),
+                            tint = if (isSearchActive || searchQuery.isNotBlank()) OperaRed else Color.White,
                             modifier = Modifier.size(17.dp)
                         )
                     }
@@ -712,11 +703,10 @@ fun ChatHistoryDrawer(
                 Column(modifier = Modifier.padding(bottom = 8.dp)) {
                     Surface(
                         shape = RoundedCornerShape(10.dp),
-                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f),
+                        color = Color.White.copy(alpha = 0.18f),
                         border = BorderStroke(
                             1.dp,
-                            if (searchQuery.isNotBlank()) ClaudeTerracotta.copy(alpha = 0.5f)
-                            else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)
+                            Color.White.copy(alpha = 0.35f)
                         ),
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -729,9 +719,7 @@ fun ChatHistoryDrawer(
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = null,
-                                tint = if (searchQuery.isNotBlank()) ClaudeTerracotta else MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                                    alpha = 0.7f
-                                ),
+                                tint = Color.White,
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
@@ -743,11 +731,11 @@ fun ChatHistoryDrawer(
                                 },
                                 singleLine = true,
                                 textStyle = TextStyle(
-                                    color = MaterialTheme.colorScheme.onSurface,
+                                    color = Color.White,
                                     fontSize = 13.5.sp,
                                     lineHeight = 18.sp
                                 ),
-                                cursorBrush = SolidColor(ClaudeTerracotta),
+                                cursorBrush = SolidColor(Color.White),
                                 modifier = Modifier
                                     .weight(1f)
                                     .padding(vertical = 1.dp),
@@ -756,7 +744,7 @@ fun ChatHistoryDrawer(
                                         Text(
                                             text = "Search chat titles...",
                                             fontSize = 13.sp,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                                            color = Color.White.copy(alpha = 0.7f)
                                         )
                                     }
                                     innerTextField()
@@ -773,7 +761,7 @@ fun ChatHistoryDrawer(
                                     Icon(
                                         imageVector = Icons.Default.Close,
                                         contentDescription = "Clear",
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                        tint = Color.White,
                                         modifier = Modifier.size(14.dp)
                                     )
                                 }
@@ -786,7 +774,7 @@ fun ChatHistoryDrawer(
                                 Icon(
                                     imageVector = Icons.Default.Tune,
                                     contentDescription = "Advanced Search",
-                                    tint = ClaudeTerracotta,
+                                    tint = Color.White,
                                     modifier = Modifier.size(16.dp)
                                 )
                             }
@@ -804,13 +792,13 @@ fun ChatHistoryDrawer(
                             Text(
                                 text = "${filtered.size} chat${if (filtered.size != 1) "s" else ""} found",
                                 fontSize = 11.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                color = Color.White.copy(alpha = 0.85f)
                             )
                             Text(
                                 text = "Advanced Search ›",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = ClaudeTerracotta,
+                                color = Color.White,
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(4.dp))
                                     .clickable { showFullSearchDialog = true }
@@ -834,15 +822,14 @@ fun ChatHistoryDrawer(
                         com.example.gemini.domain.model.AgentKind.CLAUDE to "Claude"
                     ).forEach { (agent, label) ->
                         val selected = agentFilter == agent
-                        val accent = agent?.accent() ?: ClaudeTerracotta
                         Text(
                             text = label,
                             fontSize = 11.5.sp,
                             fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
-                            color = if (selected) accent else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                            color = if (selected) Color.White else Color.White.copy(alpha = 0.7f),
                             modifier = Modifier
                                 .clip(RoundedCornerShape(12.dp))
-                                .background(if (selected) accent.copy(alpha = 0.14f) else Color.Transparent)
+                                .background(if (selected) Color.White.copy(alpha = 0.25f) else Color.Transparent)
                                 .clickable { agentFilter = agent }
                                 .padding(horizontal = 10.dp, vertical = 4.dp)
                         )
@@ -1002,7 +989,7 @@ fun ChatHistoryDrawer(
                                             Icon(
                                                 imageVector = if (groupName == "General") Icons.Outlined.Public else Icons.Default.Folder,
                                                 contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                                                tint = Color.White.copy(alpha = 0.85f),
                                                 modifier = Modifier.size(15.dp)
                                             )
                                             Spacer(modifier = Modifier.width(7.dp))
@@ -1010,7 +997,7 @@ fun ChatHistoryDrawer(
                                                 text = groupName,
                                                 fontSize = 13.sp,
                                                 fontWeight = FontWeight.SemiBold,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
+                                                color = Color.White,
                                                 letterSpacing = 0.2.sp,
                                                 maxLines = 1,
                                                 overflow = TextOverflow.Ellipsis,
@@ -1019,13 +1006,13 @@ fun ChatHistoryDrawer(
                                             Spacer(modifier = Modifier.width(6.dp))
                                             Surface(
                                                 shape = RoundedCornerShape(10.dp),
-                                                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+                                                color = Color.White.copy(alpha = 0.22f)
                                             ) {
                                                 Text(
                                                     text = "${chats.size}",
                                                     fontSize = 10.5.sp,
                                                     fontWeight = FontWeight.Medium,
-                                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                                    color = Color.White,
                                                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 1.dp)
                                                 )
                                             }
@@ -1034,7 +1021,7 @@ fun ChatHistoryDrawer(
                                                 Icon(
                                                     imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                                                     contentDescription = null,
-                                                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                                                    tint = Color.White.copy(alpha = 0.8f),
                                                     modifier = Modifier.size(16.dp)
                                                 )
                                             }
@@ -1104,13 +1091,13 @@ fun ChatHistoryDrawer(
                                                     text = if (isExpanded) "Show less" else "Show ${chats.size - 5} more",
                                                     fontSize = 11.5.sp,
                                                     fontWeight = FontWeight.Medium,
-                                                    color = ClaudeTerracotta
+                                                    color = Color.White
                                                 )
                                                 Spacer(modifier = Modifier.width(2.dp))
                                                 Icon(
                                                     imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                                                     contentDescription = null,
-                                                    tint = ClaudeTerracotta,
+                                                    tint = Color.White,
                                                     modifier = Modifier.size(14.dp)
                                                 )
                                             }
@@ -1125,7 +1112,7 @@ fun ChatHistoryDrawer(
 
             HorizontalDivider(
                 thickness = 0.5.dp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                color = Color.White.copy(alpha = 0.2f)
             )
 
             // Bottom Bar: Settings (Left) & Profile/Login (Right)
@@ -1150,7 +1137,7 @@ fun ChatHistoryDrawer(
                         Icon(
                             imageVector = Icons.Outlined.Settings,
                             contentDescription = "Settings",
-                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                            tint = Color.White,
                             modifier = Modifier.size(20.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
@@ -1158,7 +1145,7 @@ fun ChatHistoryDrawer(
                             text = "Settings",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = Color.White
                         )
                     }
                 }
@@ -1170,7 +1157,7 @@ fun ChatHistoryDrawer(
                     Surface(
                         onClick = { showSigningInProgressDialog = true },
                         shape = RoundedCornerShape(14.dp),
-                        color = ClaudeTerracotta.copy(alpha = 0.12f),
+                        color = Color.White.copy(alpha = 0.18f),
                         modifier = Modifier.height(30.dp)
                     ) {
                         Row(
@@ -1180,14 +1167,14 @@ fun ChatHistoryDrawer(
                             Box(
                                 modifier = Modifier
                                     .size(6.dp)
-                                    .background(ClaudeTerracotta, CircleShape)
+                                    .background(Color.White, CircleShape)
                             )
                             Spacer(modifier = Modifier.width(5.dp))
                             Text(
                                 text = "Signing In...",
                                 fontSize = 11.5.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = ClaudeTerracotta
+                                color = Color.White
                             )
                         }
                     }
@@ -1198,10 +1185,10 @@ fun ChatHistoryDrawer(
                             Surface(
                                 onClick = { showProfileDialog = true },
                                 shape = RoundedCornerShape(20.dp),
-                                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                                color = Color.White.copy(alpha = 0.18f),
                                 border = androidx.compose.foundation.BorderStroke(
                                     1.dp,
-                                    ClaudeTerracotta.copy(alpha = 0.4f)
+                                    Color.White.copy(alpha = 0.35f)
                                 )
                             ) {
                                 Row(
@@ -1222,7 +1209,7 @@ fun ChatHistoryDrawer(
                                             Box(
                                                 modifier = Modifier
                                                     .fillMaxSize()
-                                                    .background(ClaudeTerracotta),
+                                                    .background(Color.White),
                                                 contentAlignment = Alignment.Center
                                             ) {
                                                 val initial =
@@ -1231,7 +1218,7 @@ fun ChatHistoryDrawer(
                                                     text = initial,
                                                     fontSize = 11.sp,
                                                     fontWeight = FontWeight.Bold,
-                                                    color = Color.White
+                                                    color = OperaRed
                                                 )
                                             }
                                         },
@@ -1239,7 +1226,7 @@ fun ChatHistoryDrawer(
                                             Box(
                                                 modifier = Modifier
                                                     .fillMaxSize()
-                                                    .background(ClaudeTerracotta),
+                                                    .background(Color.White),
                                                 contentAlignment = Alignment.Center
                                             ) {
                                                 val initial =
@@ -1248,7 +1235,7 @@ fun ChatHistoryDrawer(
                                                     text = initial,
                                                     fontSize = 11.sp,
                                                     fontWeight = FontWeight.Bold,
-                                                    color = Color.White
+                                                    color = OperaRed
                                                 )
                                             }
                                         }
@@ -1263,7 +1250,7 @@ fun ChatHistoryDrawer(
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis,
                                             modifier = Modifier.widthIn(max = 110.dp),
-                                            color = MaterialTheme.colorScheme.onSurface
+                                            color = Color.White
                                         )
                                     }
                                 }
@@ -1277,21 +1264,23 @@ fun ChatHistoryDrawer(
                                 contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                                 shape = RoundedCornerShape(14.dp),
                                 colors = ButtonDefaults.filledTonalButtonColors(
-                                    containerColor = ClaudeTerracotta.copy(alpha = 0.15f),
-                                    contentColor = ClaudeTerracotta
+                                    containerColor = Color.White,
+                                    contentColor = OperaRed
                                 ),
                                 modifier = Modifier.height(32.dp)
                             ) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Outlined.Login,
                                     contentDescription = "Sign In",
+                                    tint = OperaRed,
                                     modifier = Modifier.size(15.dp)
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
                                     text = "Sign In",
                                     fontSize = 12.sp,
-                                    fontWeight = FontWeight.SemiBold
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = OperaRed
                                 )
                             }
                         }
@@ -1302,7 +1291,7 @@ fun ChatHistoryDrawer(
                             Surface(
                                 onClick = if (statusObj == com.example.gemini.data.remote.SystemStatus.OFFLINE || statusObj == com.example.gemini.data.remote.SystemStatus.ERROR) onRetry else onCheckAuth,
                                 shape = RoundedCornerShape(14.dp),
-                                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                                color = Color.White.copy(alpha = 0.18f),
                                 modifier = Modifier.height(30.dp)
                             ) {
                                 Row(
@@ -1319,7 +1308,7 @@ fun ChatHistoryDrawer(
                                         text = statusObj.label,
                                         fontSize = 11.5.sp,
                                         fontWeight = FontWeight.Normal,
-                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                                        color = Color.White.copy(alpha = 0.9f)
                                     )
                                 }
                             }
@@ -1443,8 +1432,8 @@ private fun ChatHistoryItemRow(
             )
             .clip(RoundedCornerShape(8.dp))
             .background(
-                if (isSelected) MaterialTheme.colorScheme.surfaceVariant
-                else Color.Transparent
+                if (isSelected) Color.White
+                else Color.White.copy(alpha = 0.14f)
             )
             .clickable {
                 Log.d("CHAT_OPEN_DEBUG", "📂 [Drawer Row] User clicked: id=${conv.id}, title='${conv.title}'")
@@ -1461,7 +1450,7 @@ private fun ChatHistoryItemRow(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.CallSplit,
                     contentDescription = "Subagent",
-                    tint = if (isSelected) ClaudeTerracotta else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                    tint = if (isSelected) OperaRed else Color.White.copy(alpha = 0.85f),
                     modifier = Modifier.size(15.dp)
                 )
                 if (statusDotColor != null) {
@@ -1480,7 +1469,7 @@ private fun ChatHistoryItemRow(
                 Icon(
                     imageVector = Icons.Outlined.ChatBubbleOutline,
                     contentDescription = null,
-                    tint = if (isSelected) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    tint = if (isSelected) OperaRed else Color.White.copy(alpha = 0.85f),
                     modifier = Modifier.size(17.dp)
                 )
                 if (statusDotColor != null) {
@@ -1507,7 +1496,7 @@ private fun ChatHistoryItemRow(
                 fontWeight = if (isSelected) FontWeight.SemiBold else if (isSubagent) FontWeight.Medium else FontWeight.Normal,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = if (isSubagent && isSelected) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface,
+                color = if (isSelected) OperaRed else Color.White,
                 modifier = Modifier.weight(1f, fill = false)
             )
 
@@ -1521,12 +1510,10 @@ private fun ChatHistoryItemRow(
                 if (subagents.isNotEmpty()) {
                     Surface(
                         shape = RoundedCornerShape(12.dp),
-                        color = if (isSubagentsExpanded) ClaudeTerracotta.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceVariant.copy(
-                            alpha = 0.7f
-                        ),
+                        color = if (isSelected) OperaRed.copy(alpha = 0.15f) else Color.White.copy(alpha = 0.25f),
                         border = BorderStroke(
                             1.dp,
-                            if (isSubagentsExpanded) ClaudeTerracotta.copy(alpha = 0.4f) else Color.Transparent
+                            if (isSelected) OperaRed.copy(alpha = 0.4f) else Color.White.copy(alpha = 0.35f)
                         ),
                         modifier = Modifier
                             .clip(RoundedCornerShape(12.dp))
@@ -1540,13 +1527,13 @@ private fun ChatHistoryItemRow(
                                 text = "${subagents.size}",
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = if (isSubagentsExpanded) ClaudeTerracotta else MaterialTheme.colorScheme.onSurfaceVariant
+                                color = if (isSelected) OperaRed else Color.White
                             )
                             Spacer(modifier = Modifier.width(2.dp))
                             Icon(
                                 imageVector = if (isSubagentsExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                                 contentDescription = if (isSubagentsExpanded) "Collapse subagents" else "Expand subagents",
-                                tint = if (isSubagentsExpanded) ClaudeTerracotta else MaterialTheme.colorScheme.onSurfaceVariant,
+                                tint = if (isSelected) OperaRed else Color.White,
                                 modifier = Modifier.size(13.dp)
                             )
                         }
@@ -1558,7 +1545,7 @@ private fun ChatHistoryItemRow(
                     Text(
                         text = timeStr,
                         fontSize = if (isSubagent) 10.5.sp else 11.sp,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.45f)
+                        color = if (isSelected) OperaRed.copy(alpha = 0.75f) else Color.White.copy(alpha = 0.7f)
                     )
                 }
             }
@@ -1641,7 +1628,7 @@ private fun ChatHistoryItemRow(
                 Icon(
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = "Options",
-                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                    tint = if (isSelected) OperaRed.copy(alpha = 0.8f) else Color.White.copy(alpha = 0.8f),
                     modifier = Modifier.size(17.dp)
                 )
             }

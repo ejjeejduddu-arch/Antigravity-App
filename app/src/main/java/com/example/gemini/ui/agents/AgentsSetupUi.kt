@@ -2,6 +2,7 @@ package com.example.gemini.ui.agents
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import com.example.gemini.theme.OperaRed
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -74,12 +75,12 @@ fun AgentSelector(selected: Set<AgentKind>, onSelect: (Set<AgentKind>) -> Unit, 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
         AGENT_OPTIONS.forEach { option ->
             val isOn = option.agents == selected
-            val accent = if (option.agents.size == 1) option.agents.first().accent() else MaterialTheme.colorScheme.primary
+            val accent = OperaRed
             Surface(
                 onClick = { onSelect(option.agents) },
                 shape = RoundedCornerShape(16.dp),
-                color = if (isOn) accent.copy(alpha = 0.08f) else MaterialTheme.colorScheme.surface,
-                border = BorderStroke(if (isOn) 1.5.dp else 1.dp, if (isOn) accent.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)),
+                color = if (isOn) OperaRed.copy(alpha = 0.08f) else MaterialTheme.colorScheme.surface,
+                border = BorderStroke(if (isOn) 1.5.dp else 1.dp, if (isOn) OperaRed else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -101,10 +102,10 @@ fun AgentSelector(selected: Set<AgentKind>, onSelect: (Set<AgentKind>) -> Unit, 
                         Modifier
                             .size(20.dp)
                             .clip(CircleShape)
-                            .border(1.5.dp, if (isOn) accent else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f), CircleShape),
+                            .border(1.5.dp, if (isOn) OperaRed else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f), CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
-                        if (isOn) Box(Modifier.size(10.dp).clip(CircleShape).background(accent))
+                        if (isOn) Box(Modifier.size(10.dp).clip(CircleShape).background(OperaRed))
                     }
                 }
             }
@@ -179,6 +180,10 @@ fun AgentsSettingsPage(
             onClick = { confirm = true },
             enabled = selected != enabled && !isApplying,
             shape = RoundedCornerShape(14.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = OperaRed,
+                contentColor = Color.White
+            ),
             contentPadding = PaddingValues(vertical = 12.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
