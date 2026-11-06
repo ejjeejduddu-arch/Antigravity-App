@@ -85,9 +85,9 @@ fun OperaAppOpeningSplash(
         onAnimationFinished()
     }
 
-    val backgroundColor = if (isDarkTheme) OperaDarkBackground else OperaCream
-    val textColor = if (isDarkTheme) OperaDarkTextPrimary else OperaTextPrimary
-    val mutedColor = if (isDarkTheme) OperaDarkTextMuted else OperaTextMuted
+    val backgroundColor = OperaRed
+    val textColor = Color.White
+    val mutedColor = Color.White.copy(alpha = 0.88f)
 
     Box(
         modifier = Modifier
@@ -99,15 +99,15 @@ fun OperaAppOpeningSplash(
         // Glowing Ambient Backlight Aura
         Box(
             modifier = Modifier
-                .size(240.dp)
+                .size(260.dp)
                 .alpha(glowAlpha)
-                .scale(logoScale * 1.15f)
+                .scale(logoScale * 1.2f)
                 .clip(CircleShape)
                 .background(
                     Brush.radialGradient(
                         colors = listOf(
-                            OperaRed.copy(alpha = if (isDarkTheme) 0.35f else 0.22f),
-                            OperaRedBright.copy(alpha = if (isDarkTheme) 0.15f else 0.08f),
+                            Color.White.copy(alpha = 0.28f),
+                            Color(0xFFFF7A7A).copy(alpha = 0.14f),
                             Color.Transparent
                         )
                     )

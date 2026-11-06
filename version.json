@@ -1,12 +1,12 @@
 {
-  "version_code": 136,
-  "version_name": "1.0.36",
+  "version_code": 137,
+  "version_name": "1.0.37",
   "min_supported_version_code": 1,
   "changelog": [
-    "Ported exact 3D background canvas animation from web landing page into Jetpack Compose",
-    "Added 3D floating particle starfield with 400 fov depth projection and Opera Red glow",
-    "Added 3D rotating geodesic wireframe spheres with latitude and longitude rings and interactive gyroscope tilt",
-    "Added 3-tier undulating harmonic energy wave ribbons matching web index algorithm"
+    "Restored authentic Opera Red (#FF1A1A) system window splash screen and Compose opening animation",
+    "Replaced black squircle opening screen with crisp white Opera butterfly mascot on vivid Opera Red background",
+    "Updated app adaptive launcher icon background to Opera Red (#FF1A1A) with centered white butterfly",
+    "Seamless zero-flicker transition from Android OS splash into full Opera chat workspace"
   ],
   "is_critical": false
 }

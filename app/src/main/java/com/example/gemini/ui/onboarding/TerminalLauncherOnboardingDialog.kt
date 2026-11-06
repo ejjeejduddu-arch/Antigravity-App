@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import com.example.gemini.theme.OperaRed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -188,7 +189,7 @@ fun TerminalLauncherOnboardingDialog(
                                         .size(54.dp)
                                         .shadow(4.dp, RoundedCornerShape(14.dp))
                                         .clip(RoundedCornerShape(14.dp))
-                                        .background(Color.White)
+                                        .background(OperaRed)
                                         .padding(6.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
@@ -236,7 +237,7 @@ fun TerminalLauncherOnboardingDialog(
                                             if (selectedStyle == TerminalLauncherManager.STYLE_TERMUX) {
                                                 Color.Black
                                             } else {
-                                                Color.White
+                                                OperaRed
                                             }
                                         )
                                         .padding(6.dp),
@@ -355,7 +356,7 @@ fun TerminalLauncherOnboardingDialog(
                                     modifier = Modifier
                                         .size(38.dp)
                                         .clip(RoundedCornerShape(10.dp))
-                                        .background(Color.White)
+                                        .background(OperaRed)
                                         .padding(4.dp),
                                     contentAlignment = Alignment.Center
                                 ) {

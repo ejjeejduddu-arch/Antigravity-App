@@ -1826,7 +1826,7 @@ private fun AppearanceSubScreen(
                                     modifier = Modifier
                                         .size(32.dp)
                                         .clip(RoundedCornerShape(8.dp))
-                                        .background(Color.White)
+                                        .background(com.example.gemini.theme.OperaRed)
                                         .padding(3.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
