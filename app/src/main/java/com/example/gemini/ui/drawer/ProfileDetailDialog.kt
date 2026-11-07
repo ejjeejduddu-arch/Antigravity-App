@@ -62,6 +62,10 @@ fun ProfileDetailDialog(
     onLogout: () -> Unit
 ) {
     val context = LocalContext.current
+    var showMembershipDialog by remember { mutableStateOf(false) }
+    val authPrefs = remember { com.example.gemini.data.preferences.AuthPreferences(context) }
+    val currentPlan by authPrefs.subscriptionTier.collectAsState(initial = "free")
+    val scope = rememberCoroutineScope()
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -166,42 +170,42 @@ fun ProfileDetailDialog(
                     )
                 }
 
-                // User Tier / Plan Badge Card
-                val tierName = authInfo.userTier.ifBlank { authInfo.planName.ifBlank { "Pro" } }
-                if (tierName.isNotBlank()) {
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Surface(
-                        shape = RoundedCornerShape(16.dp),
-                        color = ClaudeTerracotta.copy(alpha = 0.12f),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, ClaudeTerracotta.copy(alpha = 0.35f))
+                // User Tier / Plan Badge Card (VIP vs Non-VIP)
+                val rawTier = (currentPlan ?: authInfo.userTier.ifBlank { "free" }).lowercase()
+                val isVip = rawTier in listOf("go", "plus", "pro")
+                val badgeText = when (rawTier) {
+                    "pro" -> "👑 VIP PLATINUM (Pro)"
+                    "plus" -> "👑 VIP GOLD (Plus)"
+                    "go" -> "⚡ VIP SILVER (Go)"
+                    else -> "🛡️ Non-VIP (Standard)"
+                }
+                val badgeColor = if (isVip) Color(0xFFFFB300) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                val badgeBg = if (isVip) Color(0xFFFFB300).copy(alpha = 0.14f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
+                val badgeBorder = if (isVip) Color(0xFFFFB300).copy(alpha = 0.45f) else MaterialTheme.colorScheme.outline.copy(alpha = 0.25f)
+
+                Spacer(modifier = Modifier.height(10.dp))
+                Surface(
+                    shape = RoundedCornerShape(16.dp),
+                    color = badgeBg,
+                    border = androidx.compose.foundation.BorderStroke(1.dp, badgeBorder)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.WorkspacePremium,
-                                contentDescription = null,
-                                tint = ClaudeTerracotta,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = tierName,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = ClaudeTerracotta
-                            )
-                            if (authInfo.planName.isNotBlank() && authInfo.planName != tierName) {
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    text = "•  ${authInfo.planName}",
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = ClaudeTerracotta.copy(alpha = 0.8f)
-                                )
-                            }
-                        }
+                        Icon(
+                            imageVector = if (isVip) Icons.Outlined.WorkspacePremium else Icons.Outlined.VerifiedUser,
+                            contentDescription = null,
+                            tint = badgeColor,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = badgeText,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = badgeColor
+                        )
                     }
                 }
 
@@ -352,11 +356,6 @@ fun ProfileDetailDialog(
                 }
 
                 // Details: Subscription / Upgrade Plan
-                var showMembershipDialog by remember { mutableStateOf(false) }
-                val authPrefs = remember { com.example.gemini.data.preferences.AuthPreferences(context) }
-                val currentPlan by authPrefs.subscriptionTier.collectAsState(initial = "free")
-                val scope = rememberCoroutineScope()
-
                 Spacer(modifier = Modifier.height(6.dp))
                 Row(
                     modifier = Modifier
@@ -369,7 +368,7 @@ fun ProfileDetailDialog(
                     Icon(
                         imageVector = Icons.Outlined.WorkspacePremium,
                         contentDescription = "Upgrade Plan",
-                        tint = ClaudeTerracotta,
+                        tint = if (isVip) Color(0xFFFFB300) else ClaudeTerracotta,
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(10.dp))
@@ -380,9 +379,9 @@ fun ProfileDetailDialog(
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                         )
                         Text(
-                            text = "${(currentPlan ?: "Free").replaceFirstChar { it.uppercase() }} (Tap to Upgrade / Manage)",
+                            text = if (isVip) "👑 VIP ${rawTier.uppercase()} (Active • Tap to Manage)" else "🛡️ Standard Free (Tap to Upgrade to VIP)",
                             fontSize = 12.sp,
-                            color = ClaudeTerracotta,
+                            color = if (isVip) Color(0xFFFFB300) else ClaudeTerracotta,
                             fontWeight = FontWeight.SemiBold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
